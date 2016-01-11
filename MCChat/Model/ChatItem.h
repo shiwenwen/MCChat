@@ -1,0 +1,34 @@
+//
+//  ChatItem.h
+//  MCChat
+//
+//  Created by 石文文 on 16/1/8.
+//  Copyright © 2016年 shiwenwen. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+
+typedef enum{
+    textStates,
+    picStates,
+    videoStates,
+    
+}newsStates;
+
+@interface ChatItem : NSObject
+
+
+@property(nonatomic,assign)BOOL isSelf;//判断是接受，还是发的
+@property(nonatomic,assign)newsStates states;
+@property(nonatomic,strong)NSString * content;
+
+@property(nonatomic, strong)UIImage * picImage;
+
+
+@property(nonatomic, strong)NSData * recordData;
+
+// 数据内容
+
+@end

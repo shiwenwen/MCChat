@@ -9,12 +9,21 @@
 /* Begin PBXBuildFile section */
 		2BFAA1341C3FADD700E8D032 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1331C3FADD700E8D032 /* main.m */; };
 		2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1361C3FADD700E8D032 /* AppDelegate.m */; };
-		2BFAA13A1C3FADD700E8D032 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1391C3FADD700E8D032 /* ViewController.m */; };
-		2BFAA13D1C3FADD700E8D032 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA13B1C3FADD700E8D032 /* Main.storyboard */; };
 		2BFAA13F1C3FADD700E8D032 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA13E1C3FADD700E8D032 /* Assets.xcassets */; };
 		2BFAA1421C3FADD700E8D032 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1401C3FADD700E8D032 /* LaunchScreen.storyboard */; };
 		2BFAA14D1C3FADD700E8D032 /* MCChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA14C1C3FADD700E8D032 /* MCChatTests.m */; };
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
+		2BFAA1671C3FB77100E8D032 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1661C3FB77100E8D032 /* RootViewController.m */; };
+		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
+		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		2BFAA1781C3FB7B000E8D032 /* f-pCert@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA16F1C3FB7B000E8D032 /* f-pCert@2x.png */; };
+		2BFAA1791C3FB7B000E8D032 /* f-plove@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1701C3FB7B000E8D032 /* f-plove@2x.png */; };
+		2BFAA17A1C3FB7B000E8D032 /* ReceiverTextNodeBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1711C3FB7B000E8D032 /* ReceiverTextNodeBkg.png */; };
+		2BFAA17B1C3FB7B000E8D032 /* ReceiverTextNodeBkg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1721C3FB7B000E8D032 /* ReceiverTextNodeBkg@2x.png */; };
+		2BFAA17C1C3FB7B000E8D032 /* record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1731C3FB7B000E8D032 /* record@2x.png */; };
+		2BFAA17D1C3FB7B000E8D032 /* SenderTextNodeBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1741C3FB7B000E8D032 /* SenderTextNodeBkg.png */; };
+		2BFAA17E1C3FB7B000E8D032 /* SenderTextNodeBkg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1751C3FB7B000E8D032 /* SenderTextNodeBkg@2x.png */; };
+		2BFAA1821C3FB84200E8D032 /* ChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1811C3FB84200E8D032 /* ChatCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,9 +48,6 @@
 		2BFAA1331C3FADD700E8D032 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2BFAA1351C3FADD700E8D032 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2BFAA1361C3FADD700E8D032 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		2BFAA1381C3FADD700E8D032 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		2BFAA1391C3FADD700E8D032 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		2BFAA13C1C3FADD700E8D032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2BFAA13E1C3FADD700E8D032 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BFAA1411C3FADD700E8D032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BFAA1431C3FADD700E8D032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +57,21 @@
 		2BFAA1531C3FADD800E8D032 /* MCChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MCChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MCChatUITests.m; sourceTree = "<group>"; };
 		2BFAA1591C3FADD800E8D032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2BFAA1651C3FB77100E8D032 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		2BFAA1661C3FB77100E8D032 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		2BFAA1691C3FB7B000E8D032 /* ChatItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatItem.h; sourceTree = "<group>"; };
+		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
+		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
+		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		2BFAA16F1C3FB7B000E8D032 /* f-pCert@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "f-pCert@2x.png"; sourceTree = "<group>"; };
+		2BFAA1701C3FB7B000E8D032 /* f-plove@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "f-plove@2x.png"; sourceTree = "<group>"; };
+		2BFAA1711C3FB7B000E8D032 /* ReceiverTextNodeBkg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ReceiverTextNodeBkg.png; sourceTree = "<group>"; };
+		2BFAA1721C3FB7B000E8D032 /* ReceiverTextNodeBkg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ReceiverTextNodeBkg@2x.png"; sourceTree = "<group>"; };
+		2BFAA1731C3FB7B000E8D032 /* record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record@2x.png"; sourceTree = "<group>"; };
+		2BFAA1741C3FB7B000E8D032 /* SenderTextNodeBkg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SenderTextNodeBkg.png; sourceTree = "<group>"; };
+		2BFAA1751C3FB7B000E8D032 /* SenderTextNodeBkg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SenderTextNodeBkg@2x.png"; sourceTree = "<group>"; };
+		2BFAA1801C3FB84200E8D032 /* ChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatCell.h; sourceTree = "<group>"; };
+		2BFAA1811C3FB84200E8D032 /* ChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,9 +124,12 @@
 			children = (
 				2BFAA1351C3FADD700E8D032 /* AppDelegate.h */,
 				2BFAA1361C3FADD700E8D032 /* AppDelegate.m */,
-				2BFAA1381C3FADD700E8D032 /* ViewController.h */,
-				2BFAA1391C3FADD700E8D032 /* ViewController.m */,
-				2BFAA13B1C3FADD700E8D032 /* Main.storyboard */,
+				2BFAA1651C3FB77100E8D032 /* RootViewController.h */,
+				2BFAA1661C3FB77100E8D032 /* RootViewController.m */,
+				2BFAA17F1C3FB84200E8D032 /* View */,
+				2BFAA1681C3FB7B000E8D032 /* Model */,
+				2BFAA16B1C3FB7B000E8D032 /* MyClass */,
+				2BFAA16E1C3FB7B000E8D032 /* Resourse */,
 				2BFAA13E1C3FADD700E8D032 /* Assets.xcassets */,
 				2BFAA1401C3FADD700E8D032 /* LaunchScreen.storyboard */,
 				2BFAA1431C3FADD700E8D032 /* Info.plist */,
@@ -138,6 +162,48 @@
 				2BFAA1591C3FADD800E8D032 /* Info.plist */,
 			);
 			path = MCChatUITests;
+			sourceTree = "<group>";
+		};
+		2BFAA1681C3FB7B000E8D032 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2BFAA1691C3FB7B000E8D032 /* ChatItem.h */,
+				2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2BFAA16B1C3FB7B000E8D032 /* MyClass */ = {
+			isa = PBXGroup;
+			children = (
+				2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */,
+				2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */,
+			);
+			path = MyClass;
+			sourceTree = "<group>";
+		};
+		2BFAA16E1C3FB7B000E8D032 /* Resourse */ = {
+			isa = PBXGroup;
+			children = (
+				2BFAA16F1C3FB7B000E8D032 /* f-pCert@2x.png */,
+				2BFAA1701C3FB7B000E8D032 /* f-plove@2x.png */,
+				2BFAA1711C3FB7B000E8D032 /* ReceiverTextNodeBkg.png */,
+				2BFAA1721C3FB7B000E8D032 /* ReceiverTextNodeBkg@2x.png */,
+				2BFAA1731C3FB7B000E8D032 /* record@2x.png */,
+				2BFAA1741C3FB7B000E8D032 /* SenderTextNodeBkg.png */,
+				2BFAA1751C3FB7B000E8D032 /* SenderTextNodeBkg@2x.png */,
+			);
+			path = Resourse;
+			sourceTree = "<group>";
+		};
+		2BFAA17F1C3FB84200E8D032 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BFAA1801C3FB84200E8D032 /* ChatCell.h */,
+				2BFAA1811C3FB84200E8D032 /* ChatCell.m */,
+			);
+			name = View;
+			path = Model/View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -243,9 +309,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BFAA17D1C3FB7B000E8D032 /* SenderTextNodeBkg.png in Resources */,
+				2BFAA1791C3FB7B000E8D032 /* f-plove@2x.png in Resources */,
+				2BFAA17A1C3FB7B000E8D032 /* ReceiverTextNodeBkg.png in Resources */,
+				2BFAA1781C3FB7B000E8D032 /* f-pCert@2x.png in Resources */,
+				2BFAA17B1C3FB7B000E8D032 /* ReceiverTextNodeBkg@2x.png in Resources */,
 				2BFAA1421C3FADD700E8D032 /* LaunchScreen.storyboard in Resources */,
+				2BFAA17E1C3FB7B000E8D032 /* SenderTextNodeBkg@2x.png in Resources */,
 				2BFAA13F1C3FADD700E8D032 /* Assets.xcassets in Resources */,
-				2BFAA13D1C3FADD700E8D032 /* Main.storyboard in Resources */,
+				2BFAA17C1C3FB7B000E8D032 /* record@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,9 +342,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BFAA13A1C3FADD700E8D032 /* ViewController.m in Sources */,
+				2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */,
+				2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
+				2BFAA1821C3FB84200E8D032 /* ChatCell.m in Sources */,
 				2BFAA1341C3FADD700E8D032 /* main.m in Sources */,
+				2BFAA1671C3FB77100E8D032 /* RootViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,14 +383,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		2BFAA13B1C3FADD700E8D032 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2BFAA13C1C3FADD700E8D032 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		2BFAA1401C3FADD700E8D032 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -414,6 +481,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MCChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sww.MCChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -425,6 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MCChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sww.MCChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
