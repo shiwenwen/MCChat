@@ -36,7 +36,7 @@
     self.leftHeadImage = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 30, 30)];
     self.leftHeadImage.layer.masksToBounds = YES;
     self.leftHeadImage.layer.cornerRadius = 12;
-    self.leftHeadImage.image = [UIImage imageNamed:@"f-pCert.png"];
+    self.leftHeadImage.image = [UIImage imageNamed:@"默认头像"];
     [self.contentView addSubview:self.leftHeadImage];
     
     //左边气泡
@@ -50,7 +50,7 @@
     
     self.lefeView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 66, 30)];
     self.lefeView.image = leftImgae;
-    // 这里不是一个小像素的图片？？
+
     [self.contentView addSubview:self.lefeView];
     
     
@@ -68,7 +68,7 @@
     self.rightHeadImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width - 35, 5, 30, 30)];
     self.rightHeadImage.layer.masksToBounds = YES;
     self.rightHeadImage.layer.cornerRadius = 12;
-    self.rightHeadImage.image = [UIImage imageNamed:@"f-plove.png"];
+    self.rightHeadImage.image = [UIImage imageNamed:@"默认头像"];
     [self.contentView addSubview:self.rightHeadImage];
     
     self.rightVideoButton = [UIButton buttonWithType:UIButtonTypeCustom];

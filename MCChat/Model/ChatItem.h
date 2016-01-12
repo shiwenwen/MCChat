@@ -26,9 +26,8 @@ typedef enum{
 
 @property(nonatomic, strong)UIImage * picImage;
 
-
 @property(nonatomic, strong)NSData * recordData;
 
-// 数据内容
+@property (nonatomic,strong)UIImage *header;
 
 @end

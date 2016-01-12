@@ -11,7 +11,7 @@
 #import "BlueSessionManager.h"
 #import "ChatCell.h"
 #import "ChatItem.h"
-
+#import "UIViewExt.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -67,6 +67,12 @@
 
 @implementation RootViewController
 
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -76,11 +82,24 @@
     
     [self buildVideoForWe];
     
+    //监听键盘通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillShowNotification object:nil];
     
-    // Do any additional setup after loading the view
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillHideNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenKeyboard)];
+    [self.view addGestureRecognizer:tap];
+    
 }
 
-
+- (void)hiddenKeyboard{
+    
+    [self.view endEditing:YES];
+    
+    
+}
 
 
 #pragma mark  基本制作
@@ -90,10 +109,11 @@
     self.title = @"MCChat";
     self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
+
     
-    NSArray * buttonTitleArray = @[@"寻找设备",@"打开天线"];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:buttonTitleArray[0] style:UIBarButtonItemStyleDone target:self action:@selector(lookOtherDevice)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:buttonTitleArray[1] style:UIBarButtonItemStyleDone target:self action:@selector(showSelfAdvertiser)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(lookOtherDevice)];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"扩散" style:UIBarButtonItemStyleDone target:self action:@selector(showSelfAdvertiser)];
     [self makeUIView];
     
 }
@@ -101,8 +121,12 @@
 {
     [self.sessionManager browseWithControllerInViewController:self connected:^{
         NSLog(@"connected");
-    }                                                 canceled:^{
+        
+        
+    }canceled:^{
+        
         NSLog(@"cancelled");
+        
     }];
 }
 
@@ -160,12 +184,53 @@
     
   
     
-    
-    // 增加通知
-    [self addTheNoticeForKeyDownUp];
+
     
 }
-
+#pragma mark -- 视图随键盘调整
+- (void)fitKeyboardSize:(NSNotification *)notification{
+    
+    NSLog(@"%@",notification.userInfo);
+    /**
+     {
+     UIKeyboardAnimationCurveUserInfoKey = 7;
+     UIKeyboardAnimationDurationUserInfoKey = "0.4";
+     UIKeyboardBoundsUserInfoKey = "NSRect: {{0, 0}, {375, 216}}";
+     UIKeyboardCenterBeginUserInfoKey = "NSPoint: {187.5, 775}";
+     UIKeyboardCenterEndUserInfoKey = "NSPoint: {187.5, 559}";
+     UIKeyboardFrameBeginUserInfoKey = "NSRect: {{0, 667}, {375, 216}}";
+     UIKeyboardFrameEndUserInfoKey = "NSRect: {{0, 451}, {375, 216}}";
+     
+     */
+    
+    CGRect frame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    CGFloat height = frame.size.height;
+    
+    CGFloat duration = [[notification.userInfo
+                         objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSUInteger option = [[notification.userInfo
+                          objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    
+    
+    
+    
+    
+    [UIView animateKeyframesWithDuration:duration delay:0 options:option animations:^{
+        
+        if ([notification.name isEqualToString:UIKeyboardWillHideNotification]) {
+            
+            self.view.bottom = HEIGHT;
+            
+        }else{
+            
+            self.view.bottom = HEIGHT - height;
+        }
+        
+        
+    } completion:NULL];
+    
+}
 
 #pragma mark 图片的传输---------///////
 
@@ -401,49 +466,6 @@
 
 
 
-#pragma mark 以下是为了配合  键盘上移的变化
-
-- (void)addTheNoticeForKeyDownUp
-{
-    [ [NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyBoardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-    [ [NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
--(void)handleKeyBoardDidShow:(NSNotification *)paramNotification
-{
-    CGSize size = [[paramNotification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    
-    _sendBackViewHeight = size.height;
-    
-    [UIView animateWithDuration:0.000001 animations:^{
-        self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - size.height);
-        self.sendBackView.frame = CGRectMake(0, HEIGHT - ChatHeight - size.height, WIDTH, ChatHeight);
-        
-    }];
-    
-}
--(void)handleKeyboardWillHide:(NSNotification *)paramNotification
-{
-    [UIView animateWithDuration:0.1 animations:^{
-        if(_sendTextViewHeight > 0)
-        {
-            self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - _sendTextViewHeight + 10 );
-            self.sendBackView.frame = CGRectMake(0, HEIGHT - _sendTextViewHeight  - 10, WIDTH, _sendTextViewHeight + 10);
-        }
-        else
-        {
-            self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - 10 );
-            self.sendBackView.frame = CGRectMake(0, HEIGHT - ChatHeight , WIDTH, ChatHeight);
-        }
-        
-        
-    }];
-}
 /*--------------------------------------------------------------------------------------------*/
 - (void)insertTheTableToButtom
 {
