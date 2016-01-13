@@ -40,6 +40,14 @@
 		2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4076B41C4508EB003A7161 /* NSString+WPAttributedMarkup.m */; };
 		2B4076BD1C450ECE003A7161 /* ZoomInImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4076BC1C450ECE003A7161 /* ZoomInImageView.m */; };
 		2B4076BF1C45112D003A7161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B4076BE1C45112D003A7161 /* Assets.xcassets */; };
+		2BEA0B891C4624BF00A719A8 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BEA0B791C4624BF00A719A8 /* DateTools.bundle */; };
+		2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B7C1C4624BF00A719A8 /* DTConstants.m */; };
+		2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B7E1C4624BF00A719A8 /* DTError.m */; };
+		2BEA0B8C1C4624BF00A719A8 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B801C4624BF00A719A8 /* DTTimePeriod.m */; };
+		2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B821C4624BF00A719A8 /* DTTimePeriodChain.m */; };
+		2BEA0B8E1C4624BF00A719A8 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B841C4624BF00A719A8 /* DTTimePeriodCollection.m */; };
+		2BEA0B8F1C4624BF00A719A8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B861C4624BF00A719A8 /* DTTimePeriodGroup.m */; };
+		2BEA0B901C4624BF00A719A8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B881C4624BF00A719A8 /* NSDate+DateTools.m */; };
 		2BFAA1341C3FADD700E8D032 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1331C3FADD700E8D032 /* main.m */; };
 		2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1361C3FADD700E8D032 /* AppDelegate.m */; };
 		2BFAA14D1C3FADD700E8D032 /* MCChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA14C1C3FADD700E8D032 /* MCChatTests.m */; };
@@ -112,6 +120,22 @@
 		2B4076BB1C450ECE003A7161 /* ZoomInImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomInImageView.h; sourceTree = "<group>"; };
 		2B4076BC1C450ECE003A7161 /* ZoomInImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomInImageView.m; sourceTree = "<group>"; };
 		2B4076BE1C45112D003A7161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2BEA0B791C4624BF00A719A8 /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
+		2BEA0B7A1C4624BF00A719A8 /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
+		2BEA0B7B1C4624BF00A719A8 /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
+		2BEA0B7C1C4624BF00A719A8 /* DTConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTConstants.m; sourceTree = "<group>"; };
+		2BEA0B7D1C4624BF00A719A8 /* DTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTError.h; sourceTree = "<group>"; };
+		2BEA0B7E1C4624BF00A719A8 /* DTError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTError.m; sourceTree = "<group>"; };
+		2BEA0B7F1C4624BF00A719A8 /* DTTimePeriod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTimePeriod.h; sourceTree = "<group>"; };
+		2BEA0B801C4624BF00A719A8 /* DTTimePeriod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriod.m; sourceTree = "<group>"; };
+		2BEA0B811C4624BF00A719A8 /* DTTimePeriodChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTimePeriodChain.h; sourceTree = "<group>"; };
+		2BEA0B821C4624BF00A719A8 /* DTTimePeriodChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodChain.m; sourceTree = "<group>"; };
+		2BEA0B831C4624BF00A719A8 /* DTTimePeriodCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTimePeriodCollection.h; sourceTree = "<group>"; };
+		2BEA0B841C4624BF00A719A8 /* DTTimePeriodCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodCollection.m; sourceTree = "<group>"; };
+		2BEA0B851C4624BF00A719A8 /* DTTimePeriodGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTimePeriodGroup.h; sourceTree = "<group>"; };
+		2BEA0B861C4624BF00A719A8 /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
+		2BEA0B871C4624BF00A719A8 /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
+		2BEA0B881C4624BF00A719A8 /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
 		2BFAA12F1C3FADD700E8D032 /* MCChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MCChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFAA1331C3FADD700E8D032 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2BFAA1351C3FADD700E8D032 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -229,11 +253,35 @@
 		2B4076BA1C4508F7003A7161 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				2BEA0B781C4624BF00A719A8 /* DateTools */,
 				2B4076A91C4508EB003A7161 /* Extras */,
 				2B4076B01C4508EB003A7161 /* WPAttributedMarkup */,
 				2B4076A21C4504E1003A7161 /* UIViewExtensions */,
 			);
 			name = SDK;
+			sourceTree = "<group>";
+		};
+		2BEA0B781C4624BF00A719A8 /* DateTools */ = {
+			isa = PBXGroup;
+			children = (
+				2BEA0B791C4624BF00A719A8 /* DateTools.bundle */,
+				2BEA0B7A1C4624BF00A719A8 /* DateTools.h */,
+				2BEA0B7B1C4624BF00A719A8 /* DTConstants.h */,
+				2BEA0B7C1C4624BF00A719A8 /* DTConstants.m */,
+				2BEA0B7D1C4624BF00A719A8 /* DTError.h */,
+				2BEA0B7E1C4624BF00A719A8 /* DTError.m */,
+				2BEA0B7F1C4624BF00A719A8 /* DTTimePeriod.h */,
+				2BEA0B801C4624BF00A719A8 /* DTTimePeriod.m */,
+				2BEA0B811C4624BF00A719A8 /* DTTimePeriodChain.h */,
+				2BEA0B821C4624BF00A719A8 /* DTTimePeriodChain.m */,
+				2BEA0B831C4624BF00A719A8 /* DTTimePeriodCollection.h */,
+				2BEA0B841C4624BF00A719A8 /* DTTimePeriodCollection.m */,
+				2BEA0B851C4624BF00A719A8 /* DTTimePeriodGroup.h */,
+				2BEA0B861C4624BF00A719A8 /* DTTimePeriodGroup.m */,
+				2BEA0B871C4624BF00A719A8 /* NSDate+DateTools.h */,
+				2BEA0B881C4624BF00A719A8 /* NSDate+DateTools.m */,
+			);
+			path = DateTools;
 			sourceTree = "<group>";
 		};
 		2BFAA1261C3FADD700E8D032 = {
@@ -466,6 +514,7 @@
 				2BFAA17C1C3FB7B000E8D032 /* record@2x.png in Resources */,
 				2B40769B1C44FDCB003A7161 /* AppIcon76x76~ipad.png in Resources */,
 				2B4076841C44FC22003A7161 /* LaunchImage.png in Resources */,
+				2BEA0B891C4624BF00A719A8 /* DateTools.bundle in Resources */,
 				2B4076851C44FC22003A7161 /* LaunchImage@2x.png in Resources */,
 				2B40769A1C44FDCB003A7161 /* AppIcon76x76@2x~ipad.png in Resources */,
 				2B4076821C44FC22003A7161 /* LaunchImage-800-Portrait-736h@3x.png in Resources */,
@@ -502,16 +551,23 @@
 			files = (
 				2B4076B81C4508EB003A7161 /* NSMutableString+TagReplace.m in Sources */,
 				2B4076A71C4504E1003A7161 /* UIView+UIViewController.m in Sources */,
+				2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */,
+				2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */,
 				2B40764F1C44F76E003A7161 /* MyChatCell.m in Sources */,
 				2B4076A81C4504E1003A7161 /* UIViewExt.m in Sources */,
 				2B4076B71C4508EB003A7161 /* WPTappableLabel.m in Sources */,
+				2BEA0B8F1C4624BF00A719A8 /* DTTimePeriodGroup.m in Sources */,
+				2BEA0B901C4624BF00A719A8 /* NSDate+DateTools.m in Sources */,
 				2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */,
 				2B4076BD1C450ECE003A7161 /* ZoomInImageView.m in Sources */,
 				2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */,
 				2B4076B51C4508EB003A7161 /* WPAttributedStyleAction.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
+				2BEA0B8C1C4624BF00A719A8 /* DTTimePeriod.m in Sources */,
 				2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */,
+				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
 				2BFAA1821C3FB84200E8D032 /* ChatCell.m in Sources */,
+				2BEA0B8E1C4624BF00A719A8 /* DTTimePeriodCollection.m in Sources */,
 				2BFAA1341C3FADD700E8D032 /* main.m in Sources */,
 				2BFAA1671C3FB77100E8D032 /* RootViewController.m in Sources */,
 				2B4076A01C44FEF9003A7161 /* HomeViewController.m in Sources */,

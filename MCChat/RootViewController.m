@@ -14,7 +14,7 @@
 #import "UIViewExt.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
-
+#import "MyChatCell.h"
 
 #define kRecordAudioFile @"myRecord.caf"
 
@@ -108,7 +108,7 @@
 {
     self.title = @"MCChat";
     self.view.backgroundColor = [UIColor whiteColor];
-    self.automaticallyAdjustsScrollViewInsets = NO;
+//    self.automaticallyAdjustsScrollViewInsets = NO;
 
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(lookOtherDevice)];
@@ -120,6 +120,7 @@
 - (void)lookOtherDevice
 {
     [self.sessionManager browseWithControllerInViewController:self connected:^{
+        
         NSLog(@"connected");
         
         
@@ -139,15 +140,15 @@
 #pragma mark 制作页面UI
 - (void)makeUIView
 {
-//    NSLog(@"width === %f,height===== %f",WIDTH,HEIGHT);
-    
+
     self.myDataArray = [NSMutableArray arrayWithCapacity:0];
     
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - 10)];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, HEIGHT - 64 - ChatHeight)];
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
-   
+    self.tableView.backgroundColor = [UIColor redColor];
     [self.view addSubview:self.tableView];
     
    
@@ -160,10 +161,10 @@
     self.sendBackView.backgroundColor = [UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0];
     [self.view addSubview:self.sendBackView];
     
-//    float heightView = self.sendBackView.frame.size.height;
+
     
     self.sendTextView = [[UITextView alloc] initWithFrame:CGRectMake(10, 5, WIDTH - 10 - 90, 35)];
-//    self.sendTextView.backgroundColor = [UIColor lightGrayColor];
+
     self.sendTextView.returnKeyType = UIReturnKeySend;
     self.sendTextView.font = [UIFont systemFontOfSize:17];
     self.sendTextView.editable = YES;
@@ -171,7 +172,7 @@
     [self.sendBackView addSubview:self.sendTextView];
     
     UIButton * addButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    addButton.frame = CGRectMake(WIDTH - 85, 2, 37, 37);
+    addButton.frame = CGRectMake(WIDTH - 85, 2, 40, 40);
     [addButton addTarget:self action:@selector(addNextImage) forControlEvents:UIControlEventTouchUpInside];
     [self.sendBackView addSubview:addButton];
     
@@ -211,11 +212,6 @@
                          objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSUInteger option = [[notification.userInfo
                           objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    
-    
-    
-    
-    
     [UIView animateKeyframesWithDuration:duration delay:0 options:option animations:^{
         
         if ([notification.name isEqualToString:UIKeyboardWillHideNotification]) {
@@ -260,7 +256,7 @@
                 _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
             }
         
-            [self presentViewController:_picker animated:NO completion:nil];
+            [self presentViewController:_picker animated:YES completion:nil];
             
             
       
@@ -270,9 +266,8 @@
             //From album
             _picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
             
-            [self presentViewController:_picker animated:NO completion:^{
+            [self presentViewController:_picker animated:YES completion:^{
                 
-                // 改变状态栏的颜色  为正常  这是这个独有的地方需要处理的
                 [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
             }];
             break;
@@ -299,14 +294,18 @@
     {
         //先把图片转成NSData
         UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        NSURL *url=  [info objectForKey:UIImagePickerControllerReferenceURL];
+        NSMutableString *imageName = [NSMutableString stringWithFormat:@"%@",url.description];
         NSData *data;
         if (UIImagePNGRepresentation(image) == nil)
         {
             data = UIImageJPEGRepresentation(image, 1.0);
+            [imageName appendFormat:@".jpg"];
         }
         else
         {
             data = UIImagePNGRepresentation(image);
+            [imageName appendFormat:@".png"];
         }
         
         //图片保存的路径
@@ -316,15 +315,13 @@
         //文件管理器
         NSFileManager *fileManager = [NSFileManager defaultManager];
         
+         NSString * filePath = [[NSString alloc]initWithFormat:@"%@/%@",DocumentsPath,imageName];
+        
         //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
         [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:@"/image.png"] contents:data attributes:nil];
+        [fileManager createFileAtPath:filePath contents:data attributes:nil];
         
-        //得到选择后沙盒中图片的完整路径
-        NSString * filePath = [[NSString alloc]initWithFormat:@"%@%@",DocumentsPath,  @"/image.png"];
-        
-        
-        
+
         [_picker dismissViewControllerAnimated:NO completion:^{
             
             // 改变状态栏的颜色  改变为白色
@@ -335,7 +332,7 @@
             // 这边是真正的发送
             if(!self.sessionManager.isConnected)
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"蓝牙已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
                 [alertView show];
                 return;
             }
@@ -381,7 +378,7 @@
 {
     if(!self.sessionManager.isConnected)
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"蓝牙已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
         [alertView show];
         return;
     }
@@ -416,9 +413,9 @@
 {
     // 归零
     self.sendTextView.text = @"";
-    [self.sendTextView resignFirstResponder];
-    self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - 10 );
-    self.sendBackView.frame = CGRectMake(0, HEIGHT - ChatHeight , WIDTH, ChatHeight);
+//    [self.sendTextView resignFirstResponder];
+//    self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - 10 );
+//    self.sendBackView.frame = CGRectMake(0, HEIGHT - ChatHeight , WIDTH, ChatHeight);
     
 }
 
@@ -488,168 +485,26 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ChatItem * chatItem = [self.datasource objectAtIndex:indexPath.row];
-    if(chatItem.states == picStates)
-    {
-        NSLog(@"widht====%f,height======%f",chatItem.picImage.size.width,chatItem.picImage.size.height);
-        return 50;
-        
-        
-        
-    }
-    else if(chatItem.states == textStates)
-    {
-        CGSize size = [chatItem.content boundingRectWithSize:CGSizeMake(250, 1000) options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading  attributes:@{NSFontAttributeName :[UIFont systemFontOfSize:14]} context:nil].size;
-        
-        return size.height + 20 + 10; // 与view的距离 ＋ 与Cell的距离
-    }
-    else
-    {
-        return 50;
-    }
+    ChatItem *model = self.datasource[indexPath.row];
+    return model.cellHeight;
     
     
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    static NSString *identifier = @"Chat_Cell";
     
-    static NSString * iden = @"iden";
-    ChatCell * cell = [tableView dequeueReusableCellWithIdentifier:iden];
-    if(cell == nil)
-    {
-        cell = [[ChatCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:iden];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        // 让后面选中的没有阴影效果
+    MyChatCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    
+    if (!cell) {
+        
+        cell = [[MyChatCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        
         
     }
     
-    // 模型
-    
-    ChatItem * chatItem = [self.datasource objectAtIndex:indexPath.row];
-   
-    CGSize size = [chatItem.content boundingRectWithSize:CGSizeMake(250, 1000) options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading  attributes:@{NSFontAttributeName :[UIFont systemFontOfSize:14]} context:nil].size;
-    
-    //如果自己发的
-    if(chatItem.isSelf)
-    {
-        cell.leftHeadImage.hidden = YES;
-        cell.rightHeadImage.hidden = NO;
-        
-        if(chatItem.states == picStates)
-        {
-            cell.lefeView.hidden = YES;
-            cell.rightView.hidden = YES;
-            
-            cell.rightPicImage.image = chatItem.picImage;
-            cell.leftPicImage.hidden = YES;
-            cell.rightPicImage.hidden = NO;
-            
-            cell.leftVideoButton.hidden = YES;
-            cell.rightVideoButton.hidden = YES;
-            
-            NSLog(@"self send");
-           
-            
-        }
-        else if(chatItem.states == textStates)
-        {
-            cell.rightPicImage.hidden = YES;
-            cell.leftPicImage.hidden = YES;
-            
-            cell.lefeView.hidden = YES;
-            cell.rightView.hidden = NO;
-            
-            cell.leftVideoButton.hidden = YES;
-            cell.rightVideoButton.hidden = YES;
-            // 复用机制
-            cell.rightLabel.frame = CGRectMake(10, 5, size.width, size.height);
-            cell.rightView.frame = CGRectMake(WIDTH - 40 -size.width-25, 5, size.width + 25, size.height + 18);
-            cell.rightLabel.text = chatItem.content;
-        }
-        else
-        {
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = YES;
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = YES;
-            
-            cell.leftVideoButton.hidden = YES;
-            cell.rightVideoButton.hidden = NO;
-            
-            cell.rightVideoButton.tag = 300 + indexPath.row;
-            [cell.rightVideoButton addTarget:self action:@selector(cellSelectIndex:) forControlEvents:UIControlEventTouchUpInside];
-            [cell.rightVideoButton setImage:[UIImage imageNamed:@"record.png"] forState:UIControlStateNormal];
-            
-        }
-        
-        
-        
-        
-        
-        
-        
-    }
-    else  // 接受得到
-    {
-        cell.leftHeadImage.hidden = NO;
-        cell.rightHeadImage.hidden = YES;
-       
-        
-        
-        if(chatItem.states == picStates)
-        {
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = YES;
-            
-            cell.leftVideoButton.hidden = YES;
-            cell.rightVideoButton.hidden = YES;
-            
-            cell.leftPicImage.image = chatItem.picImage;
-            cell.rightPicImage.hidden = YES;
-            cell.leftPicImage.hidden = NO;
-            
-           
-            
-            
-        }
-        else if(chatItem.states == textStates)
-        {
-            cell.rightPicImage.hidden = YES;
-            cell.leftPicImage.hidden = YES;
-            
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = NO;
-            
-            cell.leftVideoButton.hidden = YES;
-            cell.rightVideoButton.hidden = YES;
-            
-            cell.leftLabel.frame = CGRectMake(15, 5, size.width, size.height);
-            
-            cell.lefeView.frame = CGRectMake(40, 5, size.width +30, size.height + 25);
-            
-            cell.leftLabel.text = chatItem.content;
-        }
-        else
-        {
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = YES;
-            cell.rightView.hidden = YES;
-            cell.lefeView.hidden = YES;
-            
-            cell.leftVideoButton.hidden = NO;
-            cell.rightVideoButton.hidden = YES;
-            
-            
-            cell.leftVideoButton.tag = 300 + indexPath.row;
-            [cell.leftVideoButton setImage:[UIImage imageNamed:@"record.png"] forState:UIControlStateNormal];
-            [cell.leftVideoButton addTarget:self action:@selector(cellSelectIndex:) forControlEvents:UIControlEventTouchUpInside];
-        }
-        
-        
-        
-    }
-
+    cell.model = self.datasource[indexPath.row];
     
     return cell;
 }
@@ -768,7 +623,7 @@
 {
     if(!self.sessionManager.isConnected)
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"蓝牙已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
         [alertView show];
         return;
     }

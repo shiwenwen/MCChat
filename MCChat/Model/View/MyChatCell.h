@@ -11,7 +11,7 @@
 #import "ChatItem.h"
 #import "ZoomInImageView.h"
 @interface MyChatCell : UITableViewCell
-
+@property (nonatomic,strong,readonly)UILabel *timeLabel;
 @property (nonatomic,strong,readonly)UIImageView *leftHeaderView;
 @property (nonatomic,strong,readonly)UIImageView *rightHeaderView;
 @property (nonatomic,strong,readonly)UIImageView *leftBgView;
@@ -20,6 +20,7 @@
 @property (nonatomic,strong,readonly)WPHotspotLabel *rightChatLabel;
 @property (nonatomic,strong,readonly)ZoomInImageView *getImageView;
 @property (nonatomic,strong,readonly)ZoomInImageView *postImageView;
-@property (nonatomic,assign)BOOL isSelf;
+@property (nonatomic,strong,readonly)UIImageView *getVoiceView;
+@property (nonatomic,strong,readonly)UIImageView *postVoiceView;
 @property (nonatomic,strong)ChatItem *model;
 @end
