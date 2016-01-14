@@ -22,8 +22,8 @@
     if (self) {
         
         _timeLabel = [[UILabel alloc]initWithFrame:CGRectMake((WIDTH - 150) / 2.0, 5, 150, 15)];
-        _timeLabel.textColor = [UIColor blackColor];
-        _timeLabel.backgroundColor = [UIColor colorWithWhite:0.892 alpha:1.000];
+        _timeLabel.textColor = [UIColor whiteColor];
+        _timeLabel.backgroundColor = [UIColor colorWithWhite:0.268 alpha:1.000];
         _timeLabel.font = [UIFont systemFontOfSize:11];
         _timeLabel.textAlignment = NSTextAlignmentCenter;
         _timeLabel.layer.cornerRadius = 2;
@@ -34,22 +34,17 @@
         //毛玻璃
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
         
-            UIVisualEffectView *visualEffect = [[UIVisualEffectView alloc]initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+            UIVisualEffectView *visualEffect = [[UIVisualEffectView alloc]initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
             
             visualEffect.frame = CGRectMake(0, 0, _timeLabel.width, _timeLabel.height);
             
-            visualEffect.alpha = 0.9;
+            visualEffect.alpha = 0.5;
             
 //            [_timeLabel addSubview:visualEffect];
  
             
         }
-        NSDate *date = [NSDate date];
-            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-            NSString *dateStr = [formatter stringFromDate:date];
-
-        _timeLabel.text = dateStr;
+     
         //左边头像
         _leftHeaderView = [[UIImageView alloc]initWithFrame:CGRectMake(5, _timeLabel.bottom + 5, 45, 45)];
         _leftHeaderView.layer.cornerRadius = 45 * .5;
@@ -69,13 +64,13 @@
         _leftBgView = [[UIImageView alloc]init];
         _leftBgView.userInteractionEnabled = YES;
         UIImage *leftImage = [UIImage imageNamed:@"ReceiverTextNodeBkg"];
-        leftImage = [leftImage stretchableImageWithLeftCapWidth:leftImage.size.width * .5 topCapHeight:leftImage.size.height *.75];
+        leftImage = [leftImage stretchableImageWithLeftCapWidth:leftImage.size.width * .5 topCapHeight:leftImage.size.height *.65];
         _leftBgView.image = leftImage;
         
         _rightBgView = [[UIImageView alloc]init];
         _rightBgView.userInteractionEnabled = YES;
         UIImage *rigthImage = [UIImage imageNamed:@"SenderTextNodeBkg"];
-        rigthImage = [rigthImage stretchableImageWithLeftCapWidth:rigthImage.size.width * .5 topCapHeight:rigthImage.size.height *.75];
+        rigthImage = [rigthImage stretchableImageWithLeftCapWidth:rigthImage.size.width * .5 topCapHeight:rigthImage.size.height *.65];
         _rightBgView.image = rigthImage;
         [self.contentView addSubview:_leftBgView];
         [self.contentView addSubview:_rightBgView];
@@ -105,7 +100,19 @@
             self.rightChatLabel.text = _model.content;
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.textWidth - 35,self.rightHeaderView.top, _model.textWidth + 30,_model.textHeight + 25);
             
+        }else if (_model.states == picStates){
+            
+            self.rightChatLabel.hidden = YES;
+            self.postImageView.hidden = NO;
+            self.postVoiceView.hidden = YES;
+            self.postImageView.image = _model.picImage;
+            self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
+
+            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
+            
+            
         }
+        
     }else{
             
         self.leftHeaderView.image = [UIImage imageNamed:@"无头像"];
@@ -125,6 +132,17 @@
         
         
         
+        }else if (_model.states == picStates){
+            
+            self.leftChatLabel.hidden = YES;
+            self.getImageView.hidden = NO;
+            self.getVoiceView.hidden = YES;
+            self.getImageView.image = _model.picImage;
+            self.getImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
+            
+            self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.leftHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
+            
+            
         }
     
     
@@ -147,7 +165,7 @@
     if (!_rightChatLabel) {
         
         _rightChatLabel = [[WPHotspotLabel alloc]init];
-        _rightChatLabel.font = [UIFont systemFontOfSize:17];
+        _rightChatLabel.font = [UIFont systemFontOfSize:16];
         _rightChatLabel.numberOfLines = 0;
         [_rightBgView addSubview:_rightChatLabel];
         
@@ -159,6 +177,7 @@
     
     if (!_postImageView) {
         _postImageView = [[ZoomInImageView alloc]init];
+        _postImageView.contentMode = UIViewContentModeScaleAspectFit;
         [_rightBgView addSubview:_postImageView];
     }
     return _postImageView;
@@ -167,6 +186,7 @@
     if (!_postVoiceView) {
         _postVoiceView = [[UIImageView alloc]init];
         _postVoiceView.userInteractionEnabled = YES;
+
         [_rightBgView addSubview:_postVoiceView];
         
     }
@@ -179,7 +199,7 @@
     if (!_leftChatLabel) {
         
         _leftChatLabel = [[WPHotspotLabel alloc]init];
-        _leftChatLabel.font = [UIFont systemFontOfSize:17];
+        _leftChatLabel.font = [UIFont systemFontOfSize:16];
         _leftChatLabel.numberOfLines = 0;
         [_leftBgView addSubview:_leftChatLabel];
         
@@ -189,11 +209,12 @@
 }
 -(ZoomInImageView *)getImageView{
     
-    if (!_getVoiceView) {
-        _getVoiceView = [[ZoomInImageView alloc]init];
-        [_leftBgView addSubview:_getVoiceView];
+    if (!_getImageView) {
+        _getImageView = [[ZoomInImageView alloc]init];
+        _getImageView.contentMode = UIViewContentModeScaleAspectFit;
+        [_leftBgView addSubview:_getImageView];
     }
-    return _postImageView;
+    return _getImageView;
 }
 -(UIImageView *)_getVoiceView{
     
@@ -206,7 +227,17 @@
     return _postVoiceView;
     
 }
-
+- (void)layoutSubviews{
+    
+    [super layoutSubviews];
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+    NSString *dateStr = [formatter stringFromDate:date];
+    
+    _timeLabel.text = dateStr;
+    
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 

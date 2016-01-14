@@ -14,13 +14,13 @@
 
 -(CGFloat)textWidth{
     
-    _textWidth = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:17] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].width;
+    _textWidth = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:16] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].width;
     return _textWidth;
     
 }
 - (CGFloat)textHeight{
     
-   _textHeight = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:17] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].height;
+   _textHeight = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:16] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].height;
     _cellHeight = _textHeight
     + 60;
     return _textHeight;
@@ -46,6 +46,28 @@
     }
     
     return s;
+}
+- (CGFloat)imageHight{
+    
+    
+    _imageHight = self.picImage.size.height;
+    
+    if (_imageHight > 180) {
+        
+        _imageHight = 180.0;
+    }
+    _cellHeight = _imageHight + 60;
+    return _imageHight;
+    
+}
+
+-(CGFloat)imageWidth{
+    
+    _imageWidth = self.imageHight * self.picImage.size.width / self.picImage.size.height ;
+    
+    return _imageWidth;
+    
+
 }
 
 @end

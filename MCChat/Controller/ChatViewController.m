@@ -1,13 +1,12 @@
 //
-//  RootViewController.m
+//  ChatViewController.m
 //  MCChat
 //
-//  Created by 石文文 on 16/1/8.
+//  Created by 石文文 on 16/1/14.
 //  Copyright © 2016年 shiwenwen. All rights reserved.
 //
 
-
-#import "RootViewController.h"
+#import "ChatViewController.h"
 #import "BlueSessionManager.h"
 #import "ChatCell.h"
 #import "ChatItem.h"
@@ -16,21 +15,22 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MyChatCell.h"
 
-#define kRecordAudioFile @"myRecord.caf"
-
-// 判断大小
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
-#define ChatHeight 45.0
+#define ChatHeight 49.0
 
-@interface RootViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>
-{
+#define kRecordAudioFile @"myRecord.caf"
+
+@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>{
+    
     float _sendBackViewHeight;
-    float _sendTextViewHeight;
+    float _keyboardHeight;
     
     UIImagePickerController * _picker;
     UIView * _backRemindRecordView;
+    CGRect _tabBarFrame;
 }
+
 
 // DataAndBlue
 @property(strong, nonatomic) BlueSessionManager *sessionManager;
@@ -65,9 +65,7 @@
 
 @end
 
-@implementation RootViewController
-
-
+@implementation ChatViewController
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -75,6 +73,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatBg.jpg"]];
+    
+    self.navigationController.navigationBar.titleTextAttributes =@{
+                                                                   NSForegroundColorAttributeName:[UIColor whiteColor]
+                                                                   
+                                                                   };
+//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+//    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:0.127 alpha:1.000];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.800];
+    
     
     [self makeBlueData];
     
@@ -94,31 +103,42 @@
     
 }
 
+//- (UIStatusBarStyle)preferredStatusBarStyle{
+//    
+//    return UIStatusBarStyleLightContent;
+//    
+//}
+
+- (void)viewDidAppear:(BOOL)animated{
+    
+    _tabBarFrame = self.tabVC.view.frame;
+    [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+}
 - (void)hiddenKeyboard{
     
     [self.view endEditing:YES];
-    
+    [self.tabVC.view endEditing:YES];
     
 }
-
-
-#pragma mark  基本制作
-
 - (void)readyUI
 {
-    self.title = @"MCChat";
-    self.view.backgroundColor = [UIColor whiteColor];
-//    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.title = @"MC_Chat";
 
+//    self.automaticallyAdjustsScrollViewInsets = NO;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(lookOtherDevice)];
-    
+    self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"扩散" style:UIBarButtonItemStyleDone target:self action:@selector(showSelfAdvertiser)];
+        self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
     [self makeUIView];
     
 }
 - (void)lookOtherDevice
 {
+    
+    
+     [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    
     [self.sessionManager browseWithControllerInViewController:self connected:^{
         
         NSLog(@"connected");
@@ -140,33 +160,46 @@
 #pragma mark 制作页面UI
 - (void)makeUIView
 {
-
+    
     self.myDataArray = [NSMutableArray arrayWithCapacity:0];
     
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, HEIGHT - 64 - ChatHeight)];
-    
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.frame];
+    self.navigationController.navigationBar.translucent = YES;
+
+    self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
-    self.tableView.backgroundColor = [UIColor redColor];
+//    self.tableView.backgroundColor = [UIColor redColor];
     [self.view addSubview:self.tableView];
-    
-   
-    
-    
-   
-//-------------------------------------------------------------------------//
-    
-    self.sendBackView = [[UIView alloc] initWithFrame:CGRectMake(0, HEIGHT - ChatHeight, WIDTH, ChatHeight)];
-    self.sendBackView.backgroundColor = [UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0];
-    [self.view addSubview:self.sendBackView];
-    
+    //-------------------------------------------------------------------------//
 
-    
-    self.sendTextView = [[UITextView alloc] initWithFrame:CGRectMake(10, 5, WIDTH - 10 - 90, 35)];
 
+    self.sendBackView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.height, WIDTH, ChatHeight)];
+    self.sendBackView.backgroundColor = [UIColor colorWithWhite:1.000 alpha:0.95];
+    self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight, WIDTH, ChatHeight);
+    
+    UIView *backLine = [[UIView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, .5)];
+    backLine.backgroundColor = [UIColor colorWithWhite:0.078 alpha:1.000];
+    [self.sendBackView addSubview:backLine];
+    
+    for (UIView * view in self.tabVC.tabBar.subviews) {
+        
+        [view removeFromSuperview];
+        
+    }
+    self.tabVC.tabBar.hidden = YES;
+    
+    [self.tabVC.view addSubview:self.sendBackView];
+    
+    self.sendTextView = [[UITextView alloc] initWithFrame:CGRectMake(10, 5, WIDTH - 10 - 90, 36.3)];
+    
     self.sendTextView.returnKeyType = UIReturnKeySend;
     self.sendTextView.font = [UIFont systemFontOfSize:17];
+    self.sendTextView.layer.cornerRadius = 5;
+    self.sendTextView.layer.borderColor =[UIColor colorWithWhite:0.449 alpha:1.000].CGColor;
+    self.sendTextView.layer.borderWidth = .25;
+    self.sendTextView.layer.masksToBounds = YES;
     self.sendTextView.editable = YES;
     self.sendTextView.delegate = self;
     [self.sendBackView addSubview:self.sendTextView];
@@ -183,9 +216,9 @@
     [self.sendButton addTarget:self action:@selector(videoRecord) forControlEvents:UIControlEventTouchUpInside];
     [self.sendBackView addSubview:self.sendButton];
     
-  
     
-
+    self.tabVC.tabBar.translucent = YES;
+    self.navigationController.navigationBar.translucent = YES;
     
 }
 #pragma mark -- 视图随键盘调整
@@ -207,6 +240,14 @@
     CGRect frame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     CGFloat height = frame.size.height;
+    _keyboardHeight = height;
+//    if ([notification.name isEqualToString:UIKeyboardWillChangeFrameNotification]){
+//        
+//        
+//        height = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height - height;
+//        
+//    }
+//    
     
     CGFloat duration = [[notification.userInfo
                          objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
@@ -215,12 +256,22 @@
     [UIView animateKeyframesWithDuration:duration delay:0 options:option animations:^{
         
         if ([notification.name isEqualToString:UIKeyboardWillHideNotification]) {
+            _keyboardHeight = 0;
+            self.sendBackView.bottom = self.view.bottom;
+            self.tableView.frame = self.view.frame;
             
-            self.view.bottom = HEIGHT;
+            
             
         }else{
             
-            self.view.bottom = HEIGHT - height;
+            self.sendBackView.bottom = self.view.height - height ;
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - height - self.sendBackView.height + 49);
+            
+            if (self.datasource.count >= 1) {
+                // 滑动到底部  第二个参数是滑动到底部
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+           
         }
         
         
@@ -232,7 +283,7 @@
 
 - (void)addNextImage
 {
-   
+    [self hiddenKeyboard];
     UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"照相机",@"相册", nil];
     [chooseImageSheet showInView:self.view];
 }
@@ -249,17 +300,17 @@
     switch (buttonIndex) {
         case 0://Take picture
             
-     
+            
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
             {
                 
                 _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
             }
-        
+            
             [self presentViewController:_picker animated:YES completion:nil];
             
             
-      
+            
             break;
             
         case 1:
@@ -280,10 +331,6 @@
 
 
 
-
-
-
-
 // 相册
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
@@ -294,18 +341,14 @@
     {
         //先把图片转成NSData
         UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-        NSURL *url=  [info objectForKey:UIImagePickerControllerReferenceURL];
-        NSMutableString *imageName = [NSMutableString stringWithFormat:@"%@",url.description];
         NSData *data;
         if (UIImagePNGRepresentation(image) == nil)
         {
             data = UIImageJPEGRepresentation(image, 1.0);
-            [imageName appendFormat:@".jpg"];
         }
         else
         {
             data = UIImagePNGRepresentation(image);
-            [imageName appendFormat:@".png"];
         }
         
         //图片保存的路径
@@ -315,13 +358,15 @@
         //文件管理器
         NSFileManager *fileManager = [NSFileManager defaultManager];
         
-         NSString * filePath = [[NSString alloc]initWithFormat:@"%@/%@",DocumentsPath,imageName];
-        
         //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
         [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [fileManager createFileAtPath:filePath contents:data attributes:nil];
+        [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:@"/image.png"] contents:data attributes:nil];
         
-
+        //得到选择后沙盒中图片的完整路径
+        NSString * filePath = [[NSString alloc]initWithFormat:@"%@%@",DocumentsPath,  @"/image.png"];
+        
+        
+        
         [_picker dismissViewControllerAnimated:NO completion:^{
             
             // 改变状态栏的颜色  改变为白色
@@ -332,7 +377,7 @@
             // 这边是真正的发送
             if(!self.sessionManager.isConnected)
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"蓝牙已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
                 [alertView show];
                 return;
             }
@@ -348,12 +393,14 @@
             
             
             [self sendAsResource:filePath];
-           
+            
         }];
     }
-
-  
+    
+    
 }
+
+
 - (void)sendAsResource:(NSString *)path
 {
     
@@ -379,8 +426,8 @@
     if(!self.sessionManager.isConnected)
     {
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-        [alertView show];
-        return;
+                [alertView show];
+                return;
     }
     if([self.sendTextView.text isEqualToString:@""])
     {
@@ -413,10 +460,7 @@
 {
     // 归零
     self.sendTextView.text = @"";
-//    [self.sendTextView resignFirstResponder];
-//    self.tableView.frame = CGRectMake(0, 64, WIDTH, HEIGHT - 64 - ChatHeight - 10 );
-//    self.sendBackView.frame = CGRectMake(0, HEIGHT - ChatHeight , WIDTH, ChatHeight);
-    
+  
 }
 
 // 这是一种很好的键盘下移方式
@@ -425,8 +469,20 @@
     
     if ([text isEqualToString:@"\n"]) {
         
+        float textHeight = 36.3;
+        
+        self.sendTextView.height = textHeight;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        
         [self sendWeNeedNews];
+        
+        
+        
 
+
+
+        
         return NO;
     }
     
@@ -438,17 +494,23 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    
 
-    // 随机改变其高度
     
-    float textHeight = [self heightForString:textView.text fontSize:16 andWidth:textView.frame.size.width];
-    _sendTextViewHeight = textHeight;
-//    NSLog(@"teztheight ===== %f",textHeight);
+    float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
     
     
-    self.sendTextView.frame = CGRectMake(10, 5, WIDTH - 10 - 90, _sendTextViewHeight);
-    self.sendBackView.frame = CGRectMake(0, HEIGHT -  _sendBackViewHeight - _sendTextViewHeight - 10, WIDTH, _sendTextViewHeight + 10);
-  
+    self.sendTextView.height = textHeight;
+    
+    
+    self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+ 
+    self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+    
+    if (self.datasource.count >= 1) {
+      [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
+    
     
 }
 
@@ -500,8 +562,9 @@
     if (!cell) {
         
         cell = [[MyChatCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        
-        
+        cell.selectionStyle =     UITableViewCellSelectionStyleNone;
+
+        cell.backgroundColor = [UIColor clearColor];
     }
     
     cell.model = self.datasource[indexPath.row];
@@ -516,7 +579,7 @@
     if(chatIden.states == videoStates)
     {
         NSLog(@"realy play");
-//        [self makeVideoPlayer:[self getVideoStremData]];
+        //        [self makeVideoPlayer:[self getVideoStremData]];
         [self makeVideoPlayer:chatIden.recordData];
     }
 }
@@ -527,7 +590,7 @@
 /***************************-------**********************************************/
 - (void)makeBlueData
 {
-      // 这是为了让 在block中弱引用
+    // 这是为了让 在block中弱引用
     __weak typeof (self) weakSelf = self;
     self.datasource = [NSMutableArray arrayWithCapacity:0];
     
@@ -545,12 +608,13 @@
         if(state == MCSessionStateConnected) {
             UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"已经连接" message:[NSString stringWithFormat:@"现在连接 %@了！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
             [alertView show];
+            self.title = peer.displayName;
         }
     }];
     
     // 发正常数据的返回
     [self.sessionManager receiveDataOnMainQueue:YES block:^(NSData *data, MCPeerID *peer) {
-       
+        
         __strong typeof (weakSelf) strongSelf = weakSelf;
         
         NSString *string = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -627,7 +691,7 @@
         [alertView show];
         return;
     }
-   
+    
     NSError *err;
     self.outputStream = [self.sessionManager streamWithName:@"super stream" toPeer:self.sessionManager.firstPeer error:&err];
     self.outputStream.delegate = self;
@@ -645,15 +709,15 @@
 // 下面是一个代理
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
 {
-   
+    
     if(eventCode == NSStreamEventHasBytesAvailable)
     {
-         // 有可读的字节，接收到了数据
+        // 有可读的字节，接收到了数据
         NSInputStream *input = (NSInputStream *)aStream;
         uint8_t buffer[1024];
         NSInteger length = [input read:buffer maxLength:1024];
         [self.streamData appendBytes:(const void *)buffer length:(NSUInteger)length];
-       // 记住这边的数据陆陆续续的
+        // 记住这边的数据陆陆续续的
     }
     else if(eventCode == NSStreamEventHasSpaceAvailable)
     {
@@ -719,7 +783,7 @@
     NSString *path = [[NSBundle mainBundle]pathForResource:@"301-alien-ship@2x" ofType:@"png"];
     // 这儿有个技术点
     // 那个如何将 image转化成 路径
-   
+    
     NSURL *url = [NSURL fileURLWithPath:path];
     return url;
 }
@@ -766,7 +830,7 @@
     UILongPressGestureRecognizer * longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressNextDo:)];
     [beginLabel addGestureRecognizer:longPress];
     
-
+    
     
     
     
@@ -791,7 +855,7 @@
         [_backRemindRecordView removeFromSuperview];
         [self  sendAsStream];
         NSLog(@"stop");
-       
+        
     }
 }
 
@@ -891,13 +955,13 @@
     if (error)
     {
         NSLog(@"创建播放器过程中发生错误，错误信息：%@",error.localizedDescription);
-       
+        
     }
     else
     {
         if (![self.audioPlayer isPlaying]) {
             NSLog(@"play");
-                [self.audioPlayer play];
+            [self.audioPlayer play];
         }
         
     }
@@ -978,9 +1042,9 @@
  */
 -(void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
 {
-//    if (![self.audioPlayer isPlaying]) {
-//        [self.audioPlayer play];
-//    }
+    //    if (![self.audioPlayer isPlaying]) {
+    //        [self.audioPlayer play];
+    //    }
     NSLog(@"录音完成!");
 }
 
@@ -990,11 +1054,6 @@
     // 每次完成后都将这个对象释放
     player =nil;
 }
-
-
-
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

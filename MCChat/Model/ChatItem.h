@@ -23,7 +23,7 @@ typedef enum{
 @property(nonatomic,assign)BOOL isSelf;//判断是接受，还是发的
 @property(nonatomic,assign)newsStates states;
 @property(nonatomic,strong)NSString * content;
-
+@property (nonatomic,strong)UIImage *headerImage;
 @property(nonatomic, strong)UIImage * picImage;
 
 @property(nonatomic, strong)NSData * recordData;
