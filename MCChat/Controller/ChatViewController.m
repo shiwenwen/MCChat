@@ -377,7 +377,7 @@
             // 这边是真正的发送
             if(!self.sessionManager.isConnected)
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"蓝牙已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
                 [alertView show];
                 return;
             }
@@ -416,7 +416,9 @@
             NSLog(@"%@", error);
         }
     }];
+    
     NSLog(@"%@", @(progress.fractionCompleted));
+    
 }
 
 
