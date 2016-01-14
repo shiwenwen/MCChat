@@ -26,6 +26,8 @@
     float _sendBackViewHeight;
     float _keyboardHeight;
     
+    UIButton * _emotionButton;
+    UIButton *_addButton;
     UIImagePickerController * _picker;
     UIView * _backRemindRecordView;
     CGRect _tabBarFrame;
@@ -46,7 +48,6 @@
 @property(strong, nonatomic) UITableView * tableView;
 @property(strong, nonatomic) UIView * sendBackView;
 @property(strong, nonatomic) UITextView * sendTextView;
-@property(strong, nonatomic) UIButton * sendButton;
 @property (strong,nonatomic) UIButton *voiceButton;
 @property (strong,nonatomic) UIButton *recorderButton;
 // 语音播放
@@ -227,17 +228,17 @@
     
     [self.sendBackView addSubview:self.recorderButton];
     
-    UIButton * addButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    addButton.frame = CGRectMake(WIDTH - TextDefaultheight - 2.5, 5, TextDefaultheight, TextDefaultheight);
-    [addButton setImage:[UIImage imageNamed:@"TypeSelectorBtn_Black"] forState:UIControlStateNormal];
-    [addButton addTarget:self action:@selector(addNextImage) forControlEvents:UIControlEventTouchUpInside];
-    [self.sendBackView addSubview:addButton];
+    _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _addButton.frame = CGRectMake(WIDTH - TextDefaultheight - 2.5, 5, TextDefaultheight, TextDefaultheight);
+    [_addButton setImage:[UIImage imageNamed:@"TypeSelectorBtn_Black"] forState:UIControlStateNormal];
+    [_addButton addTarget:self action:@selector(addNextImage) forControlEvents:UIControlEventTouchUpInside];
+    [self.sendBackView addSubview:_addButton];
     
-    UIButton * emotionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    emotionButton.frame = CGRectMake(addButton.left - TextDefaultheight - 5, 5, TextDefaultheight, TextDefaultheight);
-    [emotionButton setImage:[UIImage imageNamed:@"ToolViewEmotion"] forState:UIControlStateNormal];
+     _emotionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _emotionButton.frame = CGRectMake(_addButton.left - TextDefaultheight - 5, 5, TextDefaultheight, TextDefaultheight);
+    [_emotionButton setImage:[UIImage imageNamed:@"ToolViewEmotion"] forState:UIControlStateNormal];
 //    [addButton addTarget:self action:@selector() forControlEvents:UIControlEventTouchUpInside];
-    [self.sendBackView addSubview:emotionButton];
+    [self.sendBackView addSubview:_emotionButton];
     
     self.tabVC.tabBar.translucent = YES;
     self.navigationController.navigationBar.translucent = YES;
@@ -304,9 +305,28 @@
         
         if ([notification.name isEqualToString:UIKeyboardWillHideNotification]) {
             _keyboardHeight = 0;
-            self.sendBackView.bottom = self.view.bottom;
-            self.tableView.frame = self.view.frame;
+//            self.sendBackView.bottom = self.view.bottom;
+//            
+//            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+//
             
+            float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+            
+            
+            self.sendTextView.height = textHeight;
+            
+            self.voiceButton.bottom = self.sendTextView.bottom;
+            _addButton.bottom = self.sendTextView.bottom;
+            _emotionButton.bottom = self.sendTextView.bottom;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+            
+            
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+            
+            if (self.datasource.count >= 1) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+
             
             
         }else{
@@ -316,7 +336,7 @@
             
             if (self.datasource.count >= 1) {
                 // 滑动到底部  第二个参数是滑动到底部
-                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
             }
            
         }
@@ -540,7 +560,11 @@
     
     return YES;
 }
-
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
+    
+    
+    return YES;
+}
 - (void)textViewDidChange:(UITextView *)textView
 {
     
@@ -551,9 +575,12 @@
     
     self.sendTextView.height = textHeight;
     
-    
+    self.voiceButton.bottom = self.sendTextView.bottom;
+    _addButton.bottom = self.sendTextView.bottom;
+    _emotionButton.bottom = self.sendTextView.bottom;
     self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
- 
+    
+    
     self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
     
     if (self.datasource.count >= 1) {
