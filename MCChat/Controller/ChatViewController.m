@@ -18,7 +18,7 @@
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
 #define ChatHeight 49.0
-
+#define TextDefaultheight 36.3
 #define kRecordAudioFile @"myRecord.caf"
 
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>{
@@ -47,8 +47,8 @@
 @property(strong, nonatomic) UIView * sendBackView;
 @property(strong, nonatomic) UITextView * sendTextView;
 @property(strong, nonatomic) UIButton * sendButton;
-
-
+@property (strong,nonatomic) UIButton *voiceButton;
+@property (strong,nonatomic) UIButton *recorderButton;
 // 语音播放
 @property (nonatomic,strong) AVAudioRecorder *audioRecorder;//音频录音机
 //音频播放器，用于播放录音文件
@@ -103,11 +103,6 @@
     
 }
 
-//- (UIStatusBarStyle)preferredStatusBarStyle{
-//    
-//    return UIStatusBarStyleLightContent;
-//    
-//}
 
 - (void)viewDidAppear:(BOOL)animated{
     
@@ -192,7 +187,17 @@
     
     [self.tabVC.view addSubview:self.sendBackView];
     
-    self.sendTextView = [[UITextView alloc] initWithFrame:CGRectMake(10, 5, WIDTH - 10 - 90, 36.3)];
+    //语音
+    self.voiceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.voiceButton.frame = CGRectMake(2.5,5, TextDefaultheight, TextDefaultheight);
+    [self.voiceButton setImage:[UIImage imageNamed:@"ToolViewInputVoice"] forState:UIControlStateNormal];
+    [self.voiceButton setImage:[UIImage imageNamed:@"ToolViewKeyboard"] forState:UIControlStateSelected];
+    [self.voiceButton addTarget:self action:@selector(clickVoiceButton:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.sendBackView addSubview:self.voiceButton];
+    
+    //输入框
+    self.sendTextView = [[UITextView alloc] initWithFrame:CGRectMake(self.voiceButton.right + 5, 5, WIDTH - 20 - 3 * TextDefaultheight, TextDefaultheight)];
     
     self.sendTextView.returnKeyType = UIReturnKeySend;
     self.sendTextView.font = [UIFont systemFontOfSize:17];
@@ -204,21 +209,63 @@
     self.sendTextView.delegate = self;
     [self.sendBackView addSubview:self.sendTextView];
     
-    UIButton * addButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    addButton.frame = CGRectMake(WIDTH - 85, 2, 40, 40);
+    //按住录音
+    self.recorderButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.recorderButton.frame = self.sendTextView.frame;
+    self.recorderButton.layer.cornerRadius = 5;
+    [self.recorderButton setBackgroundImage:[UIImage imageNamed:@"ScanDetailHeaderBg"] forState:UIControlStateNormal];
+    [self.recorderButton setTitleColor:[UIColor colorWithWhite:.1 alpha:1.0] forState:UIControlStateNormal];
+    self.recorderButton.layer.borderColor =[UIColor colorWithWhite:0.449 alpha:1.000].CGColor;
+    [self.recorderButton setTitle:@"按住 录音" forState:UIControlStateNormal];
+    [self.recorderButton setTitle:@"松开 结束" forState:UIControlStateHighlighted];
+    self.recorderButton.layer.borderWidth = .25;
+    self.recorderButton.layer.masksToBounds = YES;
+    self.recorderButton.hidden = YES;
+    [self.recorderButton addTarget:self action:@selector(BeginRecordClick:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.recorderButton addTarget:self action:@selector(OkStopClick:) forControlEvents:UIControlEventTouchDown];
+    
+    [self.sendBackView addSubview:self.recorderButton];
+    
+    UIButton * addButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    addButton.frame = CGRectMake(WIDTH - TextDefaultheight - 2.5, 5, TextDefaultheight, TextDefaultheight);
+    [addButton setImage:[UIImage imageNamed:@"TypeSelectorBtn_Black"] forState:UIControlStateNormal];
     [addButton addTarget:self action:@selector(addNextImage) forControlEvents:UIControlEventTouchUpInside];
     [self.sendBackView addSubview:addButton];
     
-    self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.sendButton.frame = CGRectMake(WIDTH - 45, 5, 40, 30);
-    
-    [self.sendButton setImage:[UIImage imageNamed:@"record.png"] forState:UIControlStateNormal];
-    [self.sendButton addTarget:self action:@selector(videoRecord) forControlEvents:UIControlEventTouchUpInside];
-    [self.sendBackView addSubview:self.sendButton];
-    
+    UIButton * emotionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    emotionButton.frame = CGRectMake(addButton.left - TextDefaultheight - 5, 5, TextDefaultheight, TextDefaultheight);
+    [emotionButton setImage:[UIImage imageNamed:@"ToolViewEmotion"] forState:UIControlStateNormal];
+//    [addButton addTarget:self action:@selector() forControlEvents:UIControlEventTouchUpInside];
+    [self.sendBackView addSubview:emotionButton];
     
     self.tabVC.tabBar.translucent = YES;
     self.navigationController.navigationBar.translucent = YES;
+    
+}
+
+- (void)MakerecordingView:(CGFloat )volume{
+    
+    
+    
+    
+}
+- (void)clickVoiceButton:(UIButton *)sender{
+    
+    sender.selected = !sender.selected;
+    if (sender.selected) {
+        
+        
+        //显示录音按钮
+        self.recorderButton.hidden = NO;
+        self.sendTextView.hidden = YES;
+    }else{
+        //显示输入框
+        self.recorderButton.hidden = YES;
+        self.sendTextView.hidden = NO;
+    }
+    
+    
     
 }
 #pragma mark -- 视图随键盘调整
@@ -678,12 +725,6 @@
 
 /***********--------------------- 下面是流的传输 ------------------------***********************************/
 
-- (void)videoRecord
-{
-    // 播放录音
-    [self SetTempRecordView];
-}
-
 
 - (void)sendAsStream
 {
@@ -813,53 +854,6 @@
     [self setAudioSession];
 }
 
-- (void)SetTempRecordView
-{
-    _backRemindRecordView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, 150)];
-    _backRemindRecordView.center = self.view.center;
-    _backRemindRecordView.backgroundColor = [UIColor lightGrayColor];
-    [self.view addSubview:_backRemindRecordView];
-    
-    
-    UILabel * beginLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 50, WIDTH -120, 50)];
-    beginLabel.backgroundColor = [UIColor greenColor];
-    beginLabel.text = @"长按录音开始···";
-    beginLabel.tag = 1001;
-    beginLabel.textAlignment = NSTextAlignmentCenter;
-    beginLabel.userInteractionEnabled = YES;
-    [_backRemindRecordView addSubview:beginLabel];
-    
-    UILongPressGestureRecognizer * longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressNextDo:)];
-    [beginLabel addGestureRecognizer:longPress];
-    
-    
-    
-    
-    
-    
-}
-
-
-
-- (void)longPressNextDo:(UILongPressGestureRecognizer * )longPress
-{
-    if(longPress.state == UIGestureRecognizerStateBegan)
-    {
-        NSLog(@"begin");
-        UILabel * label = (UILabel *)[_backRemindRecordView viewWithTag:1001];
-        label.text = @"录音正在进行中···";
-        label.backgroundColor = [UIColor orangeColor];
-        [self BeginRecordClick];
-    }
-    if(longPress.state == UIGestureRecognizerStateEnded)
-    {
-        [self OkStopClick];
-        [_backRemindRecordView removeFromSuperview];
-        [self  sendAsStream];
-        NSLog(@"stop");
-        
-    }
-}
 
 
 #pragma mark - 私有方法
@@ -904,11 +898,12 @@
     //设置录音格式
     [dicM setObject:@(kAudioFormatLinearPCM) forKey:AVFormatIDKey];
     //设置录音采样率，8000是电话采样率，对于一般录音已经够了
-    [dicM setObject:@(8000) forKey:AVSampleRateKey];
+//    [dicM setObject:@(8000) forKey:AVSampleRateKey];
+    [dicM setObject:@(44100) forKey:AVSampleRateKey];
     //设置通道,这里采用单声道
     [dicM setObject:@(1) forKey:AVNumberOfChannelsKey];
     //每个采样点位数,分为8、16、24、32
-    [dicM setObject:@(8) forKey:AVLinearPCMBitDepthKey];
+    [dicM setObject:@(16) forKey:AVLinearPCMBitDepthKey];
     //是否使用浮点数采样
     [dicM setObject:@(YES) forKey:AVLinearPCMIsFloatKey];
     //....其他设置等
@@ -1000,13 +995,12 @@
  *
  *  @param sender 录音按钮
  */
-- (void)BeginRecordClick
+- (void)BeginRecordClick:(UIButton *)sender
 {
-    if (![self.audioRecorder isRecording])
-    {
+    
         [self.audioRecorder record];//首次使用应用时如果调用record方法会询问用户是否允许使用麦克风
         self.timer.fireDate=[NSDate distantPast];
-    }
+
 }
 
 /**
@@ -1028,7 +1022,7 @@
  *
  *  @param sender 停止按钮
  */
-- (void)OkStopClick
+- (void)OkStopClick:(UIButton *)sender
 {
     [self.audioRecorder stop];
     self.timer.fireDate=[NSDate distantFuture];
