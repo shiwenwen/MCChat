@@ -38,11 +38,15 @@
 		2B92D6591C473AF50073171C /* ChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6531C473AF50073171C /* ChatCell.m */; };
 		2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6551C473AF50073171C /* MyChatCell.m */; };
 		2B92D65B1C473AF50073171C /* MyChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B92D6561C473AF50073171C /* MyChatCell.xib */; };
-		2B92D65C1C473AF50073171C /* ZoomInImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6581C473AF50073171C /* ZoomInImageView.m */; };
 		2B92D6631C473B420073171C /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D65F1C473B420073171C /* HomeViewController.m */; };
 		2B92D6641C473B420073171C /* HomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B92D6601C473B420073171C /* HomeViewController.xib */; };
 		2B92D66B1C47417C0073171C /* MainTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D66A1C47417C0073171C /* MainTabBarViewController.m */; };
 		2B92D66E1C47432F0073171C /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D66D1C47432F0073171C /* ChatViewController.m */; };
+		2BAD25CC1C4885F3007EBFAE /* 5097.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */; };
+		2BAD25CF1C489748007EBFAE /* ZoomImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25CE1C489748007EBFAE /* ZoomImageView.m */; };
+		2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */; };
+		2BAD25D51C490288007EBFAE /* RecordingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25D41C490288007EBFAE /* RecordingView.m */; };
+		2BAD25D91C491FB7007EBFAE /* 5383.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2BAD25D81C491FB7007EBFAE /* 5383.mp3 */; };
 		2BEA0B891C4624BF00A719A8 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BEA0B791C4624BF00A719A8 /* DateTools.bundle */; };
 		2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B7C1C4624BF00A719A8 /* DTConstants.m */; };
 		2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B7E1C4624BF00A719A8 /* DTError.m */; };
@@ -57,7 +61,6 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
-		2BFAA17C1C3FB7B000E8D032 /* record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFAA1731C3FB7B000E8D032 /* record@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,8 +121,6 @@
 		2B92D6541C473AF50073171C /* MyChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyChatCell.h; sourceTree = "<group>"; };
 		2B92D6551C473AF50073171C /* MyChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyChatCell.m; sourceTree = "<group>"; };
 		2B92D6561C473AF50073171C /* MyChatCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyChatCell.xib; sourceTree = "<group>"; };
-		2B92D6571C473AF50073171C /* ZoomInImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomInImageView.h; sourceTree = "<group>"; };
-		2B92D6581C473AF50073171C /* ZoomInImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomInImageView.m; sourceTree = "<group>"; };
 		2B92D65E1C473B420073171C /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		2B92D65F1C473B420073171C /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		2B92D6601C473B420073171C /* HomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeViewController.xib; sourceTree = "<group>"; };
@@ -127,6 +128,16 @@
 		2B92D66A1C47417C0073171C /* MainTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabBarViewController.m; sourceTree = "<group>"; };
 		2B92D66C1C47432F0073171C /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
 		2B92D66D1C47432F0073171C /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 5097.mp3; sourceTree = "<group>"; };
+		2BAD25CD1C489748007EBFAE /* ZoomImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomImageView.h; sourceTree = "<group>"; };
+		2BAD25CE1C489748007EBFAE /* ZoomImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomImageView.m; sourceTree = "<group>"; };
+		2BAD25D01C489F5E007EBFAE /* CustomAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomAlertView.h; sourceTree = "<group>"; };
+		2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomAlertView.m; sourceTree = "<group>"; };
+		2BAD25D31C490288007EBFAE /* RecordingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordingView.h; sourceTree = "<group>"; };
+		2BAD25D41C490288007EBFAE /* RecordingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordingView.m; sourceTree = "<group>"; };
+		2BAD25D61C4903AE007EBFAE /* UICommons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UICommons.h; sourceTree = "<group>"; };
+		2BAD25D71C4903D2007EBFAE /* PCH.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCH.pch; sourceTree = "<group>"; };
+		2BAD25D81C491FB7007EBFAE /* 5383.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 5383.mp3; sourceTree = "<group>"; };
 		2BEA0B791C4624BF00A719A8 /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		2BEA0B7A1C4624BF00A719A8 /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		2BEA0B7B1C4624BF00A719A8 /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -158,7 +169,6 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
-		2BFAA1731C3FB7B000E8D032 /* record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +266,8 @@
 		2B4076BA1C4508F7003A7161 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				2BAD25D61C4903AE007EBFAE /* UICommons.h */,
+				2BAD25D71C4903D2007EBFAE /* PCH.pch */,
 				2BEA0B781C4624BF00A719A8 /* DateTools */,
 				2B4076A91C4508EB003A7161 /* Extras */,
 				2B4076B01C4508EB003A7161 /* WPAttributedMarkup */,
@@ -267,13 +279,17 @@
 		2B92D6511C473AF50073171C /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2BAD25D01C489F5E007EBFAE /* CustomAlertView.h */,
+				2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */,
+				2BAD25D31C490288007EBFAE /* RecordingView.h */,
+				2BAD25D41C490288007EBFAE /* RecordingView.m */,
 				2B92D6521C473AF50073171C /* ChatCell.h */,
 				2B92D6531C473AF50073171C /* ChatCell.m */,
 				2B92D6541C473AF50073171C /* MyChatCell.h */,
 				2B92D6551C473AF50073171C /* MyChatCell.m */,
 				2B92D6561C473AF50073171C /* MyChatCell.xib */,
-				2B92D6571C473AF50073171C /* ZoomInImageView.h */,
-				2B92D6581C473AF50073171C /* ZoomInImageView.m */,
+				2BAD25CD1C489748007EBFAE /* ZoomImageView.h */,
+				2BAD25CE1C489748007EBFAE /* ZoomImageView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -410,9 +426,10 @@
 			children = (
 				2B4076861C44FDCB003A7161 /* HomeBackgroud@2x.png */,
 				2B4076871C44FDCB003A7161 /* HomeBackgroud@3x.png */,
+				2BAD25D81C491FB7007EBFAE /* 5383.mp3 */,
+				2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */,
 				2B4076881C44FDCB003A7161 /* Icons */,
 				2B4076731C44FC22003A7161 /* MMChatLaunchImage */,
-				2BFAA1731C3FB7B000E8D032 /* record@2x.png */,
 			);
 			path = Resourse;
 			sourceTree = "<group>";
@@ -531,7 +548,6 @@
 				2B4076801C44FC22003A7161 /* LaunchImage-700@2x.png in Resources */,
 				2B4076971C44FDCB003A7161 /* AppIcon60x60@3x.png in Resources */,
 				2B4076961C44FDCB003A7161 /* AppIcon60x60@2x.png in Resources */,
-				2BFAA17C1C3FB7B000E8D032 /* record@2x.png in Resources */,
 				2B40769B1C44FDCB003A7161 /* AppIcon76x76~ipad.png in Resources */,
 				2B4076841C44FC22003A7161 /* LaunchImage.png in Resources */,
 				2BEA0B891C4624BF00A719A8 /* DateTools.bundle in Resources */,
@@ -539,6 +555,8 @@
 				2B40769A1C44FDCB003A7161 /* AppIcon76x76@2x~ipad.png in Resources */,
 				2B4076821C44FC22003A7161 /* LaunchImage-800-Portrait-736h@3x.png in Resources */,
 				2B4076941C44FDCB003A7161 /* AppIcon57x57.png in Resources */,
+				2BAD25CC1C4885F3007EBFAE /* 5097.mp3 in Resources */,
+				2BAD25D91C491FB7007EBFAE /* 5383.mp3 in Resources */,
 				2B92D65B1C473AF50073171C /* MyChatCell.xib in Resources */,
 				2B4076981C44FDCB003A7161 /* AppIcon72x72@2x~ipad.png in Resources */,
 				2B4076831C44FC22003A7161 /* LaunchImage-Portrait@2x~ipad.png in Resources */,
@@ -571,6 +589,8 @@
 			files = (
 				2B4076B81C4508EB003A7161 /* NSMutableString+TagReplace.m in Sources */,
 				2B4076A71C4504E1003A7161 /* UIView+UIViewController.m in Sources */,
+				2BAD25CF1C489748007EBFAE /* ZoomImageView.m in Sources */,
+				2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */,
 				2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */,
 				2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */,
 				2B4076A81C4504E1003A7161 /* UIViewExt.m in Sources */,
@@ -581,13 +601,13 @@
 				2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */,
 				2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */,
 				2B4076B51C4508EB003A7161 /* WPAttributedStyleAction.m in Sources */,
+				2BAD25D51C490288007EBFAE /* RecordingView.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
 				2BEA0B8C1C4624BF00A719A8 /* DTTimePeriod.m in Sources */,
 				2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */,
 				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
 				2B92D6591C473AF50073171C /* ChatCell.m in Sources */,
 				2B92D6631C473B420073171C /* HomeViewController.m in Sources */,
-				2B92D65C1C473AF50073171C /* ZoomInImageView.m in Sources */,
 				2BEA0B8E1C4624BF00A719A8 /* DTTimePeriodCollection.m in Sources */,
 				2B92D66B1C47417C0073171C /* MainTabBarViewController.m in Sources */,
 				2B92D66E1C47432F0073171C /* ChatViewController.m in Sources */,
@@ -715,6 +735,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/MCChat/PCH.pch";
 				INFOPLIST_FILE = MCChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -728,6 +750,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/MCChat/PCH.pch";
 				INFOPLIST_FILE = MCChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

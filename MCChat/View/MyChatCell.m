@@ -111,6 +111,12 @@
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
             
             
+        }else if (_model.states == videoStates){
+            
+            
+            
+            
+            
         }
         
     }else{
@@ -143,6 +149,12 @@
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.leftHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
             
             
+        }else if (_model.states == videoStates){
+            
+            
+            
+            
+            
         }
     
     
@@ -173,10 +185,10 @@
     
     return _rightChatLabel;
 }
--(ZoomInImageView *)postImageView{
+-(ZoomImageView *)postImageView{
     
     if (!_postImageView) {
-        _postImageView = [[ZoomInImageView alloc]init];
+        _postImageView = [[ZoomImageView alloc]init];
         _postImageView.contentMode = UIViewContentModeScaleAspectFit;
         [_rightBgView addSubview:_postImageView];
     }
@@ -207,10 +219,10 @@
     
     return _leftChatLabel;
 }
--(ZoomInImageView *)getImageView{
+-(ZoomImageView *)getImageView{
     
     if (!_getImageView) {
-        _getImageView = [[ZoomInImageView alloc]init];
+        _getImageView = [[ZoomImageView alloc]init];
         _getImageView.contentMode = UIViewContentModeScaleAspectFit;
         [_leftBgView addSubview:_getImageView];
     }

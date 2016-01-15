@@ -14,13 +14,13 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
 #import "MyChatCell.h"
-
+#import "CustomAlertView.h"
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
 #define ChatHeight 49.0
-#define TextDefaultheight 36.3
+#define TextDefaultheight 36.5
 #define kRecordAudioFile @"myRecord.caf"
-
+#import "RecordingView.h"
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>{
     
     float _sendBackViewHeight;
@@ -31,6 +31,8 @@
     UIImagePickerController * _picker;
     UIView * _backRemindRecordView;
     CGRect _tabBarFrame;
+    NSTimeInterval _puaseTime;
+    BOOL _recordCancel;
 }
 
 
@@ -50,6 +52,7 @@
 @property(strong, nonatomic) UITextView * sendTextView;
 @property (strong,nonatomic) UIButton *voiceButton;
 @property (strong,nonatomic) UIButton *recorderButton;
+@property (nonatomic,strong)RecordingView *recordingView;
 // 语音播放
 @property (nonatomic,strong) AVAudioRecorder *audioRecorder;//音频录音机
 //音频播放器，用于播放录音文件
@@ -75,8 +78,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatBg.jpg"]];
+//    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"壁纸1.jpg"]];
     
+    UIImage *image = [UIImage imageNamed:@"壁纸1.jpg"];
+    self.view.layer.contents = (id) image.CGImage;
     self.navigationController.navigationBar.titleTextAttributes =@{
                                                                    NSForegroundColorAttributeName:[UIColor whiteColor]
                                                                    
@@ -108,7 +113,12 @@
 - (void)viewDidAppear:(BOOL)animated{
     
     _tabBarFrame = self.tabVC.view.frame;
-    [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+   
+}
+- (void)viewWillAppear:(BOOL)animated{
+    
+     [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+    
 }
 - (void)hiddenKeyboard{
     
@@ -116,6 +126,7 @@
     [self.tabVC.view endEditing:YES];
     
 }
+#pragma mark -- 准备UI
 - (void)readyUI
 {
     self.title = @"MC_Chat";
@@ -129,6 +140,7 @@
     [self makeUIView];
     
 }
+#pragma mark -- 搜错其它设备
 - (void)lookOtherDevice
 {
     
@@ -147,7 +159,7 @@
     }];
 }
 
-
+#pragma mark -- 扩散
 - (void)showSelfAdvertiser
 {
     [self.sessionManager advertiseForBrowserViewController];
@@ -204,7 +216,7 @@
     self.sendTextView.font = [UIFont systemFontOfSize:17];
     self.sendTextView.layer.cornerRadius = 5;
     self.sendTextView.layer.borderColor =[UIColor colorWithWhite:0.449 alpha:1.000].CGColor;
-    self.sendTextView.layer.borderWidth = .25;
+    self.sendTextView.layer.borderWidth = .5;
     self.sendTextView.layer.masksToBounds = YES;
     self.sendTextView.editable = YES;
     self.sendTextView.delegate = self;
@@ -214,17 +226,20 @@
     self.recorderButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.recorderButton.frame = self.sendTextView.frame;
     self.recorderButton.layer.cornerRadius = 5;
-    [self.recorderButton setBackgroundImage:[UIImage imageNamed:@"ScanDetailHeaderBg"] forState:UIControlStateNormal];
+    [self.recorderButton setBackgroundImage:[UIImage imageNamed:@"DeviceRankMiddle"] forState:UIControlStateNormal];
     [self.recorderButton setTitleColor:[UIColor colorWithWhite:.1 alpha:1.0] forState:UIControlStateNormal];
     self.recorderButton.layer.borderColor =[UIColor colorWithWhite:0.449 alpha:1.000].CGColor;
     [self.recorderButton setTitle:@"按住 录音" forState:UIControlStateNormal];
     [self.recorderButton setTitle:@"松开 结束" forState:UIControlStateHighlighted];
-    self.recorderButton.layer.borderWidth = .25;
+    self.recorderButton.layer.borderWidth = .5;
     self.recorderButton.layer.masksToBounds = YES;
     self.recorderButton.hidden = YES;
-    [self.recorderButton addTarget:self action:@selector(BeginRecordClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.recorderButton addTarget:self action:@selector(BeginRecordClick:) forControlEvents:UIControlEventTouchDown];
     
-    [self.recorderButton addTarget:self action:@selector(OkStopClick:) forControlEvents:UIControlEventTouchDown];
+    [self.recorderButton addTarget:self action:@selector(OkStopClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.recorderButton addTarget:self action:@selector(StopPauseClick:) forControlEvents:UIControlEventTouchDragOutside];
+    [self.recorderButton addTarget:self action:@selector(recordContinue:) forControlEvents:UIControlEventTouchDragInside];
+    [self.recorderButton addTarget:self action:@selector(cancelRecord:) forControlEvents:UIControlEventTouchUpOutside];
     
     [self.sendBackView addSubview:self.recorderButton];
     
@@ -243,27 +258,47 @@
     self.tabVC.tabBar.translucent = YES;
     self.navigationController.navigationBar.translucent = YES;
     
+    
 }
 
-- (void)MakerecordingView:(CGFloat )volume{
-    
-    
+- (void)MakerecordingView{
+    if (!self.recordingView) {
+        self.recordingView = [[RecordingView alloc]init];
+    }
+
+    self.recordingView.sliderCancel = NO;
+    [self.recordingView show];
     
     
 }
+
+#pragma mark -- 切换语音，文字
 - (void)clickVoiceButton:(UIButton *)sender{
     
     sender.selected = !sender.selected;
     if (sender.selected) {
         
         
+        
         //显示录音按钮
         self.recorderButton.hidden = NO;
         self.sendTextView.hidden = YES;
+        [self.sendTextView resignFirstResponder];
+        
+        [UIView animateWithDuration:.25 animations:^{
+            self.tableView.frame = self.view.frame;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight, WIDTH, ChatHeight);
+            _addButton.bottom = self.recorderButton.bottom;
+            _emotionButton.bottom = self.recorderButton.bottom;
+            self.voiceButton.bottom = self.recorderButton.bottom;
+            
+        }];
+        
     }else{
         //显示输入框
         self.recorderButton.hidden = YES;
         self.sendTextView.hidden = NO;
+        [self.sendTextView becomeFirstResponder];
     }
     
     
@@ -330,9 +365,26 @@
             
             
         }else{
+            if (self.sendTextView.text.length > 0) {
+                
+                float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+                
+                
+                self.sendTextView.height = textHeight;
+                
+                self.voiceButton.bottom = self.sendTextView.bottom;
+                _addButton.bottom = self.sendTextView.bottom;
+                _emotionButton.bottom = self.sendTextView.bottom;
+                self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+                
+                
+                self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+                
+            }else{
+                self.sendBackView.bottom = self.view.height - height ;
+                self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - height - self.sendBackView.height + 49);
+            }
             
-            self.sendBackView.bottom = self.view.height - height ;
-            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - height - self.sendBackView.height + 49);
             
             if (self.datasource.count >= 1) {
                 // 滑动到底部  第二个参数是滑动到底部
@@ -438,6 +490,7 @@
             
             // 改变状态栏的颜色  改变为白色
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+       
             
             
             
@@ -538,11 +591,14 @@
     
     if ([text isEqualToString:@"\n"]) {
         
-        float textHeight = 36.3;
+//        float textHeight = TextDefaultheight;
         
-        self.sendTextView.height = textHeight;
-        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
-        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        self.sendTextView.height = TextDefaultheight;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight - _keyboardHeight, WIDTH, ChatHeight);
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + ChatHeight);
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
         
         [self sendWeNeedNews];
         
@@ -562,13 +618,17 @@
 }
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     
+   
     
     return YES;
 }
 - (void)textViewDidChange:(UITextView *)textView
 {
     
-
+    
+    if (self.sendBackView.height > 90) {
+        return;
+    }
     
     float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
     
@@ -666,7 +726,7 @@
 /***************************-------**********************************************/
 - (void)makeBlueData
 {
-    // 这是为了让 在block中弱引用
+
     __weak typeof (self) weakSelf = self;
     self.datasource = [NSMutableArray arrayWithCapacity:0];
     
@@ -688,14 +748,14 @@
         }
     }];
     
-    // 发正常数据的返回
+    // 收到正常数据的返回
     [self.sessionManager receiveDataOnMainQueue:YES block:^(NSData *data, MCPeerID *peer) {
         
         __strong typeof (weakSelf) strongSelf = weakSelf;
         
         NSString *string = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         
-        
+        [self playSoundEffect:@"5097.mp3"];
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
         chatItem.states = textStates;
@@ -708,12 +768,13 @@
         
     }];
     
-    // 发图片之后的返回
+    // 收到图片之后的返回
     [self.sessionManager receiveFinalResourceOnMainQueue:YES complete:^(NSString *name, MCPeerID *peer, NSURL *url, NSError *error) {
         
         __strong typeof (weakSelf) strongSelf = weakSelf;
         NSData *data = [NSData dataWithContentsOfURL:url];
         
+        [self playSoundEffect:@"5097.mp3"];
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
         chatItem.states = picStates;
@@ -760,6 +821,7 @@
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
         [alertView show];
         return;
+        
     }
     
     NSError *err;
@@ -768,12 +830,14 @@
     [self.outputStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
     if(err || !self.outputStream) {
         NSLog(@"%@", err);
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"发送失败" viewController:nil];
     }
     else
     {
         
         [self.outputStream open];
     }
+    
 }
 
 // 下面是一个代理
@@ -810,7 +874,7 @@
     {
         // 流结束事件，在此事件中负责做销毁工作
         // 同时也是获得最终数据的好地方
-        
+        [self playSoundEffect:@"5097.mp3"];
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
         chatItem.states = videoStates;
@@ -995,26 +1059,17 @@
 
 
 
-/**
- *  录音声波监控定制器
- *
- *  @return 定时器
- */
--(NSTimer *)timer{
-    if (!_timer) {
-        _timer=[NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(audioPowerChange) userInfo:nil repeats:YES];
-    }
-    return _timer;
-}
+
 
 /**
  *  录音声波状态设置
  */
--(void)audioPowerChange{
+-(void)audioPowerChange:(NSTimer *)timer{
     [self.audioRecorder updateMeters];//更新测量值
     float power= [self.audioRecorder averagePowerForChannel:0];//取得第一个通道的音频，注意音频强度范围时-160到0
-    CGFloat progress=(1.0/160.0)*(power+160.0);
-    [self.audioPower setProgress:progress];
+
+//    NSLog(@"%f",power);
+    [self.recordingView setVolume:power];
 }
 #pragma mark - UI事件
 /**
@@ -1025,24 +1080,59 @@
 - (void)BeginRecordClick:(UIButton *)sender
 {
     
+    if (![self.audioRecorder isRecording])
+    {
         [self.audioRecorder record];//首次使用应用时如果调用record方法会询问用户是否允许使用麦克风
-        self.timer.fireDate=[NSDate distantPast];
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:.1 target:self selector:@selector(audioPowerChange:) userInfo:nil repeats:YES];
+        [self MakerecordingView];
+    }
 
 }
+- (void)recordContinue:(UIButton *)sender{
+    
+    if (![self.audioRecorder isRecording])
+    {
+        NSTimeInterval time = [NSDate date].timeIntervalSince1970;
+        [self.audioRecorder recordAtTime:time - _puaseTime];
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:.1 target:self selector:@selector(audioPowerChange:) userInfo:nil repeats:YES];
 
+            NSLog(@"int");
+        self.recordingView.sliderCancel = NO;
+    }
+
+    
+    
+    
+}
 /**
  *  点击暂定按钮
  *
  *  @param sender 暂停按钮
  */
-- (void)StopPauseClick
+- (void)StopPauseClick:(UIButton *)sender
 {
     if ([self.audioRecorder isRecording]) {
         [self.audioRecorder pause];
-        self.timer.fireDate=[NSDate distantFuture];
-    }
-}
+        _puaseTime = [NSDate date].timeIntervalSince1970;
+         NSLog(@"out");
+        [self.timer invalidate];
+        self.timer = nil;
 
+        self.recordingView.sliderCancel = YES;
+
+    }
+    
+
+}
+- (void)cancelRecord:(UIButton *)button{
+    
+    _recordCancel = YES;
+    [self.audioRecorder stop];
+    [self.recordingView hidden];
+    [self.timer invalidate];
+    self.timer = nil;
+    
+}
 
 /**
  *  点击停止按钮
@@ -1051,23 +1141,30 @@
  */
 - (void)OkStopClick:(UIButton *)sender
 {
+    _recordCancel = NO;
     [self.audioRecorder stop];
-    self.timer.fireDate=[NSDate distantFuture];
-    self.audioPower.progress=0.0;
+    [self.recordingView hidden];
+    [self.timer invalidate];
+    self.timer = nil;
+
 }
 
 #pragma mark - 录音机代理方法
 /**
- *  录音完成，录音完成后播放录音
+    *  录音完成
  *
  *  @param recorder 录音机对象
  *  @param flag     是否成功
  */
 -(void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
 {
-    //    if (![self.audioPlayer isPlaying]) {
-    //        [self.audioPlayer play];
-    //    }
+//        if (![self.audioPlayer isPlaying]) {
+//            [self.audioPlayer play];
+//        }
+    if (_recordCancel) {
+        return;
+    }
+    [self  sendAsStream];
     NSLog(@"录音完成!");
 }
 
@@ -1081,6 +1178,42 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark -- 提示音
+
+
+/**
+ *  播放完成回调函数
+ *
+ *  @param soundID    系统声音ID
+ *  @param clientData 回调时传递的数据
+ */
+void soundCompleteCallback(SystemSoundID soundID,void * clientData){
+    NSLog(@"播放完成...");
+}
+
+/**
+ *  播放音效文件
+ *
+ *  @param name 音频文件名称
+ */
+-(void)playSoundEffect:(NSString *)name{
+    NSString *audioFile=[[NSBundle mainBundle] pathForResource:name ofType:nil];
+    NSURL *fileUrl=[NSURL fileURLWithPath:audioFile];
+    //1.获得系统声音ID
+    SystemSoundID soundID=0;
+    /**
+     * inFileUrl:音频文件url
+     * outSystemSoundID:声音id（此函数会将音效文件加入到系统音频服务中并返回一个长整形ID）
+     */
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)(fileUrl), &soundID);
+    //如果需要在播放完之后执行某些操作，可以调用如下方法注册一个播放完成回调函数
+    AudioServicesAddSystemSoundCompletion(soundID, NULL, NULL, soundCompleteCallback, NULL);
+    //2.播放音频
+    AudioServicesPlaySystemSound(soundID);//播放音效
+    //    AudioServicesPlayAlertSound(soundID);//播放音效并震动
+}
+
 
 /*
 #pragma mark - Navigation
