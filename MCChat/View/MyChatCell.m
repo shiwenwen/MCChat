@@ -113,7 +113,15 @@
             
         }else if (_model.states == videoStates){
             
+            self.rightChatLabel.hidden = NO;
+            self.postImageView.hidden = YES;
+            self.postVoiceView.hidden = YES;
+            self.postImageView.image = _model.picImage;
+            self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
             
+            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
+            
+
             
             
             
