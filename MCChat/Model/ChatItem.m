@@ -65,6 +65,14 @@
     
     _imageWidth = self.imageHight * self.picImage.size.width / self.picImage.size.height ;
     
+    if (_imageWidth >= KScreenWidth - 100) {
+        
+        _imageWidth = KScreenWidth -100;
+        
+        _imageHight = _imageWidth * self.picImage.size.height / self.picImage.size.width;
+        _cellHeight = _imageHight + 60;
+    }
+    
     return _imageWidth;
     
 

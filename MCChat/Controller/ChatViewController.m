@@ -1051,6 +1051,7 @@
 {
     
     [self handleNotification:YES];
+     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     NSError *error=nil;
     self.audioPlayer=[[AVAudioPlayer alloc]initWithData:data error:&error];
     self.audioPlayer.delegate = self;
