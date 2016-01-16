@@ -8,7 +8,6 @@
 
 #import "ChatViewController.h"
 #import "BlueSessionManager.h"
-#import "ChatCell.h"
 #import "ChatItem.h"
 #import "UIViewExt.h"
 #import <AssetsLibrary/AssetsLibrary.h>
@@ -33,6 +32,7 @@
     CGRect _tabBarFrame;
     NSTimeInterval _puaseTime;
     BOOL _recordCancel;
+    UIImageView *_currentVoiceView;
 }
 
 
@@ -593,19 +593,18 @@
         
 //        float textHeight = TextDefaultheight;
         
-        self.sendTextView.height = TextDefaultheight;
-        self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight - _keyboardHeight, WIDTH, ChatHeight);
-        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + ChatHeight);
-        self.voiceButton.bottom = self.sendTextView.bottom;
-        _addButton.bottom = self.sendTextView.bottom;
-        _emotionButton.bottom = self.sendTextView.bottom;
+        [UIView animateWithDuration:.25 animations:^{
+            self.sendTextView.height = TextDefaultheight;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight - _keyboardHeight, WIDTH, ChatHeight);
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + ChatHeight);
+            self.voiceButton.bottom = self.sendTextView.bottom;
+            _addButton.bottom = self.sendTextView.bottom;
+            _emotionButton.bottom = self.sendTextView.bottom;
+            
+            [self sendWeNeedNews];
+            
+        }];
         
-        [self sendWeNeedNews];
-        
-        
-        
-
-
 
         
         return NO;
@@ -630,18 +629,22 @@
         return;
     }
     
-    float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
+   
     
-    
-    self.sendTextView.height = textHeight;
-    
-    self.voiceButton.bottom = self.sendTextView.bottom;
-    _addButton.bottom = self.sendTextView.bottom;
-    _emotionButton.bottom = self.sendTextView.bottom;
-    self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
-    
-    
-    self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+    [UIView animateWithDuration:.25 animations:^{
+        float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
+        
+        
+        self.sendTextView.height = textHeight;
+        
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+        
+        
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+    }];
     
     if (self.datasource.count >= 1) {
       [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
@@ -704,7 +707,18 @@
     }
     
     cell.model = self.datasource[indexPath.row];
-    
+    cell.voiceBlock = ^(NSURL *url,NSData *data,UIImageView *imageView){
+        if (_currentVoiceView) {
+            [_currentVoiceView stopAnimating];
+            self.audioPlayer = nil;
+        }
+        _currentVoiceView = imageView;
+        
+        
+        [_currentVoiceView startAnimating];
+        [self makeVideoPlayer:data];
+        
+    };
     return cell;
 }
 
@@ -716,7 +730,7 @@
     {
         NSLog(@"realy play");
         //        [self makeVideoPlayer:[self getVideoStremData]];
-        [self makeVideoPlayer:chatIden.recordData];
+        [self makeVideoPlayer:chatIden.data];
     }
 }
 
@@ -861,7 +875,7 @@
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = YES;
         chatItem.states = videoStates;
-        chatItem.recordData = data;
+        chatItem.data = data;
         
         [self.datasource addObject:chatItem];
         [self insertTheTableToButtom];
@@ -878,7 +892,7 @@
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
         chatItem.states = videoStates;
-        chatItem.recordData = self.streamData;
+        chatItem.data = self.streamData;
         
         [self.datasource addObject:chatItem];
         [self insertTheTableToButtom];
@@ -1035,6 +1049,8 @@
 
 - (void)makeVideoPlayer:(NSData *)data
 {
+    
+    [self handleNotification:YES];
     NSError *error=nil;
     self.audioPlayer=[[AVAudioPlayer alloc]initWithData:data error:&error];
     self.audioPlayer.delegate = self;
@@ -1070,6 +1086,7 @@
 
 //    NSLog(@"%f",power);
     [self.recordingView setVolume:power];
+    
 }
 #pragma mark - UI事件
 /**
@@ -1170,9 +1187,10 @@
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
-    
+     [_currentVoiceView stopAnimating];
     // 每次完成后都将这个对象释放
     player =nil;
+    [self handleNotification:NO];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -1210,8 +1228,36 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
     //如果需要在播放完之后执行某些操作，可以调用如下方法注册一个播放完成回调函数
     AudioServicesAddSystemSoundCompletion(soundID, NULL, NULL, soundCompleteCallback, NULL);
     //2.播放音频
-    AudioServicesPlaySystemSound(soundID);//播放音效
-    //    AudioServicesPlayAlertSound(soundID);//播放音效并震动
+//    AudioServicesPlaySystemSound(soundID);//播放音效
+        AudioServicesPlayAlertSound(soundID);//播放音效并震动
+}
+
+#pragma mark - 监听听筒or扬声器
+- (void) handleNotification:(BOOL)state
+{
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:state]; //建议在播放之前设置yes，播放结束设置NO，这个功能是开启红外感应
+    
+    if(state)//添加监听
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(sensorStateChange:) name:UIDeviceProximityStateDidChangeNotification
+                                                   object:nil];
+    else//移除监听
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceProximityStateDidChangeNotification" object:nil];
+}
+
+//处理监听触发事件
+-(void)sensorStateChange:(NSNotificationCenter *)notification;
+{
+    //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗（省电啊）
+    if ([[UIDevice currentDevice] proximityState] == YES)
+    {
+        NSLog(@"Device is close to user");
+        [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    }else
+    {
+        NSLog(@"Device is not close to user");
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    }
 }
 
 

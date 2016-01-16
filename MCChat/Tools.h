@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface Tools : NSObject
-
++(nonnull NSString *)randomStringWithBit:(NSInteger)bit;
 @end

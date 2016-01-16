@@ -9,6 +9,7 @@
 #import "MyChatCell.h"
 #import "UIViewExt.h"
 #import "NSDate+DateTools.h"
+#import <AVFoundation/AVFoundation.h>
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
 @implementation MyChatCell
@@ -91,17 +92,20 @@
         self.leftHeaderView.hidden = YES;
         self.leftBgView.hidden = YES;
         if (_model.states == textStates) {
-            
+            //文字消息
             self.rightChatLabel.hidden = NO;
             self.postImageView.hidden = YES;
             self.postVoiceView.hidden = YES;
             
             self.rightChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
             self.rightChatLabel.text = _model.content;
-            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.textWidth - 35,self.rightHeaderView.top, _model.textWidth + 30,_model.textHeight + 25);
+            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.textWidth - 40,self.rightHeaderView.top, _model.textWidth + 30,_model.textHeight + 25);
+            if (_tap) {
+                [self.rightBgView removeGestureRecognizer:_tap];
+            }
             
         }else if (_model.states == picStates){
-            
+            //图片消息
             self.rightChatLabel.hidden = YES;
             self.postImageView.hidden = NO;
             self.postVoiceView.hidden = YES;
@@ -109,19 +113,43 @@
             self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
 
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
-            
+            if (_tap) {
+                [self.rightBgView removeGestureRecognizer:_tap];
+            }
             
         }else if (_model.states == videoStates){
-            
-            self.rightChatLabel.hidden = NO;
+            //语音消息
+            self.rightChatLabel.hidden = YES;
             self.postImageView.hidden = YES;
-            self.postVoiceView.hidden = YES;
-            self.postImageView.image = _model.picImage;
-            self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
+            self.postVoiceView.hidden = NO;
+            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - 100*proportation,self.rightHeaderView.top, 90 * proportation,55);
+            self.postVoiceView.frame = CGRectMake(self.rightBgView.width - 40,12 , 20, 20);
+            if (!_tap) {
+               _tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoiceClick:)];
+            }
             
-            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
             
+            
+            [self.rightBgView addGestureRecognizer:_tap];
+            //生产16位随机音频文件名
+            NSString *dataName = [NSString stringWithFormat:@"%@.caf",[Tools randomStringWithBit:16]];
+            
+            //创建保存路径
+            NSFileManager *fileManager = [NSFileManager defaultManager];
 
+            
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Voice"];
+            if (![fileManager fileExistsAtPath:DocumentsPath]) {
+                [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+            }
+            //保存数据
+            NSString * filePath = [NSString stringWithFormat:@"%@/%@",DocumentsPath,dataName];
+            
+            [fileManager createFileAtPath:filePath contents:self.model.data attributes:nil];
+            
+            //保存数据地址
+            self.dataPath = [NSURL URLWithString:filePath];
+            
             
             
             
@@ -143,8 +171,9 @@
             self.leftChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
             self.leftChatLabel.text = _model.content;
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.leftHeaderView.top, _model.textWidth + 30,_model.textHeight + 25);
-        
-        
+            if (_tap) {
+                [self.leftBgView removeGestureRecognizer:_tap];
+            }
         
         }else if (_model.states == picStates){
             
@@ -156,12 +185,41 @@
             
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.leftHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
             
-            
+            if (_tap) {
+                [self.leftBgView removeGestureRecognizer:_tap];
+            }
         }else if (_model.states == videoStates){
+            if (!_tap) {
+                _tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoiceClick:)];
+            }
+            
+            //语音消息
+            self.leftChatLabel.hidden = YES;
+            self.getImageView.hidden = YES;
+            self.getVoiceView.hidden = NO;
+            self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.leftHeaderView.top, 90 * proportation,55);
+            self.getVoiceView.frame = CGRectMake(20,12, 20, 20);
+//            self.getVoiceView.backgroundColor = [UIColor redColor];
+            [self.leftBgView addGestureRecognizer:_tap];
+            //生产16位随机音频文件名
+            NSString *dataName = [NSString stringWithFormat:@"%@.caf",[Tools randomStringWithBit:16]];
+            
+            //创建保存路径
+            NSFileManager *fileManager = [NSFileManager defaultManager];
             
             
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Voice"];
+            if (![fileManager fileExistsAtPath:DocumentsPath]) {
+                [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+            }
+            //保存数据
+            NSString * filePath = [NSString stringWithFormat:@"%@/%@",DocumentsPath,dataName];
             
+            [fileManager createFileAtPath:filePath contents:self.model.data attributes:nil];
             
+            //保存数据地址
+            self.dataPath = [NSURL URLWithString:filePath];
+
             
         }
     
@@ -180,7 +238,7 @@
 @synthesize getImageView = _getImageView;
 @synthesize getVoiceView = _getVoiceView;
 //----------------------------------------------------------
--(WPHotspotLabel *)rightChatLabel{
+- (WPHotspotLabel *)rightChatLabel{
     
     if (!_rightChatLabel) {
         
@@ -193,7 +251,7 @@
     
     return _rightChatLabel;
 }
--(ZoomImageView *)postImageView{
+- (ZoomImageView *)postImageView{
     
     if (!_postImageView) {
         _postImageView = [[ZoomImageView alloc]init];
@@ -202,11 +260,21 @@
     }
     return _postImageView;
 }
--(UIImageView *)postVoiceView{
+- (UIImageView *)postVoiceView{
     if (!_postVoiceView) {
         _postVoiceView = [[UIImageView alloc]init];
         _postVoiceView.userInteractionEnabled = YES;
-
+        
+        NSMutableArray *images = [NSMutableArray arrayWithCapacity:3];
+        _postVoiceView.image = [UIImage imageNamed:@"SenderVoiceNodePlaying003"];
+        for (int i = 1; i <= 3; i++) {
+            NSString *imageName = [NSString stringWithFormat:@"SenderVoiceNodePlaying00%d",i];
+            
+            [images addObject:[UIImage imageNamed:imageName]];
+        }
+        _postVoiceView.animationImages = images;
+        _postVoiceView.animationDuration = .5;
+        _postVoiceView.contentMode = UIViewContentModeScaleAspectFit;
         [_rightBgView addSubview:_postVoiceView];
         
     }
@@ -214,7 +282,7 @@
     
 }
 //-----------------------------------------------------------
--(WPHotspotLabel *)leftChatLabel{
+- (WPHotspotLabel *)leftChatLabel{
     
     if (!_leftChatLabel) {
         
@@ -227,7 +295,7 @@
     
     return _leftChatLabel;
 }
--(ZoomImageView *)getImageView{
+- (ZoomImageView *)getImageView{
     
     if (!_getImageView) {
         _getImageView = [[ZoomImageView alloc]init];
@@ -236,16 +304,38 @@
     }
     return _getImageView;
 }
--(UIImageView *)_getVoiceView{
+- (UIImageView *)getVoiceView{
     
     if (!_getVoiceView) {
         _getVoiceView = [[UIImageView alloc]init];
         _getVoiceView.userInteractionEnabled = YES;
+        _getVoiceView.contentMode = UIViewContentModeScaleAspectFit;
+        _getVoiceView.image = [UIImage imageNamed:@"ReceiverVoiceNodePlaying"];
+            NSMutableArray *images = [NSMutableArray arrayWithCapacity:3];
+        for (int i = 1; i <= 3; i++) {
+            
+            NSString *imageName = [NSString stringWithFormat:@"ReceiverVoiceNodePlaying00%d",i];
+            
+            [images addObject:[UIImage imageNamed:imageName]];
+        }
+        _getVoiceView.animationImages = images;
+        _getVoiceView.animationDuration =.5;
         [_leftBgView addSubview:_getVoiceView];
         
     }
-    return _postVoiceView;
+    return _getVoiceView;
     
+}
+- (UILabel *)voiceTime{
+    
+    if (!_voiceTime) {
+        
+        _voiceTime = [[UILabel alloc]init];
+        _voiceTime.font = [UIFont systemFontOfSize:11];
+        _voiceTime.textAlignment = NSTextAlignmentRight;
+    }
+    
+    return _voiceTime;
 }
 - (void)layoutSubviews{
     
@@ -258,10 +348,20 @@
     _timeLabel.text = dateStr;
     
 }
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
+//---------------------------
+- (void)playVoiceClick:(UITapGestureRecognizer *)tap{
+    
+    if (self.model.isSelf) {
+        self.voiceBlock(self.dataPath,self.model.data,self.postVoiceView);
+    }else{
+        self.voiceBlock(self.dataPath,self.model.data,self.getVoiceView);
+        
+    }
 
- 
+    
+    
 }
+
+
 
 @end

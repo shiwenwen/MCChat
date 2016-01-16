@@ -35,7 +35,6 @@
 		2B4076B81C4508EB003A7161 /* NSMutableString+TagReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4076B21C4508EB003A7161 /* NSMutableString+TagReplace.m */; };
 		2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4076B41C4508EB003A7161 /* NSString+WPAttributedMarkup.m */; };
 		2B4076BF1C45112D003A7161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B4076BE1C45112D003A7161 /* Assets.xcassets */; };
-		2B92D6591C473AF50073171C /* ChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6531C473AF50073171C /* ChatCell.m */; };
 		2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6551C473AF50073171C /* MyChatCell.m */; };
 		2B92D65B1C473AF50073171C /* MyChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B92D6561C473AF50073171C /* MyChatCell.xib */; };
 		2B92D6631C473B420073171C /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D65F1C473B420073171C /* HomeViewController.m */; };
@@ -55,6 +54,7 @@
 		2BEA0B8E1C4624BF00A719A8 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B841C4624BF00A719A8 /* DTTimePeriodCollection.m */; };
 		2BEA0B8F1C4624BF00A719A8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B861C4624BF00A719A8 /* DTTimePeriodGroup.m */; };
 		2BEA0B901C4624BF00A719A8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA0B881C4624BF00A719A8 /* NSDate+DateTools.m */; };
+		2BF8BDBB1C49DE67001192A7 /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF8BDBA1C49DE67001192A7 /* Tools.m */; };
 		2BFAA1341C3FADD700E8D032 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1331C3FADD700E8D032 /* main.m */; };
 		2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1361C3FADD700E8D032 /* AppDelegate.m */; };
 		2BFAA14D1C3FADD700E8D032 /* MCChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA14C1C3FADD700E8D032 /* MCChatTests.m */; };
@@ -116,8 +116,6 @@
 		2B4076B31C4508EB003A7161 /* NSString+WPAttributedMarkup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+WPAttributedMarkup.h"; sourceTree = "<group>"; };
 		2B4076B41C4508EB003A7161 /* NSString+WPAttributedMarkup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+WPAttributedMarkup.m"; sourceTree = "<group>"; };
 		2B4076BE1C45112D003A7161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2B92D6521C473AF50073171C /* ChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatCell.h; sourceTree = "<group>"; };
-		2B92D6531C473AF50073171C /* ChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatCell.m; sourceTree = "<group>"; };
 		2B92D6541C473AF50073171C /* MyChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyChatCell.h; sourceTree = "<group>"; };
 		2B92D6551C473AF50073171C /* MyChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyChatCell.m; sourceTree = "<group>"; };
 		2B92D6561C473AF50073171C /* MyChatCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyChatCell.xib; sourceTree = "<group>"; };
@@ -154,6 +152,8 @@
 		2BEA0B861C4624BF00A719A8 /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
 		2BEA0B871C4624BF00A719A8 /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		2BEA0B881C4624BF00A719A8 /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
+		2BF8BDB91C49DE67001192A7 /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
+		2BF8BDBA1C49DE67001192A7 /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tools.m; sourceTree = "<group>"; };
 		2BFAA12F1C3FADD700E8D032 /* MCChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MCChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFAA1331C3FADD700E8D032 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2BFAA1351C3FADD700E8D032 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -272,6 +272,8 @@
 				2B4076A91C4508EB003A7161 /* Extras */,
 				2B4076B01C4508EB003A7161 /* WPAttributedMarkup */,
 				2B4076A21C4504E1003A7161 /* UIViewExtensions */,
+				2BF8BDB91C49DE67001192A7 /* Tools.h */,
+				2BF8BDBA1C49DE67001192A7 /* Tools.m */,
 			);
 			name = SDK;
 			sourceTree = "<group>";
@@ -283,8 +285,6 @@
 				2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */,
 				2BAD25D31C490288007EBFAE /* RecordingView.h */,
 				2BAD25D41C490288007EBFAE /* RecordingView.m */,
-				2B92D6521C473AF50073171C /* ChatCell.h */,
-				2B92D6531C473AF50073171C /* ChatCell.m */,
 				2B92D6541C473AF50073171C /* MyChatCell.h */,
 				2B92D6551C473AF50073171C /* MyChatCell.m */,
 				2B92D6561C473AF50073171C /* MyChatCell.xib */,
@@ -590,6 +590,7 @@
 				2B4076B81C4508EB003A7161 /* NSMutableString+TagReplace.m in Sources */,
 				2B4076A71C4504E1003A7161 /* UIView+UIViewController.m in Sources */,
 				2BAD25CF1C489748007EBFAE /* ZoomImageView.m in Sources */,
+				2BF8BDBB1C49DE67001192A7 /* Tools.m in Sources */,
 				2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */,
 				2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */,
 				2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */,
@@ -606,7 +607,6 @@
 				2BEA0B8C1C4624BF00A719A8 /* DTTimePeriod.m in Sources */,
 				2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */,
 				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
-				2B92D6591C473AF50073171C /* ChatCell.m in Sources */,
 				2B92D6631C473B420073171C /* HomeViewController.m in Sources */,
 				2BEA0B8E1C4624BF00A719A8 /* DTTimePeriodCollection.m in Sources */,
 				2B92D66B1C47417C0073171C /* MainTabBarViewController.m in Sources */,

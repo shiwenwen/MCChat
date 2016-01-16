@@ -12,5 +12,5 @@
 #import "UICommons.h"
 #import "UIViewExt.h"
 #import "UIView+UIViewController.h"
-
+#import "Tools.h"
 #endif /* PCH_pch */

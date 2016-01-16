@@ -20,7 +20,7 @@
 }
 - (CGFloat)textHeight{
     
-   _textHeight = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:16] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].height;
+   _textHeight = [self sizeOfStr:self.content andFont:[UIFont systemFontOfSize:16] andMaxSize:CGSizeMake(WIDTH * 2 / 3, 1000) andLineBreakMode:NSLineBreakByCharWrapping].height + 10;
     _cellHeight = _textHeight
     + 60;
     return _textHeight;
@@ -69,5 +69,14 @@
     
 
 }
-
+- (void)setStates:(newsStates)states{
+    
+    _states = states;
+    if (_states == videoStates) {
+        
+        _cellHeight = 45 + 60;
+        
+    }
+    
+}
 @end

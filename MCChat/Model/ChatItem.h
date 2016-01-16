@@ -26,7 +26,7 @@ typedef enum{
 @property (nonatomic,strong)UIImage *headerImage;
 @property(nonatomic, strong)UIImage * picImage;
 
-@property(nonatomic, strong)NSData * recordData;
+@property(nonatomic, strong)NSData * data;
 
 @property (nonatomic,strong)UIImage *header;
 @property (nonatomic,assign)CGFloat cellHeight;
