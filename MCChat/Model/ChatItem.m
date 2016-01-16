@@ -56,14 +56,27 @@
         
         _imageHight = 180.0;
     }
+    if (self.imageWidth > KScreenWidth -100) {
+        
+        _imageHight = self.imageWidth * self.picImage.size.height / self.picImage.size.width;
+    }
+    
+    
     _cellHeight = _imageHight + 60;
+    
     return _imageHight;
     
 }
 
 -(CGFloat)imageWidth{
     
-    _imageWidth = self.imageHight * self.picImage.size.width / self.picImage.size.height ;
+    if (self.picImage.size.height > 180) {
+        
+     _imageWidth = 180 * self.picImage.size.width / self.picImage.size.height ;
+    }else{
+        _imageWidth =  self.picImage.size.width;
+    }
+    
     
     if (_imageWidth >= KScreenWidth - 100) {
         
@@ -86,5 +99,7 @@
         
     }
     
+    
 }
+
 @end

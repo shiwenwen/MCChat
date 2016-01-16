@@ -458,40 +458,40 @@
     //当选择的类型是图片
     if ([type isEqualToString:@"public.image"])
     {
-        //先把图片转成NSData
-        UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-        NSData *data;
-        if (UIImagePNGRepresentation(image) == nil)
-        {
-            data = UIImageJPEGRepresentation(image, 1.0);
-        }
-        else
-        {
-            data = UIImagePNGRepresentation(image);
-        }
-        
-        //图片保存的路径
-        //这里将图片放在沙盒的documents文件夹中
-        NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-        
-        //文件管理器
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        
-        //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
-        [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:@"/image.png"] contents:data attributes:nil];
-        
-        //得到选择后沙盒中图片的完整路径
-        NSString * filePath = [[NSString alloc]initWithFormat:@"%@%@",DocumentsPath,  @"/image.png"];
         
         
         
-        [_picker dismissViewControllerAnimated:NO completion:^{
+        
+        [_picker dismissViewControllerAnimated:YES completion:^{
             
             // 改变状态栏的颜色  改变为白色
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
        
+            //先把图片转成NSData
+            UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+            NSData *data;
+            if (UIImagePNGRepresentation(image) == nil)
+            {
+                data = UIImageJPEGRepresentation(image, 1.0);
+            }
+            else
+            {
+                data = UIImagePNGRepresentation(image);
+            }
             
+            //图片保存的路径
+            //这里将图片放在沙盒的documents文件夹中
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+            
+            //文件管理器
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            
+            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+            [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+            [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:@"/image.png"] contents:data attributes:nil];
+            
+            //得到选择后沙盒中图片的完整路径
+            NSString * filePath = [[NSString alloc]initWithFormat:@"%@%@",DocumentsPath,  @"/image.png"];
             
             
             // 这边是真正的发送
