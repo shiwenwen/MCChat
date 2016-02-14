@@ -832,9 +832,9 @@
 {
     if(!self.sessionManager.isConnected)
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-        [alertView show];
-        return;
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+//        [alertView show];
+//        return;
         
     }
     
@@ -1084,7 +1084,7 @@
 -(void)audioPowerChange:(NSTimer *)timer{
     [self.audioRecorder updateMeters];//更新测量值
     float power= [self.audioRecorder averagePowerForChannel:0];//取得第一个通道的音频，注意音频强度范围时-160到0
-
+//    float power= [self.audioRecorder peakPowerForChannel:0];
 //    NSLog(@"%f",power);
     [self.recordingView setVolume:power];
     
