@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="120" id="KGk-i7-Jjw" customClass="SettingHeaderIconCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="119.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="无头像" translatesAutoresizingMaskIntoConstraints="NO" id="5AB-2w-LPV">
+                        <rect key="frame" x="15" y="20" width="80" height="80"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="80" id="n0g-go-Rir"/>
+                            <constraint firstAttribute="width" constant="80" id="vzV-rb-t2q"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gMm-j4-amX">
+                        <rect key="frame" x="102" y="79" width="195" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="4Qo-dZ-Ply"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <color key="textColor" red="0.52941176469999995" green="0.52941176469999995" blue="0.52941176469999995" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="5AB-2w-LPV" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="GJV-YL-3nm"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="gMm-j4-amX" secondAttribute="bottom" constant="11.5" id="QRW-e1-Wf5"/>
+                    <constraint firstItem="gMm-j4-amX" firstAttribute="leading" secondItem="5AB-2w-LPV" secondAttribute="trailing" constant="7" id="hxe-ZY-SSv"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="gMm-j4-amX" secondAttribute="trailing" constant="15" id="ujp-mP-8bM"/>
+                    <constraint firstItem="5AB-2w-LPV" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" id="vqH-G5-HV5"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="headerIcon" destination="5AB-2w-LPV" id="h3I-48-OZp"/>
+                <outlet property="nickName" destination="gMm-j4-amX" id="aQ2-CL-rET"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="无头像" width="70" height="70"/>
+    </resources>
+</document>

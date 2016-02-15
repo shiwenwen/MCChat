@@ -14,4 +14,8 @@
 #define KTabBarHeight 49
 #define KNavigationBarHeight 64
 #define proportation  (KScreenWidth / 375)
+#define UserDefaultsGet(a)  [[NSUserDefaults standardUserDefaults] objectForKey:a]
+#define UserDefaultsSet(a,b) [[NSUserDefaults standardUserDefaults] setObject:a forKey:b]
+#define MyNickName @"myNickName"
+
 #endif /* UICommons_h */

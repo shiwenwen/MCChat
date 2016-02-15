@@ -10,4 +10,5 @@
 #import "MainTabBarViewController.h"
 @interface ChatViewController : UIViewController
 @property (nonatomic,strong)MainTabBarViewController *tabVC;
+- (void)makeBlueData;
 @end

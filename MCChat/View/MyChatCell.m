@@ -47,17 +47,17 @@
         }
      
         //左边头像
-        _leftHeaderView = [[UIImageView alloc]initWithFrame:CGRectMake(5, _timeLabel.bottom + 5, 45, 45)];
+        _leftHeaderView = [[ZoomImageView alloc]initWithFrame:CGRectMake(5, _timeLabel.bottom + 5, 45, 45)];
         _leftHeaderView.layer.cornerRadius = 45 * .5;
         _leftHeaderView.layer.borderColor = [UIColor grayColor].CGColor;
         _leftHeaderView.layer.borderWidth = .25;
-        
+        _leftHeaderView.layer.masksToBounds = YES;
         //右边头像
-        _rightHeaderView = [[UIImageView alloc]initWithFrame:CGRectMake(WIDTH - 55, _timeLabel.bottom + 5, 45, 45)];
+        _rightHeaderView = [[ZoomImageView alloc]initWithFrame:CGRectMake(WIDTH - 55, _timeLabel.bottom + 5, 45, 45)];
         _rightHeaderView.layer.cornerRadius = 45 * .5;
         _rightHeaderView.layer.borderColor = [UIColor grayColor].CGColor;
         _rightHeaderView.layer.borderWidth = .25;
-        
+        _rightHeaderView.layer.masksToBounds = YES;
         [self.contentView addSubview:_leftHeaderView];
         [self.contentView addSubview:_rightHeaderView];
         
@@ -85,8 +85,13 @@
     _model = model;
     
     if (_model.isSelf) {
-        
-        self.rightHeaderView.image = [UIImage imageNamed:@"无头像"];
+        if (UserDefaultsGet(@"headerIcon")) {
+            
+            self.rightHeaderView.image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"headerIcon")];
+        }else{
+            self.rightHeaderView.image = [UIImage imageNamed:@"无头像"];
+        }
+
         self.rightHeaderView.hidden = NO;
         self.rightBgView.hidden = NO;
         self.leftHeaderView.hidden = YES;
@@ -340,12 +345,12 @@
 - (void)layoutSubviews{
     
     [super layoutSubviews];
-    NSDate *date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-    NSString *dateStr = [formatter stringFromDate:date];
+//    NSDate *date = [NSDate date];
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+//    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+//    NSString *dateStr = [formatter stringFromDate:date];
     
-    _timeLabel.text = dateStr;
+    _timeLabel.text = self.model.timeStr;
     
 }
 //---------------------------

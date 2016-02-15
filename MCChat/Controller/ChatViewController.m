@@ -20,6 +20,7 @@
 #define TextDefaultheight 36.5
 #define kRecordAudioFile @"myRecord.caf"
 #import "RecordingView.h"
+#import "SettingViewController.h"
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>{
     
     float _sendBackViewHeight;
@@ -33,9 +34,10 @@
     NSTimeInterval _puaseTime;
     BOOL _recordCancel;
     UIImageView *_currentVoiceView;
+    MCPeerID *_curretConnect;
 }
 
-
+@property (nonatomic,strong)UIImage *otherHeaderImage;
 // DataAndBlue
 @property(strong, nonatomic) BlueSessionManager *sessionManager;
 
@@ -73,19 +75,36 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
+}
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.sendBackView.hidden = NO;
+      [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];   
+}
+- (void)viewWillDisappear:(BOOL)animated{
+    
+    [super viewWillDisappear:animated];
+    self.sendBackView.hidden = YES;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"壁纸1.jpg"]];
+
     
-    UIImage *image = [UIImage imageNamed:@"壁纸1.jpg"];
-    self.view.layer.contents = (id) image.CGImage;
-    self.navigationController.navigationBar.titleTextAttributes =@{
-                                                                   NSForegroundColorAttributeName:[UIColor whiteColor]
-                                                                   
-                                                                   };
+    if (UserDefaultsGet(@"bgPath")) {
+        
+        UIImage *image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"bgPath")];
+        self.view.layer.contents = (id) image.CGImage;
+        self.navigationController.navigationBar.titleTextAttributes =@{
+                                                                       NSForegroundColorAttributeName:[UIColor whiteColor]
+                                                                       
+                                                                       };
+    }else{
+        [self setDefaultBackground];
+
+    }
+    
 //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 //    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:0.127 alpha:1.000];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.800];
@@ -107,19 +126,46 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenKeyboard)];
     [self.view addGestureRecognizer:tap];
     
+    //监听背景切换
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(setDefaultBackground) name:@"ChangeDefaultBackground" object:nil];
+    
+    
 }
 
+#pragma mark -- 切换背景
+- (void)setDefaultBackground{
+    //    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"壁纸1.jpg"]];
+    
+    UIImage *image = [UIImage imageNamed:@"壁纸1.jpg"];
+    self.view.layer.contents = (id) image.CGImage;
+    self.navigationController.navigationBar.titleTextAttributes =@{
+                                                                   NSForegroundColorAttributeName:[UIColor whiteColor]
+                                                                   
+                                                                   };
+
+    
+}
+- (void)changeBackground{
+    
+    
+    UIImage *image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"bgPath")];
+    self.view.layer.contents = (id) image.CGImage;
+    self.navigationController.navigationBar.titleTextAttributes =@{
+                                                                   NSForegroundColorAttributeName:[UIColor whiteColor]
+                                                                   
+                                                                   };
+    
+    [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"背景切换成功" viewController:nil];
+}
 
 - (void)viewDidAppear:(BOOL)animated{
     
     _tabBarFrame = self.tabVC.view.frame;
-   
-}
-- (void)viewWillAppear:(BOOL)animated{
+
     
-     [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-    
+
 }
+
 - (void)hiddenKeyboard{
     
     [self.view endEditing:YES];
@@ -129,13 +175,23 @@
 #pragma mark -- 准备UI
 - (void)readyUI
 {
-    self.title = @"MC_Chat";
+    if (!self.sessionManager.isConnected) {
+        self.title = @"未连接";        
+    }
+
 
 //    self.automaticallyAdjustsScrollViewInsets = NO;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(lookOtherDevice)];
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"扩散" style:UIBarButtonItemStyleDone target:self action:@selector(showSelfAdvertiser)];
+    
+    UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rightButton.frame = CGRectMake(0, 0, 40, 40);
+    rightButton.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    [rightButton addTarget:self action:@selector(showSelfAdvertiser) forControlEvents:UIControlEventTouchUpInside];
+    [rightButton setImage:[UIImage imageNamed:@"barbuttonicon_InfoSingle"] forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightButton];
+    
         self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
     [self makeUIView];
     
@@ -159,10 +215,40 @@
     }];
 }
 
-#pragma mark -- 扩散
+#pragma mark -- 设置
 - (void)showSelfAdvertiser
 {
-    [self.sessionManager advertiseForBrowserViewController];
+    [self.sendBackView endEditing:YES];
+    SettingViewController *setting =  [[SettingViewController alloc]init];
+    setting.sessionManager = self.sessionManager;
+    [self.navigationController pushViewController:setting animated:YES];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeBackground) name:@"changeBg" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
+    
+}
+#pragma mark -- 更换头像
+- (void)ChangeHeaderIcon{
+    
+    
+    [self.tableView reloadData];
+    
+    
+    NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
+    NSString * name = [NSString stringWithFormat:@"%@ForIcon",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
+    NSURL * url = [NSURL fileURLWithPath:UserDefaultsGet(@"headerIcon")];
+    
+    NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:self.sessionManager.firstPeer complete:^(NSError *error) {
+        if(!error) {
+            NSLog(@"finished sending resource");
+        }
+        else {
+            NSLog(@"%@", error);
+        }
+    }];
+    
+    NSLog(@"%@", @(progress.fractionCompleted));
+
+    
 }
 
 #pragma mark 制作页面UI
@@ -438,7 +524,8 @@
             
             [self presentViewController:_picker animated:YES completion:^{
                 
-                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
+                 ];
             }];
             break;
             
@@ -469,32 +556,49 @@
        
             //先把图片转成NSData
             UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-            NSData *data;
-            if (UIImagePNGRepresentation(image) == nil)
-            {
-                data = UIImageJPEGRepresentation(image, 1.0);
-            }
-            else
-            {
-                data = UIImagePNGRepresentation(image);
-            }
+
             
-            //图片保存的路径
-            //这里将图片放在沙盒的documents文件夹中
-            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+            dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+                   NSData *data;
+                NSString *type;
+                if (UIImagePNGRepresentation(image) == nil)
+                {
+                    data = UIImageJPEGRepresentation(image, 1.0);
+                    type = @".jpg";
+                }
+                else
+                {
+                    data = UIImagePNGRepresentation(image);
+                    type = @".png";
+                }
+                
+                //图片保存的路径
+                //这里将图片放在沙盒的documents文件夹中
+                NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+                
+                //文件管理器
+                NSFileManager *fileManager = [NSFileManager defaultManager];
+                
+                //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+                [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+                [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/image%@",type]] contents:data attributes:nil];
+                
+                //得到选择后沙盒中图片的完整路径
+                NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
+                
+                
+                
+                if(self.sessionManager.isConnected)
+                {
+                  [self sendAsResource:filePath];
+                }
+
+                
+            });
+         
             
-            //文件管理器
-            NSFileManager *fileManager = [NSFileManager defaultManager];
             
-            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
-            [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-            [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:@"/image.png"] contents:data attributes:nil];
-            
-            //得到选择后沙盒中图片的完整路径
-            NSString * filePath = [[NSString alloc]initWithFormat:@"%@%@",DocumentsPath,  @"/image.png"];
-            
-            
-            // 这边是真正的发送
+      
             if(!self.sessionManager.isConnected)
             {
                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
@@ -506,13 +610,18 @@
             chatItem.isSelf = YES;
             chatItem.states = picStates;
             chatItem.picImage = image;
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
             [self.datasource addObject:chatItem];
             
             
             [self insertTheTableToButtom];
             
             
-            [self sendAsResource:filePath];
+
             
         }];
     }
@@ -525,7 +634,8 @@
 {
     
     NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
-    NSString * name = [NSString stringWithFormat:@"%@ForPic",[[UIDevice currentDevice] name]];
+    NSString * name = [NSString stringWithFormat:@"%@ForPic",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
+    
     NSURL * url = [NSURL fileURLWithPath:path];
     
     NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:self.sessionManager.firstPeer complete:^(NSError *error) {
@@ -561,6 +671,12 @@
     chatItem.isSelf = YES;
     chatItem.states = textStates;
     chatItem.content = self.sendTextView.text;
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+    NSString *dateStr = [formatter stringFromDate:date];
+    chatItem.timeStr = dateStr;
+    
     [self.datasource addObject:chatItem];
     // 加到数组里面
     
@@ -670,9 +786,10 @@
     // 哪一组 哪一段
     NSIndexPath * indexPath = [NSIndexPath indexPathForRow:self.datasource.count- 1 inSection:0];
     // 添加新的一行
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    
     // 滑动到底部  第二个参数是滑动到底部
-    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 }
 
 #pragma mark tableView 代理
@@ -707,6 +824,11 @@
     }
     
     cell.model = self.datasource[indexPath.row];
+    if (self.otherHeaderImage) {
+        
+        cell.leftHeaderView.image = self.otherHeaderImage;
+    }
+    
     cell.voiceBlock = ^(NSURL *url,NSData *data,UIImageView *imageView){
         if (_currentVoiceView) {
             [_currentVoiceView stopAnimating];
@@ -745,20 +867,47 @@
     self.datasource = [NSMutableArray arrayWithCapacity:0];
     
     // 初始化  会议室
-    self.sessionManager = [[BlueSessionManager alloc]initWithDisplayName:[NSString stringWithFormat:@" %@",  [[UIDevice currentDevice] name]]];
+    NSString *nickName = UserDefaultsGet(MyNickName);
+    if (!nickName) {
+        nickName = [[UIDevice currentDevice]name];
+        
+    }
+    
+    self.sessionManager = [[BlueSessionManager alloc]initWithDisplayName:nickName];
     
     //
     [self.sessionManager didReceiveInvitationFromPeer:^void(MCPeerID *peer, NSData *context) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"是否连接？" message:[NSString stringWithFormat:@"同 %@%@", peer.displayName, @" 连接?"] delegate:strongSelf cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-        [alertView show];
+        if (_curretConnect == peer) {
+            
+            [self.sessionManager connectToPeer:YES];
+        }else{
+            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"是否连接？" message:[NSString stringWithFormat:@"同 %@%@", peer.displayName, @" 连接?"] delegate:strongSelf cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            [alertView show];
+        }
+        
     }];
     
     [self.sessionManager peerConnectionStatusOnMainQueue:YES block:^(MCPeerID *peer, MCSessionState state) {
         if(state == MCSessionStateConnected) {
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"已经连接" message:[NSString stringWithFormat:@"现在连接 %@了！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-            [alertView show];
-            self.title = peer.displayName;
+            
+            if (UserDefaultsGet(@"headerIcon")) {
+                [self ChangeHeaderIcon];
+            }
+            
+         
+            if (_curretConnect == peer) {
+                
+                
+            }else{
+                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"已经连接" message:[NSString stringWithFormat:@"现在连接 %@了！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                
+                _curretConnect = peer;
+                
+                [alertView show];
+                self.title = peer.displayName;
+            }
+            
         }
     }];
     
@@ -774,6 +923,11 @@
         chatItem.isSelf = NO;
         chatItem.states = textStates;
         chatItem.content = string;
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
         [strongSelf.datasource addObject:chatItem];
         // 加到数组里面
         
@@ -787,15 +941,30 @@
         
         __strong typeof (weakSelf) strongSelf = weakSelf;
         NSData *data = [NSData dataWithContentsOfURL:url];
+    
+        if ([name hasSuffix:@"Icon"]) {
+            
+            self.otherHeaderImage = [UIImage imageWithData:data];
+            [self.tableView reloadData];
+            
+        }else{
+            
+            [self playSoundEffect:@"5097.mp3"];
+            ChatItem * chatItem = [[ChatItem alloc] init];
+            chatItem.isSelf = NO;
+            chatItem.states = picStates;
+            chatItem.content = name;
+            chatItem.picImage = [UIImage imageWithData:data];
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
+            [strongSelf.datasource addObject:chatItem];
+            [strongSelf insertTheTableToButtom];
+
+        }
         
-        [self playSoundEffect:@"5097.mp3"];
-        ChatItem * chatItem = [[ChatItem alloc] init];
-        chatItem.isSelf = NO;
-        chatItem.states = picStates;
-        chatItem.content = name;
-        chatItem.picImage = [UIImage imageWithData:data];
-        [strongSelf.datasource addObject:chatItem];
-        [strongSelf insertTheTableToButtom];
         
     }];
     
@@ -876,7 +1045,11 @@
         chatItem.isSelf = YES;
         chatItem.states = videoStates;
         chatItem.data = data;
-        
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
         [self.datasource addObject:chatItem];
         [self insertTheTableToButtom];
         
@@ -893,7 +1066,11 @@
         chatItem.isSelf = NO;
         chatItem.states = videoStates;
         chatItem.data = self.streamData;
-        
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
         [self.datasource addObject:chatItem];
         [self insertTheTableToButtom];
         
@@ -1003,12 +1180,12 @@
     //设置录音格式
     [dicM setObject:@(kAudioFormatLinearPCM) forKey:AVFormatIDKey];
     //设置录音采样率，8000是电话采样率，对于一般录音已经够了
-//    [dicM setObject:@(8000) forKey:AVSampleRateKey];
-    [dicM setObject:@(44100) forKey:AVSampleRateKey];
+    [dicM setObject:@(8000) forKey:AVSampleRateKey];
+//    [dicM setObject:@(44100) forKey:AVSampleRateKey];
     //设置通道,这里采用单声道
     [dicM setObject:@(1) forKey:AVNumberOfChannelsKey];
     //每个采样点位数,分为8、16、24、32
-    [dicM setObject:@(16) forKey:AVLinearPCMBitDepthKey];
+    [dicM setObject:@(8) forKey:AVLinearPCMBitDepthKey];
     //是否使用浮点数采样
     [dicM setObject:@(YES) forKey:AVLinearPCMIsFloatKey];
     //....其他设置等

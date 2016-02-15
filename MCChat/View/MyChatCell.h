@@ -16,8 +16,8 @@ typedef void(^VoiceBlock)( NSURL * _Nonnull url, NSData * _Nullable data,UIImage
     
 }
 @property (nonatomic,strong,readonly,nullable)UILabel *timeLabel;
-@property (nonatomic,strong,readonly,nullable)UIImageView *leftHeaderView;
-@property (nonatomic,strong,readonly,nullable)UIImageView *rightHeaderView;
+@property (nonatomic,strong,readonly,nullable)ZoomImageView *leftHeaderView;
+@property (nonatomic,strong,readonly,nullable)ZoomImageView *rightHeaderView;
 @property (nonatomic,strong,readonly,nullable)UIImageView *leftBgView;
 @property (nonatomic,strong,readonly,nullable)UIImageView *rightBgView;
 @property (nonatomic,strong,readonly,nullable)WPHotspotLabel *leftChatLabel;

@@ -28,6 +28,8 @@ typedef enum{
 
 @property(nonatomic, strong)NSData * data;
 
+@property (nonatomic,copy)NSString *timeStr;
+
 @property (nonatomic,strong)UIImage *header;
 @property (nonatomic,assign)CGFloat cellHeight;
 @property (nonatomic,assign)CGFloat textHeight;
