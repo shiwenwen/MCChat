@@ -14,6 +14,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MyChatCell.h"
 #import "CustomAlertView.h"
+#import "WeiboFacePanelView.h"
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
 #define ChatHeight 49.0
@@ -21,7 +22,7 @@
 #define kRecordAudioFile @"myRecord.caf"
 #import "RecordingView.h"
 #import "SettingViewController.h"
-@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>{
+@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate>{
     
     float _sendBackViewHeight;
     float _keyboardHeight;
@@ -35,6 +36,7 @@
     BOOL _recordCancel;
     UIImageView *_currentVoiceView;
     MCPeerID *_curretConnect;
+    BOOL _showFacePanel;
 }
 
 @property (nonatomic,strong)UIImage *otherHeaderImage;
@@ -55,6 +57,7 @@
 @property (strong,nonatomic) UIButton *voiceButton;
 @property (strong,nonatomic) UIButton *recorderButton;
 @property (nonatomic,strong)RecordingView *recordingView;
+@property (nonatomic,strong)WeiboFacePanelView *facePanelView;
 // 语音播放
 @property (nonatomic,strong) AVAudioRecorder *audioRecorder;//音频录音机
 //音频播放器，用于播放录音文件
@@ -79,13 +82,20 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.sendBackView.hidden = NO;
+    [UIView animateWithDuration:.25 animations:^{
+        self.sendBackView.hidden = NO;
+        self.facePanelView.hidden = NO;
+    }];
+
+    
+    
       [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];   
 }
 - (void)viewWillDisappear:(BOOL)animated{
     
     [super viewWillDisappear:animated];
     self.sendBackView.hidden = YES;
+    
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -224,6 +234,9 @@
     [self.navigationController pushViewController:setting animated:YES];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeBackground) name:@"changeBg" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
+    if (_showFacePanel) {
+        self.facePanelView.hidden = YES;
+    }
     
 }
 #pragma mark -- 更换头像
@@ -338,8 +351,17 @@
      _emotionButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _emotionButton.frame = CGRectMake(_addButton.left - TextDefaultheight - 5, 5, TextDefaultheight, TextDefaultheight);
     [_emotionButton setImage:[UIImage imageNamed:@"ToolViewEmotion"] forState:UIControlStateNormal];
-//    [addButton addTarget:self action:@selector() forControlEvents:UIControlEventTouchUpInside];
+    [_emotionButton setImage:[UIImage imageNamed:@"ToolViewKeyboard"] forState:UIControlStateSelected];
+    [_emotionButton addTarget:self action:@selector(clickEmotion:) forControlEvents:UIControlEventTouchUpInside];
     [self.sendBackView addSubview:_emotionButton];
+    
+    
+    //表情面板
+    self.facePanelView = [[WeiboFacePanelView alloc]initWithFrame:CGRectMake(0,KScreenHeight, 0, 0)];
+    self.facePanelView.faceView.delegate = self;
+    [self.tabBarController.view addSubview:self.facePanelView];
+    
+    
     
     self.tabVC.tabBar.translucent = YES;
     self.navigationController.navigationBar.translucent = YES;
@@ -350,6 +372,7 @@
 - (void)MakerecordingView{
     if (!self.recordingView) {
         self.recordingView = [[RecordingView alloc]init];
+        
     }
 
     self.recordingView.sliderCancel = NO;
@@ -390,6 +413,61 @@
     
     
 }
+#pragma mark -- 切换表情键盘
+
+- (void)clickEmotion:(UIButton *)sender{
+    
+    sender.selected = !sender.isSelected;
+    
+    if (sender.isSelected) {
+        _showFacePanel = YES;
+        
+        if ([self.sendTextView isFirstResponder]) {
+        [self.sendTextView resignFirstResponder];
+            
+        }else{
+            [UIView animateWithDuration:.25 animations:^{
+                
+                
+                    _keyboardHeight = self.facePanelView.height;
+                    self.facePanelView.bottom = KScreenHeight;
+                
+                float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+                
+                
+                self.sendTextView.height = textHeight;
+                
+                self.voiceButton.bottom = self.sendTextView.bottom;
+                _addButton.bottom = self.sendTextView.bottom;
+                _emotionButton.bottom = self.sendTextView.bottom;
+                self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+                
+                
+                self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+                
+                if (self.datasource.count >= 1) {
+                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+                }
+ 
+            }];
+            
+            
+            
+        }
+
+        
+        
+
+    }else{
+        _showFacePanel = NO;
+        [self.sendTextView becomeFirstResponder];
+
+    }
+    
+    
+    
+}
+
 #pragma mark -- 视图随键盘调整
 - (void)fitKeyboardSize:(NSNotification *)notification{
     
@@ -430,6 +508,10 @@
 //            
 //            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
 //
+            if (_showFacePanel == YES) {
+                _keyboardHeight = self.facePanelView.height;
+                self.facePanelView.bottom = KScreenHeight;
+            }
             
             float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
             
@@ -451,6 +533,12 @@
             
             
         }else{
+            
+            if (!_showFacePanel) {
+                
+                self.facePanelView.top = KScreenHeight;
+            }
+            
             if (self.sendTextView.text.length > 0) {
                 
                 float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
@@ -655,12 +743,12 @@
 #pragma mark 普通数据的传输
 - (void)sendWeNeedNews
 {
-    if(!self.sessionManager.isConnected)
-    {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-                [alertView show];
-                return;
-    }
+//    if(!self.sessionManager.isConnected)
+//    {
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+//                [alertView show];
+//                return;
+//    }
     if([self.sendTextView.text isEqualToString:@""])
     {
         return;
@@ -733,23 +821,21 @@
 }
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     
-   
+    _emotionButton.selected = NO;
+    _showFacePanel = NO;
+    
+
     
     return YES;
+    
+    
 }
-- (void)textViewDidChange:(UITextView *)textView
-{
-    
-    
-    if (self.sendBackView.height > 90) {
-        return;
-    }
-    
-   
-    
+- (void)textViewDidBeginEditing:(UITextView *)textView{
     [UIView animateWithDuration:.25 animations:^{
-        float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
-        
+        float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+        if (textHeight > 90) {
+            textHeight = 90;
+        }
         
         self.sendTextView.height = textHeight;
         
@@ -760,6 +846,36 @@
         
         
         self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        [self.sendTextView scrollRangeToVisible:self.sendTextView.selectedRange];
+    }];
+    
+    if (self.datasource.count >= 1) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
+
+    
+}
+- (void)textViewDidChange:(UITextView *)textView
+{
+    
+
+    
+    [UIView animateWithDuration:.25 animations:^{
+        float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
+        if (textHeight > 90) {
+            textHeight = 90;
+        }
+        
+        self.sendTextView.height = textHeight;
+        
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+        
+        
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        [self.sendTextView scrollRangeToVisible:self.sendTextView.selectedRange];
     }];
     
     if (self.datasource.count >= 1) {
@@ -767,6 +883,68 @@
     }
     
     
+}
+- (void)textViewDidEndEditing:(UITextView *)textView{
+    [UIView animateWithDuration:.25 animations:^{
+        float textHeight = [self heightForString:textView.text fontSize:17 andWidth:textView.frame.size.width];
+        if (textHeight > 90) {
+            textHeight = 90;
+        }
+        
+        self.sendTextView.height = textHeight;
+        
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+        
+        
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        [self.sendTextView scrollRangeToVisible:self.sendTextView.selectedRange];
+    }];
+    
+    if (self.datasource.count >= 1) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
+    
+
+    
+    
+    
+    
+}
+#pragma mark -- 表情面板代理
+- (void)choseFace:(NSString *)faceString{
+    
+    NSRange selectedRange = [self.sendTextView selectedRange];
+    
+    NSMutableString *str = [NSMutableString stringWithString:self.sendTextView.text];
+    
+    [str replaceCharactersInRange:selectedRange withString:faceString];
+    self.sendTextView.text = str;
+    self.sendTextView.selectedRange = NSMakeRange(selectedRange.location + str.length,0);
+    [UIView animateWithDuration:.25 animations:^{
+        float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+        if (textHeight > 90) {
+            textHeight = 90;
+        }
+        
+        self.sendTextView.height = textHeight;
+        
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+        
+        
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+        [self.sendTextView scrollRangeToVisible:self.sendTextView.selectedRange];
+    }];
+    
+    if (self.datasource.count >= 1) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
+   
 }
 
 - (float) heightForString:(NSString *)value fontSize:(float)fontSize andWidth:(float)width
@@ -789,7 +967,7 @@
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
     
     // 滑动到底部  第二个参数是滑动到底部
-    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 #pragma mark tableView 代理
@@ -914,15 +1092,18 @@
     // 收到正常数据的返回
     [self.sessionManager receiveDataOnMainQueue:YES block:^(NSData *data, MCPeerID *peer) {
         
+        
         __strong typeof (weakSelf) strongSelf = weakSelf;
         
         NSString *string = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        NSString *name = peer.displayName;
         
         [self playSoundEffect:@"5097.mp3"];
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
         chatItem.states = textStates;
         chatItem.content = string;
+        chatItem.displayName = name;
         NSDate *date = [NSDate date];
         NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
         [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
@@ -952,6 +1133,7 @@
             [self playSoundEffect:@"5097.mp3"];
             ChatItem * chatItem = [[ChatItem alloc] init];
             chatItem.isSelf = NO;
+            chatItem.displayName = peer.displayName;
             chatItem.states = picStates;
             chatItem.content = name;
             chatItem.picImage = [UIImage imageWithData:data];
@@ -1064,6 +1246,7 @@
         [self playSoundEffect:@"5097.mp3"];
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = NO;
+        chatItem.displayName = _curretConnect.displayName;
         chatItem.states = videoStates;
         chatItem.data = self.streamData;
         NSDate *date = [NSDate date];
