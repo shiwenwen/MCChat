@@ -317,7 +317,8 @@
     
     //存放所有图片的索引位置
     NSMutableArray *ranges = [NSMutableArray array];
-    for (NSString *imageUrl in [self imagesOfRegexStrArray]) {
+    NSArray *imageUrls = [self imagesOfRegexStrArray];
+    for (NSString *imageUrl in imageUrls) {
         NSArray *imageUrls = [imageUrl componentsSeparatedByString:@"'"];
         NSString *imgName = imageUrls[1];
         if (imgName.length == 0) {

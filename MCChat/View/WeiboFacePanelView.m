@@ -29,6 +29,7 @@
     _faceView = [[WeiboFaceView alloc]initWithFrame:CGRectZero];
     _faceView.backgroundColor = [UIColor clearColor];
     _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, _faceView.height)];
+    
     _scrollView.backgroundColor = [UIColor clearColor];
     _scrollView.pagingEnabled = YES;
     _scrollView.clipsToBounds = NO;
@@ -62,5 +63,11 @@
     _pageCtrl.currentPage = scrollView.contentOffset.x / KScreenWidth;
     
 }
-
+- (void)showSendWithTarget:(id)target Action:(SEL)sel{
+    
+    UIButton *send = [[UIButton alloc]initWithFrame:CGRectMake(self.width - 60, self.height - 30, 60, 30)];
+    [self addSubview:send];
+    [send setTitle:@"发送" forState:UIControlStateNormal];
+    [send addTarget:target action:sel forControlEvents:UIControlEventTouchUpInside];
+}
 @end

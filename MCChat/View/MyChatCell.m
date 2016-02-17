@@ -114,8 +114,9 @@
             self.postVoiceView.hidden = YES;
             self.rightChatLabel.text = _model.content;
             self.rightChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
-
+      
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.textWidth - 40,self.rightHeaderView.top, _model.textWidth + 30,_model.textHeight + 25);
+
             if (_tap) {
                 [self.rightBgView removeGestureRecognizer:_tap];
             }
@@ -265,8 +266,11 @@
     if (!_rightChatLabel) {
         
         _rightChatLabel = [[WXLabel alloc]initWithFrame:CGRectZero];
-        _rightChatLabel.font = [UIFont systemFontOfSize:16];
+        _rightChatLabel.font = [UIFont systemFontOfSize:17];
         _rightChatLabel.numberOfLines = 0;
+//        _rightChatLabel.textHeight = 16;
+        _rightChatLabel.linespace = 5;
+        _rightChatLabel.lineBreakMode = NSLineBreakByCharWrapping;
         _rightChatLabel.wxLabelDelegate = self;
         [_rightBgView addSubview:_rightChatLabel];
         
@@ -311,7 +315,10 @@
         
         _leftChatLabel = [[WXLabel alloc]initWithFrame:CGRectZero];
         _leftChatLabel.wxLabelDelegate = self;
-        _leftChatLabel.font = [UIFont systemFontOfSize:16];
+        _leftChatLabel.font = [UIFont systemFontOfSize:17];
+//        _leftChatLabel.textHeight = 16;
+        _leftChatLabel.linespace = 5;
+        _leftChatLabel.lineBreakMode = NSLineBreakByCharWrapping;
         _leftChatLabel.numberOfLines = 0;
         [_leftBgView addSubview:_leftChatLabel];
         
@@ -389,13 +396,14 @@
 //检索文本的正则表达式的字符串
 - (NSString *)contentsOfRegexStringWithWXLabel:(WXLabel *)wxLabel{
     
-    NSString *regexStr1 = @"(http://([a-zA-Z0-9_.-]+(/)?)+)";
-    NSString *regexStr2 = @"(@[\\w.-]{2,30})";
-    NSString *regexStr3 = @"(#[^#]+#)";
-    
-    NSString *regexStr = [NSString stringWithFormat:@"%@|%@|%@",regexStr1,regexStr2,regexStr3];
-    
-    return regexStr;
+//    NSString *regexStr1 = @"(http://([a-zA-Z0-9_.-]+(/)?)+)";
+//    NSString *regexStr2 = @"(@[\\w.-]{2,30})";
+//    NSString *regexStr3 = @"(#[^#]+#)";
+//    
+//    NSString *regexStr = [NSString stringWithFormat:@"%@|%@|%@",regexStr1,regexStr2,regexStr3];
+//    
+//    return regexStr;
+    return @"^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$";
 }
 //设置当前链接文本的颜色
 - (UIColor *)linkColorWithWXLabel:(WXLabel *)wxLabel{
@@ -411,10 +419,36 @@
 
 //手指离开当前超链接文本响应的协议方法
 - (void)toucheEndWXLabel:(WXLabel *)wxLabel withContext:(NSString *)context{
+//    if ([[UIDevice currentDevice].systemVersion floatValue] > 9.0) {
+//        SFSafariViewController *safarViewCtrl = [[SFSafariViewController alloc]initWithURL:[NSURL URLWithString:context]];
+//        [self.viewController presentViewController:safarViewCtrl animated:YES completion:^{
+//            [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+//        }];
+//        
+//    }else{
+//        
+//        WebViewController *webVC = [[WebViewController alloc]init];
+//        webVC.httpUrl = context;
+//        
+//        [self.viewController presentViewController:[[UINavigationController alloc]initWithRootViewController:webVC] animated:YES completion:^{
+//            
+//            [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+//            
+//        }];
+//        
+//    }
+
     
+}
+//手指接触当前超链接文本响应的协议方法
+- (void)toucheBenginWXLabel:(WXLabel *)wxLabel withContext:(NSString *)context{
+   
     if ([[UIDevice currentDevice].systemVersion floatValue] > 9.0) {
         SFSafariViewController *safarViewCtrl = [[SFSafariViewController alloc]initWithURL:[NSURL URLWithString:context]];
-        [self.viewController presentViewController:safarViewCtrl animated:YES completion:NULL];
+        [self.viewController presentViewController:safarViewCtrl animated:YES completion:^{
+            [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+        }];
+        
     }else{
         
         WebViewController *webVC = [[WebViewController alloc]init];
@@ -422,15 +456,13 @@
         
         [self.viewController presentViewController:[[UINavigationController alloc]initWithRootViewController:webVC] animated:YES completion:^{
             
+            [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+            
         }];
         
     }
-    
-}
-//手指接触当前超链接文本响应的协议方法
-- (void)toucheBenginWXLabel:(WXLabel *)wxLabel withContext:(NSString *)context{
-    
-    
+
+
     
 }
 @end

@@ -19,7 +19,7 @@
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    _webView  = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0,KScreenWidth, KScreenHeight-64)];
+    _webView  = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0,KScreenWidth, KScreenHeight)];
     _webView.delegate = self;
     
     if (self.data) {
@@ -45,7 +45,7 @@
     _webView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_webView];
 
-
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"关闭" style:UIBarButtonItemStylePlain target:self action:@selector(goBack)];
     
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView
@@ -54,11 +54,10 @@
 }
 - (void)goBack{
     
-    if (self.isFromQr) {
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    }else{
-        [self.navigationController popViewControllerAnimated:YES];
-    }
+
+[self.navigationController dismissViewControllerAnimated:YES completion:^{
+    
+}];
     
 }
 - (void)viewWillAppear:(BOOL)animated

@@ -180,7 +180,36 @@
     
     [self.view endEditing:YES];
     [self.tabVC.view endEditing:YES];
-    
+    if (_showFacePanel) {
+
+        [UIView animateWithDuration:.25 animations:^{
+            _keyboardHeight = 0;
+            self.facePanelView.top = KScreenHeight;
+            
+            
+            float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+            
+            
+            self.sendTextView.height = textHeight;
+            
+            self.voiceButton.bottom = self.sendTextView.bottom;
+            _addButton.bottom = self.sendTextView.bottom;
+            _emotionButton.bottom = self.sendTextView.bottom;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+            
+            
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+            
+            if (self.datasource.count >= 1) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+            _emotionButton.selected = NO;
+        }];
+        
+        
+
+        
+    }
 }
 #pragma mark -- 准备UI
 - (void)readyUI
@@ -360,7 +389,7 @@
     self.facePanelView = [[WeiboFacePanelView alloc]initWithFrame:CGRectMake(0,KScreenHeight, 0, 0)];
     self.facePanelView.faceView.delegate = self;
     [self.tabBarController.view addSubview:self.facePanelView];
-    
+    [self.facePanelView showSendWithTarget:self Action:@selector(sendFace)];
     
     
     self.tabVC.tabBar.translucent = YES;
@@ -468,6 +497,22 @@
     
 }
 
+- (void)sendFace{
+    [UIView animateWithDuration:.25 animations:^{
+        self.sendTextView.height = TextDefaultheight;
+        self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight - _keyboardHeight, WIDTH, ChatHeight);
+        self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + ChatHeight);
+        self.voiceButton.bottom = self.sendTextView.bottom;
+        _addButton.bottom = self.sendTextView.bottom;
+        _emotionButton.bottom = self.sendTextView.bottom;
+        
+        [self sendWeNeedNews];
+        
+    }];
+    
+    
+    
+}
 #pragma mark -- 视图随键盘调整
 - (void)fitKeyboardSize:(NSNotification *)notification{
     
@@ -743,12 +788,12 @@
 #pragma mark 普通数据的传输
 - (void)sendWeNeedNews
 {
-//    if(!self.sessionManager.isConnected)
-//    {
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-//                [alertView show];
-//                return;
-//    }
+    if(!self.sessionManager.isConnected)
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                [alertView show];
+                return;
+    }
     if([self.sendTextView.text isEqualToString:@""])
     {
         return;
@@ -1078,7 +1123,7 @@
                 
                 
             }else{
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"已经连接" message:[NSString stringWithFormat:@"现在连接 %@了！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:[NSString stringWithFormat:@"已连接 %@！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
                 
                 _curretConnect = peer;
                 

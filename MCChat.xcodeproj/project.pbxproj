@@ -60,6 +60,7 @@
 		2B71EFC51C71BE110082BAE3 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EFB21C71BE110082BAE3 /* UIProgressView+AFNetworking.m */; };
 		2B71EFC61C71BE110082BAE3 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EFB41C71BE110082BAE3 /* UIRefreshControl+AFNetworking.m */; };
 		2B71EFC71C71BE110082BAE3 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EFB61C71BE110082BAE3 /* UIWebView+AFNetworking.m */; };
+		2B78F5D41C74262A0003C9E8 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B78F5D31C74262A0003C9E8 /* ImageIO.framework */; };
 		2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D6551C473AF50073171C /* MyChatCell.m */; };
 		2B92D65B1C473AF50073171C /* MyChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B92D6561C473AF50073171C /* MyChatCell.xib */; };
 		2B92D6631C473B420073171C /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D65F1C473B420073171C /* HomeViewController.m */; };
@@ -512,6 +513,7 @@
 		2B71EFB41C71BE110082BAE3 /* UIRefreshControl+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIRefreshControl+AFNetworking.m"; sourceTree = "<group>"; };
 		2B71EFB51C71BE110082BAE3 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		2B71EFB61C71BE110082BAE3 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
+		2B78F5D31C74262A0003C9E8 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		2B92D6541C473AF50073171C /* MyChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyChatCell.h; sourceTree = "<group>"; };
 		2B92D6551C473AF50073171C /* MyChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyChatCell.m; sourceTree = "<group>"; };
 		2B92D6561C473AF50073171C /* MyChatCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyChatCell.xib; sourceTree = "<group>"; };
@@ -899,6 +901,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B78F5D41C74262A0003C9E8 /* ImageIO.framework in Frameworks */,
 				2BC9D5241C72DE37005F3954 /* libicucore.tbd in Frameworks */,
 				2BC9D5221C72DE2E005F3954 /* CoreText.framework in Frameworks */,
 				2B5A73FB1C7024CB002AEDB3 /* MobileCoreServices.framework in Frameworks */,
@@ -1471,6 +1474,7 @@
 		2BFAA1261C3FADD700E8D032 = {
 			isa = PBXGroup;
 			children = (
+				2B78F5D31C74262A0003C9E8 /* ImageIO.framework */,
 				2BC9D5231C72DE37005F3954 /* libicucore.tbd */,
 				2BC9D5211C72DE2E005F3954 /* CoreText.framework */,
 				2B5A73FA1C7024CB002AEDB3 /* MobileCoreServices.framework */,

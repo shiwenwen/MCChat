@@ -18,6 +18,11 @@
 
 }
 @property (nonatomic,strong)WeiboFaceView *faceView;
-
+/**
+ *  发送按钮
+ *
+ *  @param sel 发送按钮执行的方法
+ */
+- (void)showSendWithTarget:(id)target Action:(SEL)sel;
 @end
 
