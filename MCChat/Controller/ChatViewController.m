@@ -15,6 +15,7 @@
 #import "MyChatCell.h"
 #import "CustomAlertView.h"
 #import "WeiboFacePanelView.h"
+#import "MainTabBarViewController.h"
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
 #define ChatHeight 49.0
@@ -431,7 +432,32 @@
             self.voiceButton.bottom = self.recorderButton.bottom;
             
         }];
-        
+        if (_showFacePanel) {
+            [UIView animateWithDuration:.25 animations:^{
+                _keyboardHeight = 0;
+                self.facePanelView.top = KScreenHeight;
+                
+                
+                float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+                
+                
+                self.sendTextView.height = textHeight;
+                
+                self.voiceButton.bottom = self.sendTextView.bottom;
+                _addButton.bottom = self.sendTextView.bottom;
+                _emotionButton.bottom = self.sendTextView.bottom;
+                self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+                
+                
+                self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+                
+                if (self.datasource.count >= 1) {
+                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+                }
+                _emotionButton.selected = NO;
+            }];
+
+        }
     }else{
         //显示输入框
         self.recorderButton.hidden = YES;
@@ -1159,6 +1185,10 @@
         
         [strongSelf insertTheTableToButtom];
         
+        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",name,string]];
+        }
+
         
     }];
     
@@ -1189,6 +1219,9 @@
             chatItem.timeStr = dateStr;
             [strongSelf.datasource addObject:chatItem];
             [strongSelf insertTheTableToButtom];
+            if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+                [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一张图片"]];
+            }
 
         }
         
@@ -1301,7 +1334,9 @@
         chatItem.timeStr = dateStr;
         [self.datasource addObject:chatItem];
         [self insertTheTableToButtom];
-        
+        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
+        }
         [aStream close];
         [aStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
         if([aStream isKindOfClass:[NSInputStream class]])
@@ -1665,6 +1700,59 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     }
 }
+
+// 设置本地通知
+- (void)registerLocalNotification:(NSInteger)alertTime message:(NSString *)content{
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    // 设置触发通知的时间
+    NSDate *fireDate = [NSDate dateWithTimeIntervalSinceNow:alertTime];
+    NSLog(@"fireDate=%@",fireDate);
+    
+    notification.fireDate = fireDate;
+    // 时区
+    notification.timeZone = [NSTimeZone defaultTimeZone];
+    // 设置重复的间隔
+//    notification.repeatInterval = kCFCalendarUnitSecond;
+    
+    // 通知内容
+    notification.alertBody =  content;
+    notification.alertAction = @"滑动来查看";
+    notification.applicationIconBadgeNumber  = [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
+    // 通知被触发时播放的声音
+    notification.soundName = @"5097.mp3"; //UILocalNotificationDefaultSoundName;
+    // 通知参数
+    NSDictionary *userDict = [NSDictionary dictionaryWithObject:content forKey:@"key"];
+    notification.userInfo = userDict;
+    
+
+    if ([UIDevice currentDevice].systemVersion.doubleValue >= 8.0) {
+            //
+        notification.alertTitle = @"新消息";
+    }
+        // 执行通知注册
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+}
+
+// 取消某个本地推送通知
++ (void)cancelLocalNotificationWithKey:(NSString *)key {
+    // 获取所有本地通知数组
+    NSArray *localNotifications = [UIApplication sharedApplication].scheduledLocalNotifications;
+    
+    for (UILocalNotification *notification in localNotifications) {
+        NSDictionary *userInfo = notification.userInfo;
+        if (userInfo) {
+            // 根据设置通知参数时指定的key来获取通知参数
+            NSString *info = userInfo[key];
+            
+            // 如果找到需要取消的通知，则取消
+            if (info != nil) {
+                [[UIApplication sharedApplication] cancelLocalNotification:notification];
+                break;
+            }
+        }
+    }
+}
+
 
 
 /*

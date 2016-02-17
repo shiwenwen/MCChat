@@ -7,7 +7,7 @@
 //
 
 #import "MainTabBarViewController.h"
-#import "ChatViewController.h"
+
 @interface MainTabBarViewController ()
 
 @end
@@ -25,6 +25,7 @@
     
     ChatViewController *chat = [[ChatViewController alloc]init];
     chat.tabVC = self;
+    self.chatVC = chat;
     UINavigationController *naviC = [[UINavigationController alloc]initWithRootViewController:chat];
     
     self.viewControllers = @[naviC];

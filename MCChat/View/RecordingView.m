@@ -8,7 +8,7 @@
 
 #import "RecordingView.h"
 #define bgSize 150 * proportation
-#define VolumeLevelBase 4
+#define VolumeLevelBase 2
 @implementation RecordingView
 
 - (instancetype)init
@@ -88,6 +88,9 @@
 -(void)setVolume:(float)volume{
     
     NSInteger level = (volume + 160) / 160 * 8 - VolumeLevelBase;
+    if (level < 0) {
+        level = 0;
+    }
     NSLog(@"%ld",(long)level);
     self.recordingAnimationView.image = self.images[level];
     

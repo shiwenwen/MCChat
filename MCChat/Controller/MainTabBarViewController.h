@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "ChatViewController.h"
 @interface MainTabBarViewController : UITabBarController
-
+@property (nonatomic,weak)ChatViewController *chatVC;
 @end

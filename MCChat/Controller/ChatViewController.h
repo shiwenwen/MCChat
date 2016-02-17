@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MainTabBarViewController.h"
+@class  MainTabBarViewController;
 @interface ChatViewController : UIViewController
 @property (nonatomic,strong)MainTabBarViewController *tabVC;
 - (void)makeBlueData;
++ (void)cancelLocalNotificationWithKey:(NSString *)key;
 @end
