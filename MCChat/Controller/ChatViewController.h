@@ -12,4 +12,5 @@
 @property (nonatomic,strong)MainTabBarViewController *tabVC;
 - (void)makeBlueData;
 + (void)cancelLocalNotificationWithKey:(NSString *)key;
+- (void)sendWeNeedNews:(NSString *)content;
 @end

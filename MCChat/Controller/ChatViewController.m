@@ -532,7 +532,7 @@
         _addButton.bottom = self.sendTextView.bottom;
         _emotionButton.bottom = self.sendTextView.bottom;
         
-        [self sendWeNeedNews];
+        [self sendWeNeedNews:nil];
         
     }];
     
@@ -812,7 +812,7 @@
 
 
 #pragma mark 普通数据的传输
-- (void)sendWeNeedNews
+- (void)sendWeNeedNews:(NSString *)content
 {
     if(!self.sessionManager.isConnected)
     {
@@ -820,7 +820,7 @@
                 [alertView show];
                 return;
     }
-    if([self.sendTextView.text isEqualToString:@""])
+    if([self.sendTextView.text isEqualToString:@""]&& content.length < 1)
     {
         return;
     }
@@ -829,7 +829,13 @@
     ChatItem * chatItem = [[ChatItem alloc] init];
     chatItem.isSelf = YES;
     chatItem.states = textStates;
-    chatItem.content = self.sendTextView.text;
+    if (content) {
+        chatItem.content = content;
+    }else{
+        chatItem.content = self.sendTextView.text;
+    }
+    
+    
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
     [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
@@ -842,7 +848,7 @@
     // 添加行   indexPath描述位置的具体信息
     [self insertTheTableToButtom];
     
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.sendTextView.text];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:content?content:self.sendTextView.text];
     NSError *error = [self.sessionManager sendDataToAllPeers:data];
     if(!error) {
         //there was no error.
@@ -876,7 +882,7 @@
             _addButton.bottom = self.sendTextView.bottom;
             _emotionButton.bottom = self.sendTextView.bottom;
             
-            [self sendWeNeedNews];
+            [self sendWeNeedNews:nil];
             
         }];
         
@@ -1701,6 +1707,7 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
     }
 }
 
+#pragma mark -- 通知
 // 设置本地通知
 - (void)registerLocalNotification:(NSInteger)alertTime message:(NSString *)content{
     UILocalNotification *notification = [[UILocalNotification alloc] init];
@@ -1716,7 +1723,7 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
     
     // 通知内容
     notification.alertBody =  content;
-    notification.alertAction = @"滑动来查看";
+//    notification.alertAction = @"滑动来查看";
     notification.applicationIconBadgeNumber  = [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
     // 通知被触发时播放的声音
     notification.soundName = @"5097.mp3"; //UILocalNotificationDefaultSoundName;
@@ -1728,6 +1735,7 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
     if ([UIDevice currentDevice].systemVersion.doubleValue >= 8.0) {
             //
         notification.alertTitle = @"新消息";
+        notification.category = @"myCategory";
     }
         // 执行通知注册
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
