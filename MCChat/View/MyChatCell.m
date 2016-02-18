@@ -112,6 +112,8 @@
             self.rightChatLabel.hidden = NO;
             self.postImageView.hidden = YES;
             self.postVoiceView.hidden = YES;
+            self.rightTimeSecondLabel.hidden = YES;
+
             self.rightChatLabel.text = _model.content;
             self.rightChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
       
@@ -128,6 +130,7 @@
             self.rightChatLabel.hidden = YES;
             self.postImageView.hidden = NO;
             self.postVoiceView.hidden = YES;
+            self.rightTimeSecondLabel.hidden = YES;
             self.postImageView.image = _model.picImage;
             self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
 
@@ -141,14 +144,22 @@
             self.rightChatLabel.hidden = YES;
             self.postImageView.hidden = YES;
             self.postVoiceView.hidden = NO;
+            self.rightTimeSecondLabel.hidden = NO;
+
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - 100*proportation,self.rightHeaderView.top, 90 * proportation,55);
             self.postVoiceView.frame = CGRectMake(self.rightBgView.width - 40,12 , 20, 20);
             if (!_tap) {
                _tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoiceClick:)];
             }
             
+       
             
+            if (self.rightTimeSecondLabel.left == 0) {
+                self.rightTimeSecondLabel.frame = CGRectMake(self.rightBgView.left - 80, self.rightBgView.top + 15, 70, 30);
+            }
             
+
+           
             [self.rightBgView addGestureRecognizer:_tap];
             //生产16位随机音频文件名
             NSString *dataName = [NSString stringWithFormat:@"%@.caf",[Tools randomStringWithBit:16]];
@@ -188,7 +199,7 @@
             self.leftChatLabel.hidden = NO;
             self.getImageView.hidden = YES;
             self.getImageView.hidden = YES;
-            
+            self.leftTimeSecondLabel.hidden = YES;
             self.leftChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
             self.leftChatLabel.text = _model.content;
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.NickNameLabel.bottom, _model.textWidth + 30,_model.textHeight + 25);
@@ -204,6 +215,7 @@
             self.getImageView.hidden = NO;
             self.getVoiceView.hidden = YES;
             self.getImageView.image = _model.picImage;
+            self.leftTimeSecondLabel.hidden = YES;
             self.getImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
             
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.NickNameLabel.bottom, _model.imageWidth + 20,_model.imageHight + 20);
@@ -220,9 +232,17 @@
             self.leftChatLabel.hidden = YES;
             self.getImageView.hidden = YES;
             self.getVoiceView.hidden = NO;
+            self.leftTimeSecondLabel.hidden = NO;
             self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.NickNameLabel.bottom, 90 * proportation,55);
             self.getVoiceView.frame = CGRectMake(20,12, 20, 20);
 //            self.getVoiceView.backgroundColor = [UIColor redColor];
+            if (self.leftTimeSecondLabel.left == 0) {
+               self.leftTimeSecondLabel.frame = CGRectMake(self.leftBgView.right + 10, self.leftBgView.top+10, 70, 35);
+            }
+            if (self.leftCorner.left == 0) {
+                self.leftCorner.frame = CGRectMake(self.leftBgView.right + 10, self.leftBgView.top, 10, 10);
+            }
+            
             [self.leftBgView addGestureRecognizer:_tap];
             //生产16位随机音频文件名
             NSString *dataName = [NSString stringWithFormat:@"%@.caf",[Tools randomStringWithBit:16]];
@@ -260,6 +280,9 @@
 @synthesize leftChatLabel = _leftChatLabel;
 @synthesize getImageView = _getImageView;
 @synthesize getVoiceView = _getVoiceView;
+@synthesize leftTimeSecondLabel = _leftTimeSecondLabel;
+@synthesize rightTimeSecondLabel = _rightTimeSecondLabel;
+@synthesize leftCorner = _leftCorner;
 //----------------------------------------------------------
 - (WXLabel *)rightChatLabel{
     
@@ -308,6 +331,21 @@
     return _postVoiceView;
     
 }
+-(UILabel *)rightTimeSecondLabel{
+    
+    if (!_rightTimeSecondLabel) {
+        _rightTimeSecondLabel = [[UILabel alloc]initWithFrame:CGRectZero];
+        _rightTimeSecondLabel.font = [UIFont systemFontOfSize:15];
+        _rightTimeSecondLabel.textColor = [UIColor colorWithWhite:.2 alpha:1.000];
+        _rightTimeSecondLabel.textAlignment = NSTextAlignmentRight;
+        [self.contentView addSubview:_rightTimeSecondLabel];
+    }
+    
+    return _rightTimeSecondLabel;
+    
+}
+
+
 //-----------------------------------------------------------
 - (WXLabel *)leftChatLabel{
     
@@ -357,6 +395,35 @@
     return _getVoiceView;
     
 }
+-(UILabel *)leftTimeSecondLabel{
+    
+    if (!_leftTimeSecondLabel) {
+        _leftTimeSecondLabel = [[UILabel alloc]initWithFrame:CGRectZero];
+        _leftTimeSecondLabel.font = [UIFont systemFontOfSize:15];
+        _leftTimeSecondLabel.textColor = [UIColor colorWithWhite:0.2 alpha:1.000];
+        _leftTimeSecondLabel.textAlignment = NSTextAlignmentLeft;
+        [self.contentView addSubview:_leftTimeSecondLabel];
+    }
+    
+    return _leftTimeSecondLabel;
+    
+}
+
+-(UIImageView *)leftCorner{
+    if (!_leftCorner) {
+        
+        _leftCorner = [[UIImageView alloc]initWithFrame:CGRectZero];
+        [self.contentView addSubview:_leftCorner];
+        _leftCorner.layer.cornerRadius = 5;
+        _leftCorner.layer.masksToBounds = YES;
+        _leftCorner.backgroundColor = [UIColor redColor];
+    }
+    
+    
+    return _leftCorner;
+}
+//-------------------------------
+
 - (UILabel *)voiceTime{
     
     if (!_voiceTime) {
@@ -368,6 +435,8 @@
     
     return _voiceTime;
 }
+
+
 - (void)layoutSubviews{
     
     [super layoutSubviews];

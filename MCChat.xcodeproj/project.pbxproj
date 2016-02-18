@@ -1639,6 +1639,7 @@
 				TargetAttributes = {
 					2BFAA12E1C3FADD700E8D032 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = EKB67UZ2N9;
 					};
 					2BFAA1471C3FADD700E8D032 = {
 						CreatedOnToolsVersion = 7.2;
@@ -2217,6 +2218,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing Houzedai Investment Management Co.,Ltd.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Beijing Houzedai Investment Management Co.,Ltd.";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/MCChat/PCH.pch";
 				INFOPLIST_FILE = MCChat/Info.plist;
@@ -2224,6 +2227,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sww.MCChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "6bd740e2-69f1-4604-a759-df0dd6bd2420";
 			};
 			name = Debug;
 		};
@@ -2232,6 +2236,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing Houzedai Investment Management Co.,Ltd.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Beijing Houzedai Investment Management Co.,Ltd.";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/MCChat/PCH.pch";
 				INFOPLIST_FILE = MCChat/Info.plist;
@@ -2239,6 +2245,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sww.MCChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "6bd740e2-69f1-4604-a759-df0dd6bd2420";
 			};
 			name = Release;
 		};

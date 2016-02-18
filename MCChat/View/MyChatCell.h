@@ -27,6 +27,9 @@ typedef void(^VoiceBlock)( NSURL * _Nonnull url, NSData * _Nullable data,UIImage
 @property (nonatomic,strong,readonly,nullable)ZoomImageView *postImageView;
 @property (nonatomic,strong,readonly,nullable)UIImageView *getVoiceView;
 @property (nonatomic,strong,readonly,nullable)UIImageView *postVoiceView;
+@property (nonatomic,strong,nullable,readonly)UILabel *leftTimeSecondLabel;
+@property (nonatomic,strong,nullable,readonly)UILabel *rightTimeSecondLabel;
+@property (nonatomic,strong,readonly,nullable)UIImageView *leftCorner;
 @property (nonatomic,strong,nullable)UILabel *NickNameLabel;
 @property (nonatomic,strong,nullable)UILabel *voiceTime;
 @property (nonatomic,strong,nullable)ChatItem *model;

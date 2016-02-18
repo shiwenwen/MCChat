@@ -100,7 +100,7 @@
         action2.authenticationRequired = YES;
         //  2.1.4 按钮的性质(没有效果)
         action2.destructive = YES;
-        
+        action2.title = @"回复";
         //  3.创建用户通知分类
         UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory  alloc]  init];
         //  3.1 设置类别的唯一标识
@@ -126,7 +126,11 @@
         
     }
 
-    
+//    if (launchOptions[@"UIApplicationLaunchOptionsShortcutItemKey"] == nil) {
+//        return YES;
+//    } else {
+//        return NO;
+//    }
     
     return YES;
 }
