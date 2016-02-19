@@ -414,15 +414,22 @@
 #pragma mark -- 切换语音，文字
 - (void)clickVoiceButton:(UIButton *)sender{
     
+    
+    
     sender.selected = !sender.selected;
     if (sender.selected) {
-        
+        if (![self canRecord]) {
+            
+            [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@需要访问您的麦克风。\n请启用麦克风-设置/隐私/麦克风", @"MMChat"] viewController:nil];
+            return;
+        }
         
         
         //显示录音按钮
         self.recorderButton.hidden = NO;
         self.sendTextView.hidden = YES;
         [self.sendTextView resignFirstResponder];
+        
         
         [UIView animateWithDuration:.25 animations:^{
             self.tableView.frame = self.view.frame;
@@ -431,7 +438,11 @@
             _emotionButton.bottom = self.recorderButton.bottom;
             self.voiceButton.bottom = self.recorderButton.bottom;
             
+      
+            
+            
         }];
+        
         if (_showFacePanel) {
             [UIView animateWithDuration:.25 animations:^{
                 _keyboardHeight = 0;
@@ -468,6 +479,28 @@
     
     
 }
+///新增api,获取录音权限. 返回值,YES为无拒绝,NO为拒绝录音.
+
+- (BOOL)canRecord
+{
+    __block BOOL bCanRecord = YES;
+    if ([[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending)
+    {
+        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+        if ([audioSession respondsToSelector:@selector(requestRecordPermission:)]) {
+            [audioSession performSelector:@selector(requestRecordPermission:) withObject:^(BOOL granted) {
+                if (granted) {
+                    bCanRecord = YES;
+                } else {
+                    bCanRecord = NO;
+                }
+            }];
+        }
+    }
+    
+    return bCanRecord;
+}
+
 #pragma mark -- 切换表情键盘
 
 - (void)clickEmotion:(UIButton *)sender{
@@ -1302,7 +1335,7 @@
     [self.outputStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
     if(err || !self.outputStream) {
         NSLog(@"%@", err);
-        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"发送失败" viewController:nil];
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"发送失败，连接已断开" viewController:nil];
     }
     else
     {
