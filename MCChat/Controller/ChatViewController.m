@@ -1357,6 +1357,7 @@
         NSInteger length = [input read:buffer maxLength:1024];
         [self.streamData appendBytes:(const void *)buffer length:(NSUInteger)length];
         // 记住这边的数据陆陆续续的
+        
     }
     else if(eventCode == NSStreamEventHasSpaceAvailable)
     {

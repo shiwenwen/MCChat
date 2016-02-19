@@ -12,7 +12,7 @@
 #import "ChangeNickNameViewController.h"
 #import "ChatBackgroundChoseViewController.h"
 #import "MLImageCrop.h"
-@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate>
+@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate>
 @property (nonatomic,strong)UIImagePickerController *picker;
 @end
 
@@ -76,7 +76,7 @@
             number = 2;
             break;
         case 1:
-            number = 1;
+            number = 2;
             break;
         case 2:
             number = 1;
@@ -127,9 +127,15 @@
         cell.detailTextLabel.text = @"修改昵称";
     }
     if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"打开天线";
+            cell.detailTextLabel.text = @"让别人搜索到您的设备";
+        }else{
+            cell.textLabel.text = @"断开连接";
+            cell.detailTextLabel.text = @"断开连接将无法继续通讯";
+            
+        }
         
-        cell.textLabel.text = @"打开天线";
-        cell.detailTextLabel.text = @"让别人搜索到您的设备";
     }
     if (indexPath.section == 2) {
         
@@ -182,8 +188,16 @@
         
     }else if (indexPath.section == 1){
         
-        [self.sessionManager advertiseForBrowserViewController];
-        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"正在扩散..." viewController:nil];
+        if (indexPath.row == 0) {
+            [self.sessionManager advertiseForBrowserViewController];
+             [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"正在扩散..." viewController:nil];
+        }else{
+            
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"断开连接" message:@"是否确认断开连接" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            
+            [alert show];
+        }
+        
         
         
     }else if (indexPath.section == 2){
@@ -314,6 +328,20 @@
         [self.tableView reloadData];
     }];
 
+    
+}
+
+#pragma mark -- alertDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    if (buttonIndex == 1) {
+        
+        
+        [self.sessionManager disconnectSession];
+        
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"连接已断开" viewController:nil];
+    }
+    
     
 }
 /*
