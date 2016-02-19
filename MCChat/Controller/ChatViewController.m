@@ -414,16 +414,16 @@
 #pragma mark -- 切换语音，文字
 - (void)clickVoiceButton:(UIButton *)sender{
     
+    if (![self canRecord]) {
+        
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@需要访问您的麦克风。\n请启用麦克风-设置/隐私/麦克风", @"MMChat"] viewController:nil];
+        return;
+    }
     
     
     sender.selected = !sender.selected;
     if (sender.selected) {
-        if (![self canRecord]) {
-            
-            [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@需要访问您的麦克风。\n请启用麦克风-设置/隐私/麦克风", @"MMChat"] viewController:nil];
-            return;
-        }
-        
+   
         
         //显示录音按钮
         self.recorderButton.hidden = NO;
@@ -1113,7 +1113,7 @@
     
     cell.model = self.datasource[indexPath.row];
     
-    [self makeVideoPlayer:cell.model.data];
+//    [self makeVideoPlayer:cell.model.data];
     
     if (self.otherHeaderImage) {
         
@@ -1122,7 +1122,8 @@
     
    
         if (cell.model.states == videoStates) {
-            [self makeVideoPlayer:cell.model.data];
+//            [self makeVideoPlayer:cell.model.data];
+             self.audioPlayer=[[AVAudioPlayer alloc]initWithData:cell.model.data error:nil];
             if (cell.model.isSelf) {
                 cell.rightTimeSecondLabel.text = [NSString stringWithFormat:@"%.0f''",self.audioPlayer.duration];
 
@@ -1600,10 +1601,12 @@
  */
 - (void)BeginRecordClick:(UIButton *)sender
 {
+    [self setAudioSession];
     
     if (![self.audioRecorder isRecording])
     {
         [self.audioRecorder record];//首次使用应用时如果调用record方法会询问用户是否允许使用麦克风
+        
         self.timer = [NSTimer scheduledTimerWithTimeInterval:.1 target:self selector:@selector(audioPowerChange:) userInfo:nil repeats:YES];
         [self MakerecordingView];
     }
