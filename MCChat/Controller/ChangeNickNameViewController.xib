@@ -24,11 +24,23 @@
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="昵称是连接的标识，如果您正在进行会话，则本次会话将会断开。" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aL1-bZ-M16">
+                    <rect key="frame" x="15" y="134" width="290" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="2s4-YF-l5B"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" red="1" green="0.26122775472257098" blue="0.24904918308030422" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="aL1-bZ-M16" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="5QA-fr-t6i"/>
                 <constraint firstItem="SMe-Br-1oC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="CeI-HY-8hr"/>
                 <constraint firstAttribute="trailing" secondItem="SMe-Br-1oC" secondAttribute="trailing" constant="15" id="Zmi-9W-kiz"/>
+                <constraint firstItem="aL1-bZ-M16" firstAttribute="top" secondItem="SMe-Br-1oC" secondAttribute="bottom" constant="15" id="Zxz-Go-0FO"/>
+                <constraint firstAttribute="trailing" secondItem="aL1-bZ-M16" secondAttribute="trailing" constant="15" id="bWY-AC-eCe"/>
                 <constraint firstItem="SMe-Br-1oC" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="89" id="w3D-Fj-iVw"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>

@@ -1218,6 +1218,8 @@
                 
                 [alertView show];
                 self.title = peer.displayName;
+                
+                [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(preventDisconnect:) userInfo:nil repeats:YES];
             }
             
         }
@@ -1229,7 +1231,14 @@
         
         __strong typeof (weakSelf) strongSelf = weakSelf;
         
-        NSString *string = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        
+       id unarchiver = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        
+        if ([unarchiver isKindOfClass:[NSDictionary class]]) {
+            return ;
+        }
+        
+        NSString *string = unarchiver;
         NSString *name = peer.displayName;
         
         [self playSoundEffect:@"5097.mp3"];
@@ -1714,7 +1723,7 @@
  *  @param clientData 回调时传递的数据
  */
 void soundCompleteCallback(SystemSoundID soundID,void * clientData){
-    NSLog(@"播放完成...");
+//    NSLog(@"播放完成...");
 }
 
 /**
@@ -1820,7 +1829,17 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
         }
     }
 }
-
+#pragma mark -- 不断发送数据 防止连接断开
+- (void)preventDisconnect:(NSTimer *)timer{
+    
+    
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
+                                                                 @"info":@"preventDisconnect"
+                                                                 }];
+    [self.sessionManager sendDataToAllPeers:data];
+    
+    
+}
 
 
 /*
