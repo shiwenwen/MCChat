@@ -40,7 +40,7 @@
     BOOL _showFacePanel;
 }
 
-@property (nonatomic,strong)UIImage *otherHeaderImage;
+@property (nonatomic,strong)NSMutableDictionary *otherHeaderImages;
 // DataAndBlue
 @property(strong, nonatomic) BlueSessionManager *sessionManager;
 
@@ -846,17 +846,20 @@
     NSString * name = [NSString stringWithFormat:@"%@ForPic",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     
     NSURL * url = [NSURL fileURLWithPath:path];
+    for (MCPeerID *peer in self.sessionManager.connectedPeers) {
+        
+        NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
+            if(!error) {
+                NSLog(@"finished sending resource");
+            }
+            else {
+                NSLog(@"%@", error);
+            }
+        }];
+        
+        NSLog(@"%@", @(progress.fractionCompleted));
+    }
     
-    NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:self.sessionManager.firstPeer complete:^(NSError *error) {
-        if(!error) {
-            NSLog(@"finished sending resource");
-        }
-        else {
-            NSLog(@"%@", error);
-        }
-    }];
-    
-    NSLog(@"%@", @(progress.fractionCompleted));
     
 }
 
@@ -1132,9 +1135,10 @@
     
 //    [self makeVideoPlayer:cell.model.data];
     
-    if (self.otherHeaderImage) {
+    if (self.otherHeaderImages[cell.model.displayName]) {
         
-        cell.leftHeaderView.image = self.otherHeaderImage;
+        NSData *data = self.otherHeaderImages[cell.model.displayName];
+        cell.leftHeaderView.image = [UIImage imageWithData:data];
     }
     
    
@@ -1271,6 +1275,7 @@
         
         if ([unarchiver isKindOfClass:[NSDictionary class]]) {
             
+        
             if (unarchiver[@"GroupName"]) {
                 
                 self.title = unarchiver[@"GroupName"];
@@ -1314,9 +1319,14 @@
         __strong typeof (weakSelf) strongSelf = weakSelf;
         NSData *data = [NSData dataWithContentsOfURL:url];
     
-        if ([name hasSuffix:@"Icon"]) {
+        if ([name hasSuffix:@"Icon"] && peer.displayName) {
+            if (!self.otherHeaderImages) {
+                self.otherHeaderImages = [@{}mutableCopy];
+            }
+//           UIImage *image = [UIImage imageWithData:data];
             
-            self.otherHeaderImage = [UIImage imageWithData:data];
+            [self.otherHeaderImages setObject:data forKey:peer.displayName];
+            
             [self.tableView reloadData];
             
         }else{
@@ -1377,9 +1387,9 @@
 {
     if(!self.sessionManager.isConnected)
     {
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-//        [alertView show];
-//        return;
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        [alertView show];
+        return;
         
     }
     

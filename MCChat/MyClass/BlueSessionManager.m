@@ -297,8 +297,7 @@
 
 - (NSProgress *)sendResourceWithName:(NSString *)name atURL:(NSURL *)url toPeer:(MCPeerID *)peer complete:(void (^)(NSError *error))compelete
 {
-    // 图片资源数据的发送
-    
+   
     return [self.session sendResourceAtURL:url withName:name toPeer:peer withCompletionHandler:compelete];
 }
 
