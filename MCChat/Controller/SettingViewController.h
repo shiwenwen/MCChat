@@ -10,4 +10,5 @@
 #import "BlueSessionManager.h"
 @interface SettingViewController : UITableViewController
 @property (nonatomic,strong)BlueSessionManager *sessionManager;
+@property (nonatomic,copy)NSString *groupName;
 @end

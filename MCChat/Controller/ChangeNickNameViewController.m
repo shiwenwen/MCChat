@@ -9,7 +9,7 @@
 #import "ChangeNickNameViewController.h"
 
 @interface ChangeNickNameViewController ()<UITextFieldDelegate>
-@property (weak, nonatomic) IBOutlet UITextField *nickNameField;
+
 
 @end
 
@@ -20,16 +20,25 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(goBack)];
     self.nickNameField.delegate = self;
+    self.nickNameField.placeholder = self.placehold;
     [self.nickNameField becomeFirstResponder];
+    if (self.style == groupName) {
+        
+        self.detailLabel.hidden = YES;
+        
+    }
 }
 - (void)goBack{
     
     if (self.nickNameField.text.length < 1) {
         
-        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"昵称不能为空" viewController:nil];
-        return;
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"未修改" viewController:nil];
+
+    }else{
+        
+        self.changeBlock(self.nickNameField.text,self.style);
     }
-    self.changeBlock(self.nickNameField.text);
+    
     [self.navigationController popViewControllerAnimated:YES];
 
 }

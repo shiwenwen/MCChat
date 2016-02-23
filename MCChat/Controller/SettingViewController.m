@@ -73,7 +73,13 @@
     NSInteger number;
     switch (section) {
         case 0:
-            number = 2;
+            
+            if (self.sessionManager.session.connectedPeers.count > 1) {
+                number = 3;
+            }else{
+                number = 2;
+            }
+
             break;
         case 1:
             number = 2;
@@ -121,10 +127,18 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    if (indexPath.section == 0 && indexPath.row == 1) {
+    if (indexPath.section == 0) {
+        if (indexPath.row == 1) {
+            cell.textLabel.text = UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[[UIDevice currentDevice]name];
+            cell.detailTextLabel.text = @"修改昵称";
+        }else if (indexPath.row == 2){
+            cell.textLabel.text = @"群聊名称";
+            cell.detailTextLabel.text = self.groupName;
+            
+        }
         
-        cell.textLabel.text = UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[[UIDevice currentDevice]name];
-        cell.detailTextLabel.text = @"修改昵称";
+        
+        
     }
     if (indexPath.section == 1) {
         if (indexPath.row == 0) {
@@ -168,21 +182,27 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if (indexPath.section == 0 && indexPath.row == 1) {
-        //修改昵称
-        
+    if (indexPath.section == 0) {
         ChangeNickNameViewController *changeName = [[ChangeNickNameViewController alloc]init];
-        __weak typeof(self) weakSelf = self;
-        
-        changeName.changeBlock = ^(NSString *name){
-          
-            UserDefaultsSet(name, MyNickName);
-            [[NSUserDefaults standardUserDefaults]synchronize];
-            [weakSelf initSessionManager];
-//            dispatch_sync(dispatch_get_main_queue(), ^{
+            __weak typeof(self) weakSelf = self;
+        if (indexPath.row == 1) {
             
-                [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-//            });
+
+            
+            changeName.changeBlock = ^(NSString *name, ChangeStyle style){
+
+                    UserDefaultsSet(name, MyNickName);
+                    [[NSUserDefaults standardUserDefaults]synchronize];
+                    [weakSelf initSessionManager];
+                    [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            };
+        }else if (indexPath.row == 2)
+             changeName.changeBlock = ^(NSString *name, ChangeStyle style){
+                self.groupName = name;
+                [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:2 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeGroupName" object:self.groupName];
+                
         };
         [self.navigationController pushViewController:changeName animated:YES];
         

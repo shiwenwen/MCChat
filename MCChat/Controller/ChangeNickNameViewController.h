@@ -7,9 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-typedef void(^ChangeBlock)(NSString *name);
+
+typedef NS_ENUM(NSInteger, ChangeStyle){
+    nickName,
+    groupName,
+};
+typedef void(^ChangeBlock)(NSString *name, ChangeStyle Style);
 @interface ChangeNickNameViewController : UIViewController
 
 @property (nonatomic,copy)ChangeBlock changeBlock;
+@property (weak, nonatomic) IBOutlet UITextField *nickNameField;
 
+@property (weak, nonatomic) IBOutlet UILabel *detailLabel;
+@property (nonatomic,assign)ChangeStyle style;
+@property (nonatomic,copy)NSString *placehold;
 @end

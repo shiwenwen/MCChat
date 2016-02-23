@@ -261,9 +261,17 @@
     [self.sendBackView endEditing:YES];
     SettingViewController *setting =  [[SettingViewController alloc]init];
     setting.sessionManager = self.sessionManager;
+    
+    if (self.sessionManager.session.connectedPeers.count > 1) {
+        setting.groupName = self.title;
+        
+    }
+    
     [self.navigationController pushViewController:setting animated:YES];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeBackground) name:@"changeBg" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeGroupName:) name:@"ChangeGroupName" object:nil];
     if (_showFacePanel) {
         self.facePanelView.hidden = YES;
     }
@@ -293,7 +301,16 @@
 
     
 }
+#pragma mark -- 更换群名称
+- (void)ChangeGroupName:(NSNotification *)noti{
+    self.title = (NSString *)noti.object;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
+                                                                 @"GroupName":self.title
+                                                                 }];
+    [self.sessionManager sendDataToAllPeers:data];
 
+    
+}
 #pragma mark 制作页面UI
 - (void)makeUIView
 {
@@ -1211,13 +1228,31 @@
             if (_curretConnect == peer) {
                 
                 
+                
             }else{
                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:[NSString stringWithFormat:@"已连接 %@！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
                 
                 _curretConnect = peer;
                 
                 [alertView show];
-                self.title = peer.displayName;
+                
+                if (self.sessionManager.session.connectedPeers.count == 2) {
+                    
+                    self.title = @"群聊";
+                    
+                }else if(self.sessionManager.session.connectedPeers.count == 1) {
+                    
+                   self.title = peer.displayName;
+                    
+                }
+                if (self.sessionManager.session.connectedPeers.count > 2) {
+                    
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
+                                                                                 @"GroupName":self.title
+                                                                                 }];
+                    [self.sessionManager sendDataToAllPeers:data];
+                    
+                }
                 
                 [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(preventDisconnect:) userInfo:nil repeats:YES];
             }
@@ -1235,10 +1270,19 @@
        id unarchiver = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         
         if ([unarchiver isKindOfClass:[NSDictionary class]]) {
+            
+            if (unarchiver[@"GroupName"]) {
+                
+                self.title = unarchiver[@"GroupName"];
+            }
+            
             return ;
         }
         
         NSString *string = unarchiver;
+        if (string.length < 1) {
+            return;
+        }
         NSString *name = peer.displayName;
         
         [self playSoundEffect:@"5097.mp3"];
@@ -1832,6 +1876,9 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
 #pragma mark -- 不断发送数据 防止连接断开
 - (void)preventDisconnect:(NSTimer *)timer{
     
+    if (self.sessionManager.connectedPeers.count > 1) {
+        return;
+    }
     
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
                                                                  @"info":@"preventDisconnect"
