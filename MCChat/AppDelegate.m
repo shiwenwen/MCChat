@@ -232,11 +232,11 @@
         
                 [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
         
-        NSString *path = [[NSBundle mainBundle]pathForResource:@"5383" ofType:@"mp3"];
+        NSString *path = [[NSBundle mainBundle]pathForResource:@"silent" ofType:@"mp3"];
         NSURL *url = [NSURL URLWithString:path];
         AVAudioPlayer *player = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:nil];
         [player prepareToPlay];
-        [player setVolume:0];
+
         player.numberOfLoops = -1; //设置音乐播放次数  -1为一直循环
         [player play];
 

@@ -67,6 +67,7 @@
 		2B92D6641C473B420073171C /* HomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B92D6601C473B420073171C /* HomeViewController.xib */; };
 		2B92D66B1C47417C0073171C /* MainTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D66A1C47417C0073171C /* MainTabBarViewController.m */; };
 		2B92D66E1C47432F0073171C /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92D66D1C47432F0073171C /* ChatViewController.m */; };
+		2B983C521C7D8E7A00B99EE3 /* silent.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2B983C511C7D8E7A00B99EE3 /* silent.mp3 */; };
 		2BAD25CC1C4885F3007EBFAE /* 5097.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */; };
 		2BAD25CF1C489748007EBFAE /* ZoomImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25CE1C489748007EBFAE /* ZoomImageView.m */; };
 		2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */; };
@@ -524,6 +525,7 @@
 		2B92D66A1C47417C0073171C /* MainTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabBarViewController.m; sourceTree = "<group>"; };
 		2B92D66C1C47432F0073171C /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
 		2B92D66D1C47432F0073171C /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		2B983C511C7D8E7A00B99EE3 /* silent.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silent.mp3; sourceTree = "<group>"; };
 		2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 5097.mp3; sourceTree = "<group>"; };
 		2BAD25CD1C489748007EBFAE /* ZoomImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomImageView.h; sourceTree = "<group>"; };
 		2BAD25CE1C489748007EBFAE /* ZoomImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomImageView.m; sourceTree = "<group>"; };
@@ -1565,6 +1567,7 @@
 				2B4076861C44FDCB003A7161 /* HomeBackgroud@2x.png */,
 				2B4076871C44FDCB003A7161 /* HomeBackgroud@3x.png */,
 				2BAD25D81C491FB7007EBFAE /* 5383.mp3 */,
+				2B983C511C7D8E7A00B99EE3 /* silent.mp3 */,
 				2BAD25CB1C4885F3007EBFAE /* 5097.mp3 */,
 				2B4076881C44FDCB003A7161 /* Icons */,
 				2B4076731C44FC22003A7161 /* MMChatLaunchImage */,
@@ -1874,6 +1877,7 @@
 				2B4076851C44FC22003A7161 /* LaunchImage@2x.png in Resources */,
 				2B40769A1C44FDCB003A7161 /* AppIcon76x76@2x~ipad.png in Resources */,
 				2B4076821C44FC22003A7161 /* LaunchImage-800-Portrait-736h@3x.png in Resources */,
+				2B983C521C7D8E7A00B99EE3 /* silent.mp3 in Resources */,
 				2BC9D5091C72DDC3005F3954 /* 101.gif in Resources */,
 				2BC9D4DB1C72DDC3005F3954 /* 085@2x.png in Resources */,
 				2BC9D3F51C72DDC2005F3954 /* 008.png in Resources */,
