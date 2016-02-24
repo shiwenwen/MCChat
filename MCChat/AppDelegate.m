@@ -10,6 +10,8 @@
 #import "MainTabBarViewController.h"
 #define UIMutableUserNotificationActionBackground @"UIMutableUserNotificationActionBackground"
 #define UIMutableUserNotificationActionForeground @"UIMutableUserNotificationActionForeground"
+#import <AVFoundation/AVFoundation.h>
+
 @interface AppDelegate ()
 @end
 
@@ -143,6 +145,10 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+    
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(tik) userInfo:nil repeats:YES];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -215,5 +221,36 @@
     
     completionHandler();
 }
+
+- (void)tik{
+    
+    if ([[UIApplication sharedApplication] backgroundTimeRemaining] < 61.0) {
+        
+
+        
+        [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+        
+                [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+        
+        NSString *path = [[NSBundle mainBundle]pathForResource:@"5383" ofType:@"mp3"];
+        NSURL *url = [NSURL URLWithString:path];
+        AVAudioPlayer *player = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:nil];
+        [player prepareToPlay];
+        [player setVolume:0];
+        player.numberOfLoops = -1; //设置音乐播放次数  -1为一直循环
+        [player play];
+
+    
+    }
+ 
+
+    
+
+}
+
+
+
+
+
 
 @end

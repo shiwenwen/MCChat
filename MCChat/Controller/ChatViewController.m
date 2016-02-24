@@ -287,17 +287,19 @@
     NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
     NSString * name = [NSString stringWithFormat:@"%@ForIcon",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     NSURL * url = [NSURL fileURLWithPath:UserDefaultsGet(@"headerIcon")];
-    
-    NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:self.sessionManager.firstPeer complete:^(NSError *error) {
-        if(!error) {
-            NSLog(@"finished sending resource");
+        for (MCPeerID *peer in self.sessionManager.connectedPeers) {
+            NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
+                if(!error) {
+                    NSLog(@"finished sending resource");
+                }
+                else {
+                    NSLog(@"%@", error);
+                }
+            }];
+            
+            NSLog(@"%@", @(progress.fractionCompleted));
         }
-        else {
-            NSLog(@"%@", error);
-        }
-    }];
-    
-    NSLog(@"%@", @(progress.fractionCompleted));
+   
 
     
 }
@@ -862,7 +864,28 @@
     
     
 }
-
+#pragma mark -- 群聊语音
+- (void)sendGroupChatVideoAsResource:(NSURL *)path
+{
+   
+    
+    
+    for (MCPeerID *peer in self.sessionManager.connectedPeers) {
+        
+        NSProgress *progress = [self.sessionManager sendResourceWithName:@"video" atURL:path toPeer:peer complete:^(NSError *error) {
+            if(!error) {
+                NSLog(@"finished sending resource");
+            }
+            else {
+                NSLog(@"%@", error);
+            }
+        }];
+        
+        NSLog(@"%@", @(progress.fractionCompleted));
+    }
+    
+    
+}
 
 #pragma mark 普通数据的传输
 - (void)sendWeNeedNews:(NSString *)content
@@ -1329,6 +1352,26 @@
             
             [self.tableView reloadData];
             
+        }else if([name isEqualToString:@"video"]){
+            
+            [self playSoundEffect:@"5097.mp3"];
+            ChatItem * chatItem = [[ChatItem alloc] init];
+            chatItem.isSelf = NO;
+            chatItem.displayName = peer.displayName;
+            chatItem.states = videoStates;
+            chatItem.data = data;
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
+            [self.datasource addObject:chatItem];
+            [self insertTheTableToButtom];
+            if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+                [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
+            }
+            
+                
         }else{
             
             [self playSoundEffect:@"5097.mp3"];
@@ -1447,29 +1490,29 @@
     if(eventCode == NSStreamEventEndEncountered)
     {
         // 流结束事件，在此事件中负责做销毁工作
-        // 同时也是获得最终数据的好地方
-        [self playSoundEffect:@"5097.mp3"];
-        ChatItem * chatItem = [[ChatItem alloc] init];
-        chatItem.isSelf = NO;
-        chatItem.displayName = _curretConnect.displayName;
-        chatItem.states = videoStates;
-        chatItem.data = self.streamData;
-        NSDate *date = [NSDate date];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-        NSString *dateStr = [formatter stringFromDate:date];
-        chatItem.timeStr = dateStr;
-        [self.datasource addObject:chatItem];
-        [self insertTheTableToButtom];
-        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
-            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
-        }
-        [aStream close];
-        [aStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-        if([aStream isKindOfClass:[NSInputStream class]])
-        {
-            self.streamData = nil;
-        }
+//        // 同时也是获得最终数据的好地方
+//        [self playSoundEffect:@"5097.mp3"];
+//        ChatItem * chatItem = [[ChatItem alloc] init];
+//        chatItem.isSelf = NO;
+//        chatItem.displayName = _curretConnect.displayName;
+//        chatItem.states = videoStates;
+//        chatItem.data = self.streamData;
+//        NSDate *date = [NSDate date];
+//        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+//        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+//        NSString *dateStr = [formatter stringFromDate:date];
+//        chatItem.timeStr = dateStr;
+//        [self.datasource addObject:chatItem];
+//        [self insertTheTableToButtom];
+//        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+//            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
+//        }
+//        [aStream close];
+//        [aStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+//        if([aStream isKindOfClass:[NSInputStream class]])
+//        {
+//            self.streamData = nil;
+//        }
         
     }
     if(eventCode == NSStreamEventErrorOccurred)
@@ -1751,8 +1794,13 @@
     if (_recordCancel) {
         return;
     }
-    [self  sendAsStream];
-    NSLog(@"录音完成!");
+//    if (self.sessionManager.session.connectedPeers.count > 1) {
+        [self sendGroupChatVideoAsResource:[self getSavePath]];
+//    }else{
+        [self  sendAsStream];
+//    }
+
+//    NSLog(@"录音完成!");
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
