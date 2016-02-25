@@ -11,4 +11,5 @@
 @interface SettingViewController : UITableViewController
 @property (nonatomic,strong)BlueSessionManager *sessionManager;
 @property (nonatomic,copy)NSString *groupName;
+@property (nonatomic,copy)NSArray *friendIcon;
 @end

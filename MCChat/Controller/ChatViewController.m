@@ -118,7 +118,7 @@
     
 //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 //    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:0.127 alpha:1.000];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.800];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.600];
     
     
     [self makeBlueData];
@@ -261,7 +261,7 @@
     [self.sendBackView endEditing:YES];
     SettingViewController *setting =  [[SettingViewController alloc]init];
     setting.sessionManager = self.sessionManager;
-    
+    setting.friendIcon = [self.otherHeaderImages allValues];
     if (self.sessionManager.session.connectedPeers.count > 1) {
         setting.groupName = self.title;
         

@@ -12,7 +12,12 @@
 #import "ChangeNickNameViewController.h"
 #import "ChatBackgroundChoseViewController.h"
 #import "MLImageCrop.h"
-@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate>
+#import "HeaderCell.h"
+
+@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>{
+    
+    UICollectionView *collection;
+}
 @property (nonatomic,strong)UIImagePickerController *picker;
 @end
 
@@ -100,7 +105,7 @@
     static NSString *headerId = @"header_cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (indexPath.section == 0 && indexPath.row == 0) {
-        
+        /*
         SettingHeaderIconCell *headerCell = [tableView dequeueReusableCellWithIdentifier:headerId];
         
         if (!headerCell) {
@@ -117,6 +122,34 @@
             }
             
         }
+        return headerCell;
+         */
+        UITableViewCell *headerCell = [tableView dequeueReusableCellWithIdentifier:headerId];
+        
+        if (!headerCell) {
+            
+            
+            headerCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:headerId];
+            headerCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+            CGFloat size = (KScreenWidth - 10 * 5) / 4;
+            layout.itemSize = CGSizeMake(size, size);
+            layout.minimumLineSpacing = 10;
+            layout.minimumInteritemSpacing = 10;
+            layout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+            NSInteger line = (self.friendIcon.count + 1) / 4 + ((self.friendIcon.count + 1) % 4 == 0 ? 0:1);
+            
+            collection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth,line * (size + 10) + 10 ) collectionViewLayout:layout];
+            [collection registerNib:[UINib nibWithNibName:@"HeaderCell" bundle:nil] forCellWithReuseIdentifier:@"HeaderCell"];
+            collection.scrollEnabled = NO;
+            collection.backgroundColor = [UIColor whiteColor];
+            collection.dataSource = self;
+            collection.delegate = self;
+            [headerCell.contentView addSubview:collection];
+            
+        }
+        
         return headerCell;
     }
     
@@ -173,7 +206,9 @@
 }
 - (CGFloat )tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0 && indexPath.row == 0) {
-        return 120;
+               NSInteger line = (self.friendIcon.count + 1) / 4 + ((self.friendIcon.count + 1) % 4 == 0 ? 0:1);
+        CGFloat size = (KScreenWidth - 10 * 5) / 4 + 10;
+        return line * size  + 10;
     }
     
     return 45;
@@ -196,15 +231,17 @@
                     [weakSelf initSessionManager];
                     [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
             };
-        }else if (indexPath.row == 2)
+        }else if (indexPath.row == 2){
              changeName.changeBlock = ^(NSString *name, ChangeStyle style){
                 self.groupName = name;
                 [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:2 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
             
             [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeGroupName" object:self.groupName];
                 
-        };
-        [self.navigationController pushViewController:changeName animated:YES];
+             };
+            [self.navigationController pushViewController:changeName animated:YES];
+        }
+
         
     }else if (indexPath.section == 1){
         
@@ -345,7 +382,7 @@
     [self.picker dismissViewControllerAnimated:YES completion:^{
 
           [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-        [self.tableView reloadData];
+        [collection reloadData];
     }];
 
     
@@ -363,6 +400,50 @@
     }
     
     
+}
+#pragma mark -- CollectionViewDataSource
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    
+    return self.friendIcon.count + 1;
+    
+}
+
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    HeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HeaderCell" forIndexPath:indexPath];
+    if (indexPath.item == 0) {
+        
+        if (UserDefaultsGet(@"headerIcon")) {
+            
+            cell.headImageVIew.image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"headerIcon")];
+            
+        }else{
+            
+            
+            cell.headImageVIew.image = [UIImage imageNamed:@"无头像"];
+            
+        }
+        cell.headImageVIew.userInteractionEnabled = NO;
+        
+        
+    }else{
+        
+        cell.headImageVIew.image =[UIImage imageWithData:self.friendIcon[indexPath.item - 1]];
+                cell.headImageVIew.userInteractionEnabled = YES;
+    }
+
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    
+    if (indexPath.item == 0) {
+        
+        [self chooseHeaderIcon];
+        
+    }
 }
 
 /*

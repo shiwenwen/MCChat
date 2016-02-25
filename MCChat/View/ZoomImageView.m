@@ -12,7 +12,13 @@
 #define KScreenHeight [UIScreen mainScreen].bounds.size.height
 #define KScreenWidth [UIScreen mainScreen].bounds.size.width
 @implementation ZoomImageView
-
+- (void)awakeFromNib{
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(loadOriginal_pic:)];
+    self.userInteractionEnabled = YES;
+    [self addGestureRecognizer:tap];
+    
+}
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -114,6 +120,7 @@
     
     [UIView animateWithDuration:0.15 animations:^{
         scrollView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+        scrollView.alpha = 0;
     } completion:^(BOOL finished) {
         
         [scrollView removeFromSuperview];

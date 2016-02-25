@@ -42,6 +42,8 @@
 		2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4076B41C4508EB003A7161 /* NSString+WPAttributedMarkup.m */; };
 		2B4076BF1C45112D003A7161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B4076BE1C45112D003A7161 /* Assets.xcassets */; };
 		2B5A73FB1C7024CB002AEDB3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B5A73FA1C7024CB002AEDB3 /* MobileCoreServices.framework */; };
+		2B6455A81C7EA5DF006285FD /* HeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6455A61C7EA5DF006285FD /* HeaderCell.m */; };
+		2B6455A91C7EA5DF006285FD /* HeaderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B6455A71C7EA5DF006285FD /* HeaderCell.xib */; };
 		2B71EF901C71BE070082BAE3 /* MLImageCrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EF8F1C71BE070082BAE3 /* MLImageCrop.m */; };
 		2B71EFB71C71BE110082BAE3 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EF931C71BE110082BAE3 /* AFHTTPRequestOperation.m */; };
 		2B71EFB81C71BE110082BAE3 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B71EF951C71BE110082BAE3 /* AFHTTPRequestOperationManager.m */; };
@@ -476,6 +478,9 @@
 		2B4076B41C4508EB003A7161 /* NSString+WPAttributedMarkup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+WPAttributedMarkup.m"; sourceTree = "<group>"; };
 		2B4076BE1C45112D003A7161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B5A73FA1C7024CB002AEDB3 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		2B6455A51C7EA5DF006285FD /* HeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeaderCell.h; sourceTree = "<group>"; };
+		2B6455A61C7EA5DF006285FD /* HeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeaderCell.m; sourceTree = "<group>"; };
+		2B6455A71C7EA5DF006285FD /* HeaderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HeaderCell.xib; sourceTree = "<group>"; };
 		2B71EF8C1C71B30C0082BAE3 /* MLImageCrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLImageCrop.h; sourceTree = "<group>"; };
 		2B71EF8F1C71BE070082BAE3 /* MLImageCrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLImageCrop.m; sourceTree = "<group>"; };
 		2B71EF921C71BE110082BAE3 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -1090,6 +1095,9 @@
 				2B39977F1C717DE70081CAFC /* SettingHeaderIconCell.h */,
 				2B3997801C717DE70081CAFC /* SettingHeaderIconCell.m */,
 				2B3997811C717DE70081CAFC /* SettingHeaderIconCell.xib */,
+				2B6455A51C7EA5DF006285FD /* HeaderCell.h */,
+				2B6455A61C7EA5DF006285FD /* HeaderCell.m */,
+				2B6455A71C7EA5DF006285FD /* HeaderCell.xib */,
 				2BC9D5251C72F831005F3954 /* WeiboFacePanelView.h */,
 				2BC9D5261C72F831005F3954 /* WeiboFacePanelView.m */,
 				2BC9D5271C72F831005F3954 /* WeiboFaceView.h */,
@@ -2003,6 +2011,7 @@
 				2BC9D46C1C72DDC3005F3954 /* 048@2x.png in Resources */,
 				2BC9D4071C72DDC2005F3954 /* 015.gif in Resources */,
 				2BC9D4511C72DDC3005F3954 /* 039@2x.png in Resources */,
+				2B6455A91C7EA5DF006285FD /* HeaderCell.xib in Resources */,
 				2BC9D3E91C72DDC2005F3954 /* 004.png in Resources */,
 				2BC9D4EA1C72DDC3005F3954 /* 090@2x.png in Resources */,
 				2B4076BF1C45112D003A7161 /* Assets.xcassets in Resources */,
@@ -2086,6 +2095,7 @@
 				2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */,
 				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
 				2B71EFC71C71BE110082BAE3 /* UIWebView+AFNetworking.m in Sources */,
+				2B6455A81C7EA5DF006285FD /* HeaderCell.m in Sources */,
 				2BC9D5291C72F831005F3954 /* WeiboFacePanelView.m in Sources */,
 				2B71EFC11C71BE110082BAE3 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				2B71EF901C71BE070082BAE3 /* MLImageCrop.m in Sources */,

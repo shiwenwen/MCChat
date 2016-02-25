@@ -55,6 +55,7 @@
         //左边头像
         _leftHeaderView = [[ZoomImageView alloc]initWithFrame:CGRectMake(5, _timeLabel.bottom + 5, 45, 45)];
         _leftHeaderView.layer.cornerRadius = 45 * .5;
+        
         _leftHeaderView.layer.borderColor = [UIColor grayColor].CGColor;
         _leftHeaderView.layer.borderWidth = .25;
         _leftHeaderView.layer.masksToBounds = YES;
