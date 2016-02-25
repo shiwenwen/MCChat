@@ -261,6 +261,16 @@
     [self.sendBackView endEditing:YES];
     SettingViewController *setting =  [[SettingViewController alloc]init];
     setting.sessionManager = self.sessionManager;
+    
+    NSArray *peers = self.sessionManager.session.connectedPeers;
+    
+    NSMutableDictionary *imagesDic = [NSMutableDictionary dictionary];
+    for (MCPeerID *peer in peers) {
+        
+        [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer];
+        
+    }
+    self.otherHeaderImages = imagesDic;
     setting.friendIcon = [self.otherHeaderImages allValues];
     if (self.sessionManager.session.connectedPeers.count > 1) {
         setting.groupName = self.title;
@@ -272,9 +282,19 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeGroupName:) name:@"ChangeGroupName" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(haveDisconnectSession) name:@"disconnectSession" object:nil];
+    
     if (_showFacePanel) {
         self.facePanelView.hidden = YES;
     }
+    
+}
+
+#pragma mark -- 断开连接
+- (void)haveDisconnectSession{
+    
+    self.otherHeaderImages = nil;
+    
     
 }
 #pragma mark -- 更换头像
@@ -288,6 +308,7 @@
     NSString * name = [NSString stringWithFormat:@"%@ForIcon",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     NSURL * url = [NSURL fileURLWithPath:UserDefaultsGet(@"headerIcon")];
         for (MCPeerID *peer in self.sessionManager.connectedPeers) {
+            
             NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
                 if(!error) {
                     NSLog(@"finished sending resource");
@@ -1291,6 +1312,7 @@
     [self.sessionManager receiveDataOnMainQueue:YES block:^(NSData *data, MCPeerID *peer) {
         
         
+        
         __strong typeof (weakSelf) strongSelf = weakSelf;
         
         
@@ -1302,6 +1324,8 @@
             if (unarchiver[@"GroupName"]) {
                 
                 self.title = unarchiver[@"GroupName"];
+                
+                [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@修改群聊名称为“%@”",peer.displayName,unarchiver[@"GroupName"]] viewController:nil];
             }
             
             return ;

@@ -25,9 +25,10 @@
     if (self.style == groupName) {
         
         self.detailLabel.hidden = YES;
-        
+
     }
 }
+
 - (void)goBack{
     
     if (self.nickNameField.text.length < 1) {

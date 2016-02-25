@@ -167,7 +167,7 @@
         }else if (indexPath.row == 2){
             cell.textLabel.text = @"群聊名称";
             cell.detailTextLabel.text = self.groupName;
-            
+
         }
         
         
@@ -223,7 +223,8 @@
         if (indexPath.row == 1) {
             
 
-            
+            changeName.style = nickName;
+            changeName.placehold = UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[[UIDevice currentDevice]name];
             changeName.changeBlock = ^(NSString *name, ChangeStyle style){
 
                     UserDefaultsSet(name, MyNickName);
@@ -232,6 +233,8 @@
                     [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
             };
         }else if (indexPath.row == 2){
+            changeName.style = groupName;
+            changeName.placehold = self.groupName;
              changeName.changeBlock = ^(NSString *name, ChangeStyle style){
                 self.groupName = name;
                 [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:2 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
@@ -397,6 +400,9 @@
         [self.sessionManager disconnectSession];
         
         [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"连接已断开" viewController:nil];
+        self.friendIcon  = nil;
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"disconnectSession" object:nil];
+        [collection reloadData];
     }
     
     
