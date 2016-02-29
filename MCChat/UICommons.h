@@ -17,5 +17,7 @@
 #define UserDefaultsGet(a)  [[NSUserDefaults standardUserDefaults] objectForKey:a]
 #define UserDefaultsSet(a,b) [[NSUserDefaults standardUserDefaults] setObject:a forKey:b]
 #define MyNickName @"myNickName"
+#define KHaveGesturePsd @"haveGesturePsd"
+#define KHaveFingerprint @"haveFingerprint"
 
 #endif /* UICommons_h */

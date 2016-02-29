@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B2A4E151C842F2F00FCF768 /* DBGuestureButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A4E121C842F2F00FCF768 /* DBGuestureButton.m */; };
+		2B2A4E161C842F2F00FCF768 /* DBGuestureLock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A4E141C842F2F00FCF768 /* DBGuestureLock.m */; };
+		2B2A4E181C844C4400FCF768 /* libc++abi.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2A4E171C844C4400FCF768 /* libc++abi.tbd */; };
+		2B2A4E1A1C844DE100FCF768 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2A4E191C844DE100FCF768 /* LocalAuthentication.framework */; };
 		2B39977E1C7174C80081CAFC /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B39977D1C7174C80081CAFC /* SettingViewController.m */; };
 		2B3997821C717DE70081CAFC /* SettingHeaderIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3997801C717DE70081CAFC /* SettingHeaderIconCell.m */; };
 		2B3997831C717DE70081CAFC /* SettingHeaderIconCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B3997811C717DE70081CAFC /* SettingHeaderIconCell.xib */; };
@@ -432,6 +436,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2B2A4E111C842F2F00FCF768 /* DBGuestureButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBGuestureButton.h; sourceTree = "<group>"; };
+		2B2A4E121C842F2F00FCF768 /* DBGuestureButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBGuestureButton.m; sourceTree = "<group>"; };
+		2B2A4E131C842F2F00FCF768 /* DBGuestureLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBGuestureLock.h; sourceTree = "<group>"; };
+		2B2A4E141C842F2F00FCF768 /* DBGuestureLock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBGuestureLock.m; sourceTree = "<group>"; };
+		2B2A4E171C844C4400FCF768 /* libc++abi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++abi.tbd"; path = "usr/lib/libc++abi.tbd"; sourceTree = SDKROOT; };
+		2B2A4E191C844DE100FCF768 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		2B39977C1C7174C80081CAFC /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		2B39977D1C7174C80081CAFC /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		2B39977F1C717DE70081CAFC /* SettingHeaderIconCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingHeaderIconCell.h; sourceTree = "<group>"; };
@@ -908,6 +918,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B2A4E1A1C844DE100FCF768 /* LocalAuthentication.framework in Frameworks */,
+				2B2A4E181C844C4400FCF768 /* libc++abi.tbd in Frameworks */,
 				2B78F5D41C74262A0003C9E8 /* ImageIO.framework in Frameworks */,
 				2BC9D5241C72DE37005F3954 /* libicucore.tbd in Frameworks */,
 				2BC9D5221C72DE2E005F3954 /* CoreText.framework in Frameworks */,
@@ -932,6 +944,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B2A4E0F1C842F0D00FCF768 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				2B2A4E191C844DE100FCF768 /* LocalAuthentication.framework */,
+				2B2A4E171C844C4400FCF768 /* libc++abi.tbd */,
+				2B78F5D31C74262A0003C9E8 /* ImageIO.framework */,
+				2BC9D5231C72DE37005F3954 /* libicucore.tbd */,
+				2BC9D5211C72DE2E005F3954 /* CoreText.framework */,
+				2B5A73FA1C7024CB002AEDB3 /* MobileCoreServices.framework */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		2B2A4E101C842F2F00FCF768 /* DBGuestureLock */ = {
+			isa = PBXGroup;
+			children = (
+				2B2A4E111C842F2F00FCF768 /* DBGuestureButton.h */,
+				2B2A4E121C842F2F00FCF768 /* DBGuestureButton.m */,
+				2B2A4E131C842F2F00FCF768 /* DBGuestureLock.h */,
+				2B2A4E141C842F2F00FCF768 /* DBGuestureLock.m */,
+			);
+			path = DBGuestureLock;
+			sourceTree = "<group>";
+		};
 		2B4076731C44FC22003A7161 /* MMChatLaunchImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -1002,6 +1038,7 @@
 		2B4076BA1C4508F7003A7161 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				2B2A4E101C842F2F00FCF768 /* DBGuestureLock */,
 				2BC9D52B1C73363F005F3954 /* RegexKitLite.h */,
 				2BC9D52C1C73363F005F3954 /* RegexKitLite.m */,
 				2BC9D5341C733D02005F3954 /* WXLabel.h */,
@@ -1484,11 +1521,8 @@
 		2BFAA1261C3FADD700E8D032 = {
 			isa = PBXGroup;
 			children = (
-				2B78F5D31C74262A0003C9E8 /* ImageIO.framework */,
-				2BC9D5231C72DE37005F3954 /* libicucore.tbd */,
-				2BC9D5211C72DE2E005F3954 /* CoreText.framework */,
-				2B5A73FA1C7024CB002AEDB3 /* MobileCoreServices.framework */,
 				2B4076BE1C45112D003A7161 /* Assets.xcassets */,
+				2B2A4E0F1C842F0D00FCF768 /* Framework */,
 				2BFAA1311C3FADD700E8D032 /* MCChat */,
 				2BFAA14B1C3FADD700E8D032 /* MCChatTests */,
 				2BFAA1561C3FADD800E8D032 /* MCChatUITests */,
@@ -2069,6 +2103,7 @@
 				2B71EFBF1C71BE110082BAE3 /* AFURLSessionManager.m in Sources */,
 				2B71EFBD1C71BE110082BAE3 /* AFURLRequestSerialization.m in Sources */,
 				2BF8BDBB1C49DE67001192A7 /* Tools.m in Sources */,
+				2B2A4E161C842F2F00FCF768 /* DBGuestureLock.m in Sources */,
 				2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */,
 				2B71EFC31C71BE110082BAE3 /* UIButton+AFNetworking.m in Sources */,
 				2BEA0B8A1C4624BF00A719A8 /* DTConstants.m in Sources */,
@@ -2109,6 +2144,7 @@
 				2BFAA1341C3FADD700E8D032 /* main.m in Sources */,
 				2B71EFB81C71BE110082BAE3 /* AFHTTPRequestOperationManager.m in Sources */,
 				2B4076B61C4508EB003A7161 /* WPHotspotLabel.m in Sources */,
+				2B2A4E151C842F2F00FCF768 /* DBGuestureButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

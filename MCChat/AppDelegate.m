@@ -11,8 +11,12 @@
 #define UIMutableUserNotificationActionBackground @"UIMutableUserNotificationActionBackground"
 #define UIMutableUserNotificationActionForeground @"UIMutableUserNotificationActionForeground"
 #import <AVFoundation/AVFoundation.h>
+#import "DBGuestureLock.h"
+#import <LocalAuthentication/LAContext.h>
+@interface AppDelegate ()<DBGuestureLockDelegate>
+@property (nonatomic,strong)UIView *LockView;
+@property (nonatomic,strong)UILabel *lockStatusLabel;
 
-@interface AppDelegate ()
 @end
 
 @implementation AppDelegate
@@ -134,7 +138,152 @@
 //        return NO;
 //    }
     
+    
+    
+//手势锁
+    [self showGesLock:.15];
+    
+    
+    
     return YES;
+}
+
+- (void)showGesLock:(float)duration{
+    
+    if (![UserDefaultsGet(KHaveGesturePsd)boolValue]) {
+        return;
+    }
+    
+    if (!self.LockView) {
+        self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
+        self.LockView.backgroundColor = [UIColor colorWithWhite:0.05 alpha:1];
+        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 80)];
+        self.lockStatusLabel.numberOfLines = 0;
+        [self.LockView addSubview:self.lockStatusLabel];
+        self.lockStatusLabel.font = [UIFont systemFontOfSize:29];
+        
+        self.lockStatusLabel.textColor = [UIColor whiteColor];
+        self.lockStatusLabel.textAlignment = NSTextAlignmentCenter;
+        if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+           
+            UIButton *dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
+            dismissButton.frame = CGRectMake(KScreenWidth - 140, KScreenHeight - 60, 120, 40);
+            [self.LockView addSubview:dismissButton];
+            [dismissButton setTitle:@"使用指纹解锁" forState:UIControlStateNormal];
+            [dismissButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//            dismissButton.titleLabel.font = [UIFont systemFontOfSize:19];
+            [dismissButton addTarget:self action:@selector(evaluatePolicy) forControlEvents:UIControlEventTouchUpInside];
+
+            
+        }
+        
+        
+        
+        self.LockView.transform = CGAffineTransformMakeTranslation(0,KScreenHeight);
+        
+    }
+
+        
+
+        
+        
+        self.lockStatusLabel.text = @"请绘制您解锁图案";
+        //Give me a Star: https://github.com/i36lib/DBGuestureLock/
+        DBGuestureLock *lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
+        [self.LockView addSubview:lock];
+        [[UIApplication sharedApplication].keyWindow addSubview:self.LockView];
+        
+        
+        [UIView animateWithDuration:duration animations:^{
+            self.LockView.transform = CGAffineTransformIdentity;
+        } completion:^(BOOL finished) {
+            
+            if (duration > 0) {
+                if ([UserDefaultsGet(KHaveFingerprint) boolValue]) {
+                    [self evaluatePolicy];
+                }
+            }
+            
+            
+        }];
+    
+    
+    
+}
+
+- (void)hiddenLockView{
+    
+    
+    [UIView animateWithDuration:.35 animations:^{
+        
+        self.LockView.transform = CGAffineTransformMakeTranslation(0,KScreenHeight);
+        
+    } completion:^(BOOL finished) {
+        
+        for (UIView *view in  self.LockView.subviews) {
+            
+            if ([view isKindOfClass:[DBGuestureLock class]]) {
+                [view removeFromSuperview];
+            }
+        }
+    }];
+    
+    
+}
+#pragma mark -- DBGuestureLock Delegate
+-(void)guestureLock:(DBGuestureLock *)lock didGetCorrectPswd:(NSString *)password {
+    //NSLog(@"Pa、ssword correct: %@", password);
+    if (lock.firstTimeSetupPassword && ![lock.firstTimeSetupPassword isEqualToString:DBFirstTimeSetupPassword]) {
+      
+        
+    } else {
+        NSLog(@"login success");
+        self.lockStatusLabel.text = @"解锁成功";
+        [self hiddenLockView];
+        
+    }
+    
+
+}
+
+
+
+
+-(void)guestureLock:(DBGuestureLock *)lock didGetIncorrectPswd:(NSString *)password {
+    //NSLog(@"Password incorrect: %@", password);
+    if (![lock.firstTimeSetupPassword isEqualToString:DBFirstTimeSetupPassword]) {
+        NSLog(@"Error: password not equal to first setup!");
+     self.lockStatusLabel.text = @"手势错误";
+    } else {
+        NSLog(@"login failed");
+        self.lockStatusLabel.text = @"手势错误";
+    }
+}
+
+
+- (void)evaluatePolicy{
+    
+    LAContext *context = [[LAContext alloc] init];
+    __block  NSString *msg;
+    
+    // show the authentication UI with our reason string
+    [context evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:NSLocalizedString(@"验证指纹解锁您的APP", nil) reply:
+     ^(BOOL success, NSError *authenticationError) {
+         if (success) {
+             
+            
+             msg =[NSString stringWithFormat:NSLocalizedString(@"验证成功", nil)];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [self hiddenLockView];
+             });
+             
+             
+         } else {
+             msg = [NSString stringWithFormat:NSLocalizedString(@"验证错误", nil), authenticationError.localizedDescription];
+         }
+         
+     }];
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -145,7 +294,7 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    
+    [self showGesLock:0.0];
     [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
     
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(tik) userInfo:nil repeats:YES];
@@ -153,11 +302,21 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+        [self evaluatePolicy];
+    }
+    
+    
+
+    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
+    
     
 }
 
@@ -221,6 +380,22 @@
     
     completionHandler();
 }
+
+
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    if (url != nil) {
+        NSString *path = [url absoluteString];
+        NSMutableString *string = [[NSMutableString alloc] initWithString:path];
+        if ([path hasPrefix:@"file://"]) {
+            [string replaceOccurrencesOfString:@"file://" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, path.length)];
+        }
+
+    }
+    return YES;
+}
+
 
 - (void)tik{
     

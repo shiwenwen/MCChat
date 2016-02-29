@@ -13,12 +13,17 @@
 #import "ChatBackgroundChoseViewController.h"
 #import "MLImageCrop.h"
 #import "HeaderCell.h"
-
-@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>{
+#import "DBGuestureButton.h"
+#import "DBGuestureLock.h"
+#import <LocalAuthentication/LocalAuthentication.h>
+#import <LocalAuthentication/LAContext.h>
+@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,DBGuestureLockDelegate>{
     
     UICollectionView *collection;
 }
 @property (nonatomic,strong)UIImagePickerController *picker;
+@property (nonatomic,strong)UIView *LockView;
+@property (nonatomic,strong)UILabel *lockStatusLabel;
 @end
 
 @implementation SettingViewController
@@ -69,7 +74,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
-    return 3;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -92,6 +97,24 @@
         case 2:
             number = 1;
             break;
+        case 3:
+        {
+            //检查设备是否能用TouchID，返回检查结果BOOL类型success：
+
+            LAContext *context = [[LAContext alloc] init];
+
+            NSError *error;
+            BOOL success;
+            
+            // test if we can evaluate the policy, this test will tell us if Touch ID is available and enrolled
+            success = [context canEvaluatePolicy: LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];
+            if (success) {
+                number = 2;
+            } else {
+                number = 1;
+            }
+        }
+            break;
         default:
             break;
     }
@@ -103,6 +126,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"setting_cell";
     static NSString *headerId = @"header_cell";
+    static NSString *switchIdenti = @"switch_cell";
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (indexPath.section == 0 && indexPath.row == 0) {
         /*
@@ -188,6 +213,39 @@
         
         cell.textLabel.text = @"聊天背景";
         cell.detailTextLabel.text = @"选择";
+    }
+    if (indexPath.section == 3) {
+        
+        UITableViewCell *switchCell = [tableView dequeueReusableCellWithIdentifier:switchIdenti];
+        
+        if (!switchCell) {
+            switchCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:switchIdenti];
+            
+            UISwitch *padSwitch = [[UISwitch alloc]initWithFrame:CGRectZero];
+            padSwitch.right = KScreenWidth - 25;
+            padSwitch.top = (45 - padSwitch.height) / 2.0;
+            [switchCell.contentView addSubview:padSwitch];
+            padSwitch.tag = 4001;
+            
+            switchCell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        
+        UISwitch *padSwitch = (UISwitch *)[switchCell.contentView viewWithTag:4001];
+        
+        if (indexPath.row == 0) {
+            switchCell.textLabel.text = @"手势锁";
+            [padSwitch addTarget:self action:@selector(setGesPsd:) forControlEvents:UIControlEventValueChanged];
+            padSwitch.on = [UserDefaultsGet(KHaveGesturePsd) boolValue] ;
+            
+        }else if (indexPath.row == 1){
+            padSwitch.on = [UserDefaultsGet(KHaveFingerprint) boolValue] ;
+            switchCell.textLabel.text = @"指纹锁";
+            [padSwitch addTarget:self action:@selector(setFingerprint:) forControlEvents:UIControlEventValueChanged];
+            
+        }
+
+        return switchCell;
+        
     }
     
     return cell;
@@ -449,6 +507,194 @@
         
         [self chooseHeaderIcon];
         
+    }
+}
+
+#pragma mark -- 手势锁 指纹锁
+- (void)setGesPsd:(UISwitch *)sender{
+    
+    if (!self.LockView) {
+        self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
+        self.LockView.backgroundColor = [UIColor colorWithWhite:0.05 alpha:1];
+        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 80)];
+        self.lockStatusLabel.numberOfLines = 0;
+        [self.LockView addSubview:self.lockStatusLabel];
+        self.lockStatusLabel.font = [UIFont systemFontOfSize:29];
+        
+        self.lockStatusLabel.textColor = [UIColor whiteColor];
+        self.lockStatusLabel.textAlignment = NSTextAlignmentCenter;
+        
+        UIButton *dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        dismissButton.frame = CGRectMake(KScreenWidth - 100, KScreenHeight - 60, 80, 40);
+        [self.LockView addSubview:dismissButton];
+        [dismissButton setTitle:@"取消" forState:UIControlStateNormal];
+        [dismissButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        dismissButton.titleLabel.font = [UIFont systemFontOfSize:21];
+        [dismissButton addTarget:self action:@selector(dismissLockView:) forControlEvents:UIControlEventTouchUpInside];
+        self.LockView.transform = CGAffineTransformMakeTranslation(0,KScreenHeight);
+        
+    }
+    if (sender.isOn == YES) {
+        
+        [DBGuestureLock clearGuestureLockPassword]; //just for test
+        
+       
+        self.lockStatusLabel.text = @"绘制解锁图案";
+        //Give me a Star: https://github.com/i36lib/DBGuestureLock/
+        DBGuestureLock *lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
+        [self.LockView addSubview:lock];
+        [[UIApplication sharedApplication].keyWindow addSubview:self.LockView];
+
+
+        [UIView animateWithDuration:.35 animations:^{
+            self.LockView.transform = CGAffineTransformIdentity;
+        }];
+        
+    }else{
+        
+       
+         self.lockStatusLabel.text = @"要关闭手势锁需要先验证解锁图案";
+        //Give me a Star: https://github.com/i36lib/DBGuestureLock/
+        DBGuestureLock *lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
+        [self.LockView addSubview:lock];
+        [[UIApplication sharedApplication].keyWindow addSubview:self.LockView];
+        
+        
+        [UIView animateWithDuration:.35 animations:^{
+            self.LockView.transform = CGAffineTransformIdentity;
+        }];
+        
+       
+        
+        
+    }
+    
+}
+
+
+
+- (void)setFingerprint:(UISwitch *)sender{
+    
+    if (sender.on) {
+        if (![UserDefaultsGet(KHaveGesturePsd)boolValue]) {
+            [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"请先开启手势密码" viewController:nil];
+
+            sender.on = NO;
+            return;
+        }
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"已开启指纹锁" viewController:nil];
+        UserDefaultsSet(@(YES), KHaveFingerprint);
+    }else{
+        
+        [sender setOn:YES animated:NO];
+        
+        //验证
+        [self evaluatePolicy];
+    }
+    
+    
+}
+- (void)dismissLockView:(UIButton *)sender{
+    
+    
+    
+    [self.tableView reloadData];
+    
+    [self hiddenLockView];
+    
+}
+
+
+- (void)evaluatePolicy{
+
+    LAContext *context = [[LAContext alloc] init];
+    __block  NSString *msg;
+    
+    // show the authentication UI with our reason string
+    [context evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:NSLocalizedString(@"验证指纹解锁您的APP", nil) reply:
+     ^(BOOL success, NSError *authenticationError) {
+         if (success) {
+             
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+             msg =[NSString stringWithFormat:NSLocalizedString(@"验证成功", nil)];
+             
+             
+             
+             UserDefaultsSet(@(NO), KHaveFingerprint);
+
+         } else {
+             msg = [NSString stringWithFormat:NSLocalizedString(@"验证错误", nil), authenticationError.localizedDescription];
+         }
+         
+     }];
+    
+}
+#pragma mark - DBGuestureLockDelegate
+
+-(void)guestureLock:(DBGuestureLock *)lock didSetPassword:(NSString *)password {
+    //NSLog(@"Password set: %@", password);
+    if (lock.firstTimeSetupPassword == nil) {
+        lock.firstTimeSetupPassword = password;
+        NSLog(@"varify your password");
+            self.lockStatusLabel.text = @"请再次绘制解锁图案进行确认";
+    }
+}
+
+-(void)guestureLock:(DBGuestureLock *)lock didGetCorrectPswd:(NSString *)password {
+    //NSLog(@"Pa、ssword correct: %@", password);
+    if (lock.firstTimeSetupPassword && ![lock.firstTimeSetupPassword isEqualToString:DBFirstTimeSetupPassword]) {
+        lock.firstTimeSetupPassword = DBFirstTimeSetupPassword;
+        NSLog(@"password has been setup!");
+        self.lockStatusLabel.text = @"设置成功";
+        
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"设置成功" viewController:nil];
+        UserDefaultsSet(@(YES), KHaveGesturePsd);
+        
+        [self hiddenLockView];
+        
+    } else {
+        NSLog(@"login success");
+    self.lockStatusLabel.text = @"关闭成功";
+        
+        UserDefaultsSet(@(NO), KHaveGesturePsd);
+        [DBGuestureLock clearGuestureLockPassword];
+        
+        [self hiddenLockView];
+        
+    }
+    
+    [self.tableView reloadData];
+}
+- (void)hiddenLockView{
+    
+    
+    [UIView animateWithDuration:.35 animations:^{
+        
+        self.LockView.transform = CGAffineTransformMakeTranslation(0,KScreenHeight);
+        
+    } completion:^(BOOL finished) {
+        
+        for (UIView *view in  self.LockView.subviews) {
+            
+            if ([view isKindOfClass:[DBGuestureLock class]]) {
+                [view removeFromSuperview];
+            }
+        }
+    }];
+
+    
+}
+
+-(void)guestureLock:(DBGuestureLock *)lock didGetIncorrectPswd:(NSString *)password {
+    //NSLog(@"Password incorrect: %@", password);
+    if (![lock.firstTimeSetupPassword isEqualToString:DBFirstTimeSetupPassword]) {
+        NSLog(@"Error: password not equal to first setup!");
+    self.lockStatusLabel.text = @"两次绘制图案不一致，请重试";
+    } else {
+        NSLog(@"login failed");
+    self.lockStatusLabel.text = @"手势错误";
     }
 }
 
