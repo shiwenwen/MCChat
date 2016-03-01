@@ -17,6 +17,7 @@
 #import "DBGuestureLock.h"
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <LocalAuthentication/LAContext.h>
+#import "FileManagerViewController.h"
 @interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,DBGuestureLockDelegate>{
     
     UICollectionView *collection;
@@ -95,7 +96,7 @@
             number = 2;
             break;
         case 2:
-            number = 1;
+            number = 2;
             break;
         case 3:
         {
@@ -210,9 +211,14 @@
         
     }
     if (indexPath.section == 2) {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"聊天背景";
+            cell.detailTextLabel.text = @"选择";
+        }else{
+            cell.textLabel.text = @"文件管理";
+            cell.detailTextLabel.text = @"查看";
+        }
         
-        cell.textLabel.text = @"聊天背景";
-        cell.detailTextLabel.text = @"选择";
     }
     if (indexPath.section == 3) {
         
@@ -319,8 +325,19 @@
         
         
     }else if (indexPath.section == 2){
-        //聊天背景
-        [self.navigationController pushViewController:[[ChatBackgroundChoseViewController alloc]init] animated:YES];
+        
+        if (indexPath.row == 0) {
+            //聊天背景
+            [self.navigationController pushViewController:[[ChatBackgroundChoseViewController alloc]init] animated:YES];
+        }else{
+
+            [self.navigationController pushViewController:[[FileManagerViewController alloc] init] animated:YES];
+                
+
+
+            
+        }
+        
         
     }
     

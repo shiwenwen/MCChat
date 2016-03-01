@@ -79,6 +79,9 @@
 		2BAD25D21C489F5E007EBFAE /* CustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25D11C489F5E007EBFAE /* CustomAlertView.m */; };
 		2BAD25D51C490288007EBFAE /* RecordingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD25D41C490288007EBFAE /* RecordingView.m */; };
 		2BAD25D91C491FB7007EBFAE /* 5383.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2BAD25D81C491FB7007EBFAE /* 5383.mp3 */; };
+		2BC741651C85A207002D036F /* FileManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC741641C85A207002D036F /* FileManagerViewController.m */; };
+		2BC741691C85AC8E002D036F /* FileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC741671C85AC8E002D036F /* FileCell.m */; };
+		2BC7416A1C85AC8E002D036F /* FileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BC741681C85AC8E002D036F /* FileCell.xib */; };
 		2BC9D3DF1C72DDC2005F3954 /* 001.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2BC9D2A41C72DDC2005F3954 /* 001.gif */; };
 		2BC9D3E01C72DDC2005F3954 /* 001.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BC9D2A51C72DDC2005F3954 /* 001.png */; };
 		2BC9D3E11C72DDC2005F3954 /* 001@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BC9D2A61C72DDC2005F3954 /* 001@2x.png */; };
@@ -551,6 +554,11 @@
 		2BAD25D61C4903AE007EBFAE /* UICommons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UICommons.h; sourceTree = "<group>"; };
 		2BAD25D71C4903D2007EBFAE /* PCH.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCH.pch; sourceTree = "<group>"; };
 		2BAD25D81C491FB7007EBFAE /* 5383.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 5383.mp3; sourceTree = "<group>"; };
+		2BC741631C85A207002D036F /* FileManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileManagerViewController.h; sourceTree = "<group>"; };
+		2BC741641C85A207002D036F /* FileManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileManagerViewController.m; sourceTree = "<group>"; };
+		2BC741661C85AC8E002D036F /* FileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCell.h; sourceTree = "<group>"; };
+		2BC741671C85AC8E002D036F /* FileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCell.m; sourceTree = "<group>"; };
+		2BC741681C85AC8E002D036F /* FileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileCell.xib; sourceTree = "<group>"; };
 		2BC9D2A41C72DDC2005F3954 /* 001.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 001.gif; sourceTree = "<group>"; };
 		2BC9D2A51C72DDC2005F3954 /* 001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 001.png; sourceTree = "<group>"; };
 		2BC9D2A61C72DDC2005F3954 /* 001@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "001@2x.png"; sourceTree = "<group>"; };
@@ -1139,6 +1147,9 @@
 				2BC9D5261C72F831005F3954 /* WeiboFacePanelView.m */,
 				2BC9D5271C72F831005F3954 /* WeiboFaceView.h */,
 				2BC9D5281C72F831005F3954 /* WeiboFaceView.m */,
+				2BC741661C85AC8E002D036F /* FileCell.h */,
+				2BC741671C85AC8E002D036F /* FileCell.m */,
+				2BC741681C85AC8E002D036F /* FileCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1162,6 +1173,8 @@
 				2B3997861C7188310081CAFC /* ChangeNickNameViewController.xib */,
 				2B3997891C7199F70081CAFC /* ChatBackgroundChoseViewController.h */,
 				2B39978A1C7199F70081CAFC /* ChatBackgroundChoseViewController.m */,
+				2BC741631C85A207002D036F /* FileManagerViewController.h */,
+				2BC741641C85A207002D036F /* FileManagerViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1927,6 +1940,7 @@
 				2BC9D44F1C72DDC3005F3954 /* 039.gif in Resources */,
 				2BC9D47F1C72DDC3005F3954 /* 055.gif in Resources */,
 				2BC9D4E21C72DDC3005F3954 /* 088.gif in Resources */,
+				2BC7416A1C85AC8E002D036F /* FileCell.xib in Resources */,
 				2BC9D43B1C72DDC3005F3954 /* 032.png in Resources */,
 				2BC9D4AE1C72DDC3005F3954 /* 070@2x.png in Resources */,
 				2BC9D42D1C72DDC3005F3954 /* 027@2x.png in Resources */,
@@ -2126,10 +2140,12 @@
 				2B3997871C7188310081CAFC /* ChangeNickNameViewController.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
 				2B71EFB71C71BE110082BAE3 /* AFHTTPRequestOperation.m in Sources */,
+				2BC741691C85AC8E002D036F /* FileCell.m in Sources */,
 				2BEA0B8C1C4624BF00A719A8 /* DTTimePeriod.m in Sources */,
 				2B4076B91C4508EB003A7161 /* NSString+WPAttributedMarkup.m in Sources */,
 				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
 				2B71EFC71C71BE110082BAE3 /* UIWebView+AFNetworking.m in Sources */,
+				2BC741651C85A207002D036F /* FileManagerViewController.m in Sources */,
 				2B6455A81C7EA5DF006285FD /* HeaderCell.m in Sources */,
 				2BC9D5291C72F831005F3954 /* WeiboFacePanelView.m in Sources */,
 				2B71EFC11C71BE110082BAE3 /* UIActivityIndicatorView+AFNetworking.m in Sources */,

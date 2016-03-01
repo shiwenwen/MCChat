@@ -388,8 +388,12 @@
     if (url != nil) {
         NSString *path = [url absoluteString];
         NSMutableString *string = [[NSMutableString alloc] initWithString:path];
-        if ([path hasPrefix:@"file://"]) {
-            [string replaceOccurrencesOfString:@"file://" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, path.length)];
+        
+        
+        if ([path hasPrefix:@"file:///private"]) {
+            [string replaceOccurrencesOfString:@"file:///private" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, path.length)];
+            NSLog(@"文件的路径%@",string);
+            
         }
 
     }
