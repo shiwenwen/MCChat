@@ -11,7 +11,10 @@
 @implementation FileCell
 
 - (void)awakeFromNib {
-    // Initialization code
+    self.logoImageView.layer.cornerRadius = 5;
+    self.logoImageView.layer.masksToBounds = YES;
+    
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

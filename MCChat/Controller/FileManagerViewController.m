@@ -7,9 +7,10 @@
 //
 
 #import "FileManagerViewController.h"
-
-@interface FileManagerViewController ()
+#import "FileModel.h"
+@interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,strong)NSArray *subFilePaths;
+@property (nonatomic,strong)UITableView *tableView;
 @end
 
 @implementation FileManagerViewController
@@ -33,11 +34,16 @@
             
             
             //目录存在
-            self.subFilePaths = [fileManager subpathsAtPath:BasePath];
             
-            for (NSString *subPath in self.subFilePaths) {
+            NSArray *subPaths = [fileManager subpathsAtPath:BasePath];
+            self.subFilePaths = [NSMutableArray arrayWithCapacity:subPaths.count];
+            for (NSString *subPath in subPaths) {
                 
                 NSLog(@"subPath = %@",subPath);
+                NSError *error;
+               NSDictionary *fileAttr =  [fileManager attributesOfItemAtPath:subPath error:&error];
+               
+                FileModel *model = [[FileModel alloc]init];
                 
             }
             
@@ -50,7 +56,39 @@
     
     
 }
+- (void)_creatTableView{
+    
+    
+    self.tableView = [[UITableView alloc]initWithFrame:self.view.bounds];
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    [self.view addSubview:self.tableView];
+}
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    
+    return 0;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    
+    return self.subFilePaths.count;
+}
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    
+    
+    return nil;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    
+}
+
+- (CGFloat )tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    return 0;
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

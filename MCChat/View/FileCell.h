@@ -10,4 +10,10 @@
 
 @interface FileCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeDetailLabel;
+
+
+
 @end

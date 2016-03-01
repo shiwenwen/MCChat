@@ -419,6 +419,7 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		88BEE3AB1C85D26900293A82 /* FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BEE3AA1C85D26900293A82 /* FileModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -919,6 +920,8 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		88BEE3A91C85D26900293A82 /* FileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileModel.h; sourceTree = "<group>"; };
+		88BEE3AA1C85D26900293A82 /* FileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1602,6 +1605,8 @@
 			children = (
 				2BFAA1691C3FB7B000E8D032 /* ChatItem.h */,
 				2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */,
+				88BEE3A91C85D26900293A82 /* FileModel.h */,
+				88BEE3AA1C85D26900293A82 /* FileModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2130,6 +2135,7 @@
 				2B71EFB91C71BE110082BAE3 /* AFHTTPSessionManager.m in Sources */,
 				2BEA0B8F1C4624BF00A719A8 /* DTTimePeriodGroup.m in Sources */,
 				2BC9D5331C73395C005F3954 /* WebViewController.m in Sources */,
+				88BEE3AB1C85D26900293A82 /* FileModel.m in Sources */,
 				2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */,
 				2BEA0B901C4624BF00A719A8 /* NSDate+DateTools.m in Sources */,
 				2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */,
