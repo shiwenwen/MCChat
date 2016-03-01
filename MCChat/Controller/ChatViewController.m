@@ -23,7 +23,8 @@
 #define kRecordAudioFile @"myRecord.caf"
 #import "RecordingView.h"
 #import "SettingViewController.h"
-@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate>{
+#import "HeaderCell.h"
+@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>{
     
     float _sendBackViewHeight;
     float _keyboardHeight;
@@ -38,6 +39,7 @@
     UIImageView *_currentVoiceView;
     MCPeerID *_curretConnect;
     BOOL _showFacePanel;
+    BOOL _showAttachment;
 }
 
 @property (nonatomic,strong)NSMutableDictionary *otherHeaderImages;
@@ -59,6 +61,8 @@
 @property (strong,nonatomic) UIButton *recorderButton;
 @property (nonatomic,strong)RecordingView *recordingView;
 @property (nonatomic,strong)WeiboFacePanelView *facePanelView;
+@property (nonatomic,strong)UICollectionView *attachmentCollectionView;
+
 // 语音播放
 @property (nonatomic,strong) AVAudioRecorder *audioRecorder;//音频录音机
 //音频播放器，用于播放录音文件
@@ -186,7 +190,7 @@
         [UIView animateWithDuration:.25 animations:^{
             _keyboardHeight = 0;
             self.facePanelView.top = KScreenHeight;
-            
+            _showFacePanel = NO;
             
             float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
             
@@ -206,9 +210,33 @@
             }
             _emotionButton.selected = NO;
         }];
+   
+    }
+    if (_showAttachment) {
         
-        
-
+        [UIView animateWithDuration:.25 animations:^{
+            _keyboardHeight = 0;
+            self.attachmentCollectionView.top = KScreenHeight;
+            
+            
+            float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+            
+            
+            self.sendTextView.height = textHeight;
+            
+            self.voiceButton.bottom = self.sendTextView.bottom;
+            _addButton.bottom = self.sendTextView.bottom;
+            _emotionButton.bottom = self.sendTextView.bottom;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+            
+            
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+            
+            if (self.datasource.count >= 1) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+            _showAttachment = NO;
+        }];
         
     }
 }
@@ -415,7 +443,7 @@
     _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _addButton.frame = CGRectMake(WIDTH - TextDefaultheight - 2.5, 5, TextDefaultheight, TextDefaultheight);
     [_addButton setImage:[UIImage imageNamed:@"TypeSelectorBtn_Black"] forState:UIControlStateNormal];
-    [_addButton addTarget:self action:@selector(addNextImage) forControlEvents:UIControlEventTouchUpInside];
+    [_addButton addTarget:self action:@selector(addNextImage:) forControlEvents:UIControlEventTouchUpInside];
     [self.sendBackView addSubview:_addButton];
     
      _emotionButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -483,32 +511,7 @@
             
         }];
         
-        if (_showFacePanel) {
-            [UIView animateWithDuration:.25 animations:^{
-                _keyboardHeight = 0;
-                self.facePanelView.top = KScreenHeight;
-                
-                
-                float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
-                
-                
-                self.sendTextView.height = textHeight;
-                
-                self.voiceButton.bottom = self.sendTextView.bottom;
-                _addButton.bottom = self.sendTextView.bottom;
-                _emotionButton.bottom = self.sendTextView.bottom;
-                self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
-                
-                
-                self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
-                
-                if (self.datasource.count >= 1) {
-                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-                }
-                _emotionButton.selected = NO;
-            }];
-
-        }
+        [self hiddenKeyboard];
     }else{
         //显示输入框
         self.recorderButton.hidden = YES;
@@ -548,14 +551,26 @@
     sender.selected = !sender.isSelected;
     
     if (sender.isSelected) {
+        
+        [self hiddenKeyboard];
+        
         _showFacePanel = YES;
         
-        if ([self.sendTextView isFirstResponder]) {
-        [self.sendTextView resignFirstResponder];
-            
-        }else{
+        if (self.voiceButton.selected) {
+            self.voiceButton.selected = NO;
+            self.recorderButton.hidden = YES;
+            self.sendTextView.hidden = NO;
+        }
+        
+
+
             [UIView animateWithDuration:.25 animations:^{
                 
+                if (_showAttachment) {
+                    
+                    self.attachmentCollectionView.top = KScreenHeight;
+                    _showAttachment = NO;
+                }
                 
                     _keyboardHeight = self.facePanelView.height;
                     self.facePanelView.bottom = KScreenHeight;
@@ -578,15 +593,12 @@
                 }
  
             }];
-            
-            
-            
-        }
 
         
         
 
     }else{
+        
         _showFacePanel = NO;
         [self.sendTextView becomeFirstResponder];
 
@@ -652,9 +664,16 @@
 //            
 //            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
 //
-            if (_showFacePanel == YES) {
+            if (_showFacePanel == YES || _showAttachment == YES) {
                 _keyboardHeight = self.facePanelView.height;
-                self.facePanelView.bottom = KScreenHeight;
+//                if (_showFacePanel) {
+//                  self.facePanelView.bottom = KScreenHeight;
+//                    
+//                }
+//                if (_showAttachment) {
+//                    self.attachmentCollectionView.bottom = KScreenHeight;
+//
+//                }
             }
             
             float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
@@ -678,10 +697,16 @@
             
         }else{
             
-            if (!_showFacePanel) {
-                
-                self.facePanelView.top = KScreenHeight;
-            }
+
+
+                 self.facePanelView.top = KScreenHeight;
+                    _showFacePanel = NO;
+
+            
+
+                 self.attachmentCollectionView.top = KScreenHeight;
+                    _showFacePanel = NO;
+
             
             if (self.sendTextView.text.length > 0) {
                 
@@ -716,17 +741,165 @@
     
 }
 
-#pragma mark 图片的传输---------///////
+#pragma mark 图片 文件的传输---------///////
 
-- (void)addNextImage
+- (void)addNextImage:(UIButton *)sender
 {
     [self hiddenKeyboard];
-    UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"照相机",@"相册", nil];
-    [chooseImageSheet showInView:self.view];
+//    UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"照相机",@"相册", nil];
+//    [chooseImageSheet showInView:self.view];
+
+
+        
+        if (!self.attachmentCollectionView) {
+            
+            
+            UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+            CGFloat size = (KScreenWidth - 20 * 5) / 4;
+            layout.itemSize = CGSizeMake(size, size);
+            layout.minimumLineSpacing = 20;
+            layout.minimumInteritemSpacing = 20;
+            layout.sectionInset = UIEdgeInsetsMake(20, 20, 20, 20);
+            
+            
+            self.attachmentCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, KScreenHeight, KScreenWidth,self.facePanelView.height) collectionViewLayout:layout];
+            [self.attachmentCollectionView registerNib:[UINib nibWithNibName:@"HeaderCell" bundle:nil] forCellWithReuseIdentifier:@"HeaderCell"];
+            self.attachmentCollectionView.scrollEnabled = NO;
+            self.attachmentCollectionView.backgroundColor = [UIColor whiteColor];
+            self.attachmentCollectionView.dataSource = self;
+            self.attachmentCollectionView.delegate = self;
+            self.attachmentCollectionView.backgroundColor  = [UIColor colorWithWhite:.8 alpha:.95];
+            [self.tabBarController.view addSubview:self.attachmentCollectionView];
+            
+            
+            
+            
+            
+        }
+    if (_showAttachment) {
+        return;
+    }
+        _showAttachment = YES;
+        [UIView animateWithDuration:.25 animations:^{
+
+                self.facePanelView.top = KScreenHeight;
+                _showFacePanel = NO;
+
+            
+            _keyboardHeight = self.attachmentCollectionView.height;
+            self.attachmentCollectionView.bottom = KScreenHeight;
+            
+            float textHeight = [self heightForString:self.sendTextView.text fontSize:17 andWidth:self.sendTextView.frame.size.width];
+            
+            
+            self.sendTextView.height = textHeight;
+            
+            self.voiceButton.bottom = self.sendTextView.bottom;
+            _addButton.bottom = self.sendTextView.bottom;
+            _emotionButton.bottom = self.sendTextView.bottom;
+            self.sendBackView.frame = CGRectMake(0, self.view.height - textHeight - 14 - _keyboardHeight, WIDTH, textHeight + 14);
+            
+            
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, self.view.height - _keyboardHeight - self.sendBackView.height + 49);
+            
+            if (self.datasource.count >= 1) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.datasource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+            
+        }];
+        
+    
+    
+    
+    
+    
+    
+    
 }
 
 
+#pragma mark --UICollectionViewDataSource,UICollectionViewDelegate
 
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+
+    return 3;
+}
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    HeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HeaderCell" forIndexPath:indexPath];
+    cell.headImageVIew.userInteractionEnabled = NO;    
+    switch (indexPath.item) {
+        case 0:
+        {
+
+            cell.headImageVIew.image = [UIImage imageNamed:@"sharemore_video"];
+        }
+            break;
+        case 1:
+        {
+
+            cell.headImageVIew.image = [UIImage imageNamed:@"sharemore_pic"];
+        }
+            break;
+        case 2:
+        {
+
+            cell.headImageVIew.image = [UIImage imageNamed:@"sharemore_wallet"];
+        }
+            break;
+            
+        default:
+            break;
+    }
+        
+    
+
+    
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    _picker = [[UIImagePickerController alloc] init];
+    _picker.delegate = self;
+
+    switch (indexPath.item) {
+        case 0:
+        {
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+            {
+                
+                _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+            }
+            
+            [self presentViewController:_picker animated:YES completion:nil];
+            
+
+        }
+            break;
+        case 1:
+        {
+            //From album
+            _picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+            
+            [self presentViewController:_picker animated:YES completion:^{
+                
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
+                 ];
+            }];
+        }
+            break;
+        case 2:
+        {
+            //发送文件
+        }
+            break;
+            
+        default:
+            break;
+    }
+
+}
 
 #pragma mark UIActionSheetDelegate Method
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

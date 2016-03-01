@@ -16,7 +16,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self _createSubViews];
-        
+        self.backgroundColor = [UIColor colorWithWhite:.8 alpha:.95];
     }
     return self;
 }
@@ -54,7 +54,7 @@
 
 - (void)drawRect:(CGRect)rect {
 
-    [[UIImage imageNamed:@"emoticon_keyboard_background"] drawInRect:rect];
+//    [[UIImage imageNamed:@"AlbumTriangleD"] drawInRect:rect];
 
 }
 //结束减速，修改pageCtrl
