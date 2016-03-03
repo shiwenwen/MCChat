@@ -156,8 +156,26 @@
             
 
 
+        }else{
+            self.tableView.hidden = YES;
+            
+            UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
+            [self.view addSubview:label];
+            label.text = @"暂无文件";
+            label.font = [UIFont systemFontOfSize:23];
+            label.textAlignment = NSTextAlignmentCenter;
+
         }
         
+    }else{
+        self.tableView.hidden = YES;
+        
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
+        [self.view addSubview:label];
+        label.text = @"暂无文件";
+        label.font = [UIFont systemFontOfSize:23];
+        label.textAlignment = NSTextAlignmentCenter;
+
     }
 
     
