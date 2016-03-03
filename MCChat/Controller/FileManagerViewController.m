@@ -9,6 +9,7 @@
 #import "FileManagerViewController.h"
 #import "FileModel.h"
 #import "FileCell.h"
+#import "FileDetailViewController.h"
 @interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,strong)NSMutableArray *files;
 @property (nonatomic,strong)UITableView *tableView;
@@ -130,6 +131,9 @@
                 }else if ([extension isEqualToString:@"rar"]||[extension isEqualToString:@"zip"]||[extension isEqualToString:@"tar"]||[extension isEqualToString:@"cab"]||[extension isEqualToString:@"uue"]||[extension isEqualToString:@"jar"]||[extension isEqualToString:@"iso"]||[extension isEqualToString:@"z"]||[extension isEqualToString:@"7-zip"]||[extension isEqualToString:@"gzip"]||[extension isEqualToString:@"bz2"]){
                     
                     type = zip;
+                }else if ([extension isEqualToString:@"pdf"]){
+                    
+                    type = pdf;
                 }
                 
                 FileModel *model = [[FileModel alloc]initWithName:subPath Detail:dateStr size:fileSize FileType:type Path:[BasePath stringByAppendingPathComponent:subPath]];
@@ -138,8 +142,18 @@
                 
             }
             
-
+            if (self.files.count > 0) {
                 [self.tableView reloadData];
+            }else{
+                self.tableView.hidden = YES;
+                
+                UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
+                [self.view addSubview:label];
+                label.text = @"暂无文件";
+                label.font = [UIFont systemFontOfSize:23];
+                label.textAlignment = NSTextAlignmentCenter;
+            }
+            
 
 
         }
@@ -181,10 +195,11 @@
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    FileModel *model = self.files[indexPath.row];
     
-    
-    
-    
+    FileDetailViewController *fileDetailVC =[[FileDetailViewController alloc]init];
+    fileDetailVC.model = model;
+    [self.navigationController pushViewController:fileDetailVC animated:YES];
     
 }
 

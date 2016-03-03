@@ -438,7 +438,10 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		8883BD051C8877DB006E3271 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8883BD041C8877DB006E3271 /* QuickLook.framework */; };
 		88BEE3AB1C85D26900293A82 /* FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BEE3AA1C85D26900293A82 /* FileModel.m */; };
+		88E749DE1C886E0F00F4BBE4 /* FileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E749DC1C886E0F00F4BBE4 /* FileDetailViewController.m */; };
+		88E749DF1C886E0F00F4BBE4 /* FileDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88E749DD1C886E0F00F4BBE4 /* FileDetailViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -976,8 +979,12 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		8883BD041C8877DB006E3271 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		88BEE3A91C85D26900293A82 /* FileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileModel.h; sourceTree = "<group>"; };
 		88BEE3AA1C85D26900293A82 /* FileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileModel.m; sourceTree = "<group>"; };
+		88E749DB1C886E0F00F4BBE4 /* FileDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDetailViewController.h; sourceTree = "<group>"; };
+		88E749DC1C886E0F00F4BBE4 /* FileDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileDetailViewController.m; sourceTree = "<group>"; };
+		88E749DD1C886E0F00F4BBE4 /* FileDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDetailViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -985,6 +992,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8883BD051C8877DB006E3271 /* QuickLook.framework in Frameworks */,
 				2B2A4E1A1C844DE100FCF768 /* LocalAuthentication.framework in Frameworks */,
 				2B2A4E181C844C4400FCF768 /* libc++abi.tbd in Frameworks */,
 				2B78F5D41C74262A0003C9E8 /* ImageIO.framework in Frameworks */,
@@ -1014,6 +1022,7 @@
 		2B2A4E0F1C842F0D00FCF768 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				8883BD041C8877DB006E3271 /* QuickLook.framework */,
 				2B2A4E191C844DE100FCF768 /* LocalAuthentication.framework */,
 				2B2A4E171C844C4400FCF768 /* libc++abi.tbd */,
 				2B78F5D31C74262A0003C9E8 /* ImageIO.framework */,
@@ -1287,6 +1296,9 @@
 				2B39978A1C7199F70081CAFC /* ChatBackgroundChoseViewController.m */,
 				2BC741631C85A207002D036F /* FileManagerViewController.h */,
 				2BC741641C85A207002D036F /* FileManagerViewController.m */,
+				88E749DB1C886E0F00F4BBE4 /* FileDetailViewController.h */,
+				88E749DC1C886E0F00F4BBE4 /* FileDetailViewController.m */,
+				88E749DD1C886E0F00F4BBE4 /* FileDetailViewController.xib */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2194,6 +2206,7 @@
 				2BC9D4A61C72DDC3005F3954 /* 068.gif in Resources */,
 				2BC9D4421C72DDC3005F3954 /* 034@2x.png in Resources */,
 				2BC9D3F31C72DDC2005F3954 /* 007@2x.png in Resources */,
+				88E749DF1C886E0F00F4BBE4 /* FileDetailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2221,6 +2234,7 @@
 				2B7C9E151C86948700062209 /* SDWebImageManager.m in Sources */,
 				2B7C9E161C86948700062209 /* SDWebImagePrefetcher.m in Sources */,
 				2B71EFC51C71BE110082BAE3 /* UIProgressView+AFNetworking.m in Sources */,
+				88E749DE1C886E0F00F4BBE4 /* FileDetailViewController.m in Sources */,
 				2B4076B81C4508EB003A7161 /* NSMutableString+TagReplace.m in Sources */,
 				2B71EFC61C71BE110082BAE3 /* UIRefreshControl+AFNetworking.m in Sources */,
 				2B4076A71C4504E1003A7161 /* UIView+UIViewController.m in Sources */,

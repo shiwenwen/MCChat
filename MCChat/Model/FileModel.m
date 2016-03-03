@@ -43,6 +43,10 @@
         }
             
             break;
+        case image:{
+            
+            self.logoImage= [UIImage imageWithContentsOfFile:self.path];
+        }
         case txt:
         {
             self.logoImage = [UIImage imageNamed:@"txt"];
@@ -52,6 +56,12 @@
         case zip:
         {
             self.logoImage = [UIImage imageNamed:@"zip"];
+            
+        }
+            break;
+        case pdf:
+        {
+            self.logoImage = [UIImage imageNamed:@"pdf"];
             
         }
             break;

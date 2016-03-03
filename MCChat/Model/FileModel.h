@@ -16,6 +16,7 @@ typedef NS_ENUM (NSInteger,FileType){
     image,//GIF、JPEG、BMP、TIF、JPG、PCD、QTI、QTF、TIFF
     txt,
     zip,//rar,zip,tar,cab,uue,jar,iso,z,7-zip,ace,lzh,arj,gzip,bz2
+    pdf,//pdf
     other
 };
 @interface FileModel : NSObject

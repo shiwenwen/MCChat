@@ -19,5 +19,5 @@
 #define MyNickName @"myNickName"
 #define KHaveGesturePsd @"haveGesturePsd"
 #define KHaveFingerprint @"haveFingerprint"
-
+#define KGetNewFile @"getNewFile"
 #endif /* UICommons_h */

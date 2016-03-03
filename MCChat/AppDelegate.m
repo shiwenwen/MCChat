@@ -16,7 +16,7 @@
 @interface AppDelegate ()<DBGuestureLockDelegate>
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
-
+@property (nonatomic,strong)MainTabBarViewController *mainTabBar;
 @end
 
 @implementation AppDelegate
@@ -30,7 +30,8 @@
     
     
 //    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[RootViewController alloc]init]];
-    self.window.rootViewController = [[MainTabBarViewController alloc]init];
+    self.mainTabBar = [[MainTabBarViewController alloc]init];
+    self.window.rootViewController = self.mainTabBar;
     //  1.如果是iOS8请求用户权限
     if ([UIDevice currentDevice].systemVersion.doubleValue >= 8.0 && [UIDevice currentDevice].systemVersion.floatValue <= 9.0) {
         
@@ -259,7 +260,10 @@
         self.lockStatusLabel.text = @"手势错误";
     }
 }
-
+-(void)guestureLock:(DBGuestureLock *)lock didSetPassword:(NSString*)password{
+    
+    
+}
 
 - (void)evaluatePolicy{
     
@@ -395,7 +399,14 @@
             NSLog(@"文件的路径%@",string);
             
         }
-
+        [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:string];
+        
+        UINavigationController *navi = (UINavigationController *) self.mainTabBar.viewControllers.lastObject;
+        if (navi.viewControllers.count > 1) {
+            
+            [navi popToRootViewControllerAnimated:YES];
+            
+        }
     }
     return YES;
 }
