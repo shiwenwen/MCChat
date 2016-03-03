@@ -13,10 +13,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DBGuestureLock.h"
 #import <LocalAuthentication/LAContext.h>
-@interface AppDelegate ()<DBGuestureLockDelegate>
+#import "FileDetailViewController.h"
+#import "FileManagerViewController.h"
+#import "FileModel.h"
+@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
 @property (nonatomic,strong)MainTabBarViewController *mainTabBar;
+@property (nonatomic,copy)NSString *getFilePath;
 @end
 
 @implementation AppDelegate
@@ -399,14 +403,15 @@
             NSLog(@"文件的路径%@",string);
             
         }
-        [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:string];
-        
-        UINavigationController *navi = (UINavigationController *) self.mainTabBar.viewControllers.lastObject;
-        if (navi.viewControllers.count > 1) {
-            
-            [navi popToRootViewControllerAnimated:YES];
-            
+        self.getFilePath = string;
+        NSRange range = [string rangeOfString:@"/" options:NSAnchoredSearch];
+        NSString *name = @"未知";
+        if (range.location != NSNotFound) {
+            name = [string substringFromIndex:range.location + 1];
         }
+
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"新文件" message:name delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"发送",@"查看", nil];
+        [alert show];
     }
     return YES;
 }
@@ -437,10 +442,149 @@
     
 
 }
+#pragma mark - alrtViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    if (buttonIndex == 0) {
+        
+    }else if (buttonIndex == 1){
+         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:self.getFilePath];
+        UINavigationController *navi = (UINavigationController *)self.mainTabBar.viewControllers.lastObject;
+        if (navi.viewControllers > 0) {
+            
+            [navi popToRootViewControllerAnimated:YES];
+            
+        }
+        
+    }else{
+         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:self.getFilePath];
+         UINavigationController *navi = (UINavigationController *)self.mainTabBar.viewControllers.lastObject;
+        FileDetailViewController *fileDetail = [[FileDetailViewController alloc]init];
+        fileDetail.model= [self getFileModelWithPath:self.getFilePath];
+        [navi pushViewController:fileDetail animated:YES];
+        
+    }
+    
+    
+}
 
+- (FileModel *)getFileModelWithPath:(NSString *)path{
+    
+    NSDictionary *fileAttr =  [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
+    
+    NSLog(@"fileAttr ==== %@",fileAttr);
+    
+    /*
+     fileAttr ==== {
+     NSFileCreationDate = "2016-03-01 10:46:27 +0000";
+     NSFileExtensionHidden = 0;
+     NSFileGroupOwnerAccountID = 501;
+     NSFileGroupOwnerAccountName = mobile;
+     NSFileModificationDate = "2016-03-01 10:46:27 +0000";
+     NSFileOwnerAccountID = 501;
+     NSFileOwnerAccountName = mobile;
+     NSFilePosixPermissions = 420;
+     NSFileProtectionKey = NSFileProtectionCompleteUntilFirstUserAuthentication;
+     NSFileReferenceCount = 1;
+     NSFileSize = 16220;
+     NSFileSystemFileNumber = 17553603;
+     NSFileSystemNumber = 16777220;
+     NSFileType = NSFileTypeRegular;
+     }
+     */
+    
+    NSString *fileSize = [self fileSizeTransform:[fileAttr[@"NSFileSize"] floatValue]];
+    
+    NSDate *modificationDate = fileAttr[@"NSFileModificationDate"];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    NSString *dateStr = [formatter stringFromDate:modificationDate];
+    
+    
+    NSRange range = [path rangeOfString:@"." options:NSAnchoredSearch];
+    
+    NSString *extension;
+    
+    if (range.location != NSNotFound) {
+        
+        extension = [path substringFromIndex:range.location + 1];
+        
+        
+    }
+    
+    FileType type = other;
+    
+    /*
+     Word,//doc,docx
+     Excel,//xls,xlsx
+     PowerPoint,//ppt,pptx
+     music,//mp3,wma,mac,aac,wav...
+     video,//RMVB、WMV、ASF、AVI、3GP、MPG、MKV、MP4、OGM、MOV、MPEG2、MPEG4
+     image,//GIF、JPEG、BMP、TIF、JPG、PCD、QTI、QTF、TIFF
+     txt,
+     zip,//rar,zip,tar,cab,uue,jar,iso,z,7-zip,ace,lzh,arj,gzip,bz2
+     other
+     */
+    extension = [extension lowercaseString];
+    if ([extension isEqualToString:@"doc"]||[extension isEqualToString:@"docx"]) {
+        type = Word;
+    }else if ([extension isEqualToString:@"xls"]||[extension isEqualToString:@"xlsx"]){
+        
+        type = Excel;
+        
+    }else if ([extension isEqualToString:@"ppt"]||[extension isEqualToString:@"pptx"]){
+        
+        type = PowerPoint;
+    }
+    else if ([extension isEqualToString:@"mp3"]||[extension isEqualToString:@"wma"]||[extension isEqualToString:@"mac"]||[extension isEqualToString:@"aac"]||[extension isEqualToString:@"wav"]){
+        
+        
+        type = music;
+        
+    }else if ([extension isEqualToString:@"rmvb"]||[extension isEqualToString:@"wmv"]||[extension isEqualToString:@"asf"]||[extension isEqualToString:@"avi"]||[extension isEqualToString:@"3gp"]||[extension isEqualToString:@"mpg"]||[extension isEqualToString:@"mkv"]||[extension isEqualToString:@"mp4"]||[extension isEqualToString:@"ogm"]||[extension isEqualToString:@"mov"]||[extension isEqualToString:@"mpeg2"]||[extension isEqualToString:@"mpeg4"]){
+        
+        type = video;
+        
+    }else if ([extension isEqualToString:@"gif"]||[extension isEqualToString:@"jpeg"]||[extension isEqualToString:@"bmp"]||[extension isEqualToString:@"tif"]||[extension isEqualToString:@"jpg"]||[extension isEqualToString:@"pcd"]||[extension isEqualToString:@"qti"]||[extension isEqualToString:@"qtf"]||[extension isEqualToString:@"tiff"]){
+        
+        type = image;
+        
+    }else if ([extension isEqualToString:@"rar"]||[extension isEqualToString:@"zip"]||[extension isEqualToString:@"tar"]||[extension isEqualToString:@"cab"]||[extension isEqualToString:@"uue"]||[extension isEqualToString:@"jar"]||[extension isEqualToString:@"iso"]||[extension isEqualToString:@"z"]||[extension isEqualToString:@"7-zip"]||[extension isEqualToString:@"gzip"]||[extension isEqualToString:@"bz2"]){
+        
+        type = zip;
+    }else if ([extension isEqualToString:@"pdf"]){
+        
+        type = pdf;
+    }
+    NSRange range2 = [path rangeOfString:@"/" options:NSAnchoredSearch];
+    NSString *name = @"未知";
+    if (range.location != NSNotFound) {
+        name = [path substringFromIndex:range2.location + 1];
+    }
+    FileModel *model = [[FileModel alloc]initWithName:name Detail:dateStr size:fileSize FileType:type Path:path];
+    
+    return model;
+    
+}
 
-
-
+#pragma mark -- 尺寸计算
+- (NSString *)fileSizeTransform:(CGFloat )originalSize{
+    
+    if (originalSize / (1000 * 1000) < 1) {
+        
+        return [NSString stringWithFormat:@"%.2fKB",originalSize / 1000.0];
+    }else if (originalSize / (1000 * 1000) >= 1){
+        
+        
+        return [NSString stringWithFormat:@"%.2fMB",originalSize / (1000.0 * 1000.0)];
+        
+        
+    }else{
+        
+        return [NSString stringWithFormat:@"%.2fGB",originalSize / (1000.0 * 1000 * 1000)];
+    }
+    
+}
 
 
 @end
