@@ -1336,7 +1336,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identifier = @"Chat_Cell";
+    static NSString *identifier = @"MyChatCell";
     
     MyChatCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     

@@ -16,7 +16,15 @@
     
     
 }
-
+-(void)setModel:(FileModel *)model{
+    
+    _model = model;
+    self.logoImageView.image = _model.logoImage;
+    self.nameLabel.text = _model.name;
+    self.sizeLabel.text = _model.size;
+    self.timeDetailLabel.text = _model.detail;
+    
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 

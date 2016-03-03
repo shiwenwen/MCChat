@@ -15,6 +15,7 @@ typedef NS_ENUM (NSInteger,FileType){
     video,//RMVB、WMV、ASF、AVI、3GP、MPG、MKV、MP4、DVD、OGM、MOV、MPEG2、MPEG4
     image,//GIF、JPEG、BMP、TIF、JPG、PCD、QTI、QTF、TIFF
     txt,
+    zip,//rar,zip,tar,cab,uue,jar,iso,z,7-zip,ace,lzh,arj,gzip,bz2
     other
 };
 @interface FileModel : NSObject
@@ -23,7 +24,7 @@ typedef NS_ENUM (NSInteger,FileType){
 @property (nonatomic,copy)NSString *detail;
 @property (nonatomic,assign)FileType fileType;
 @property (nonatomic,copy)NSString *path;
+@property (nonatomic,copy)NSString *size;
 
-
-- (instancetype)initWithName:(NSString *)name Detail:(NSString *)detail FileType:(FileType )type Path:(NSString *)path;
+- (instancetype)initWithName:(NSString *)name Detail:(NSString *)detail size:(NSString *)size FileType:(FileType )type Path:(NSString *)path;
 @end

@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "FileModel.h"
 @interface FileCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeDetailLabel;
 
-
+@property (weak, nonatomic) IBOutlet UILabel *sizeLabel;
+@property (nonatomic,strong)FileModel *model;
 
 @end
