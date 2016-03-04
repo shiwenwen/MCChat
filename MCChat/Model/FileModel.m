@@ -45,7 +45,9 @@
             break;
         case image:{
             
-            self.logoImage= [UIImage imageWithContentsOfFile:self.path];
+
+           self.logoImage =[ UIImage imageWithContentsOfFile:self.path];;
+            
         }
         case txt:
         {
@@ -85,8 +87,9 @@
         
         self.name = name;
         self.detail = detail;
-        self.fileType = type;
         self.path = path;
+        self.fileType = type;
+
         self.size = size;
         
     }

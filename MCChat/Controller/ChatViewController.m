@@ -24,6 +24,8 @@
 #import "RecordingView.h"
 #import "SettingViewController.h"
 #import "HeaderCell.h"
+#import "FileModel.h"
+#import "FileManagerViewController.h"
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>{
     
     float _sendBackViewHeight;
@@ -90,6 +92,7 @@
     [UIView animateWithDuration:.25 animations:^{
         self.sendBackView.hidden = NO;
         self.facePanelView.hidden = NO;
+        self.attachmentCollectionView.hidden = NO;
     }];
 
     
@@ -100,6 +103,7 @@
     
     [super viewWillDisappear:animated];
     self.sendBackView.hidden = YES;
+    self.attachmentCollectionView.hidden = YES;
     
 }
 - (void)viewDidLoad {
@@ -143,10 +147,90 @@
     
     //监听背景切换
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(setDefaultBackground) name:@"ChangeDefaultBackground" object:nil];
+    //监听新文件
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getNewFile:) name:KGetNewFile object:nil];
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getNewFile:) name:@"PostFile" object:nil];
     
     
 }
+#pragma mark -- 收到新文件
+- (void)getNewFile:(NSNotification *)noti{
+    
+    FileModel *model = noti.object;
+    
+    if (model.realitySize <1000*1000*10) {
+        
+        [self postFile:model];
+        
+    }else{
+        
+        
+        
+        
+    }
+    
+    
+}
+#pragma mark -- 发送文件
+- (void)postFile:(FileModel *)model{
+    
+    
+    if(!self.sessionManager.isConnected)
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        [alertView show];
+        return;
+    }
+    
+    NSString *name = [NSString stringWithFormat:@"file_%@",model.name];
+    
+    if (model.fileType == image) {
+        
+        
+    [self sendAsResource:model.path];
+        
+        ChatItem * chatItem = [[ChatItem alloc] init];
+        chatItem.isSelf = YES;
+        chatItem.states = picStates;
+        chatItem.picImage = [UIImage imageWithContentsOfFile:model.path];
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
+        [self.datasource addObject:chatItem];
+        
+        
+        [self insertTheTableToButtom];
 
+        
+    }else{
+        
+      
+        
+        NSURL * url = [NSURL fileURLWithPath:model.path];
+        for (MCPeerID *peer in self.sessionManager.connectedPeers) {
+            
+            NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
+                if(!error) {
+                    NSLog(@"finished sending resource");
+                }
+                else {
+                    NSLog(@"%@", error);
+                }
+            }];
+            
+            NSLog(@"%@", @(progress.fractionCompleted));
+        }
+        
+
+        
+        
+    }
+    
+    
+    
+}
 #pragma mark -- 切换背景
 - (void)setDefaultBackground{
     //    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"壁纸1.jpg"]];
@@ -267,7 +351,7 @@
 #pragma mark -- 搜错其它设备
 - (void)lookOtherDevice
 {
-    
+    [self hiddenKeyboard];
     
      [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     
@@ -295,7 +379,10 @@
     NSMutableDictionary *imagesDic = [NSMutableDictionary dictionary];
     for (MCPeerID *peer in peers) {
         
-        [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer];
+        if (self.otherHeaderImages[peer.displayName]) {
+          [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer];
+        }
+        
         
     }
     self.otherHeaderImages = imagesDic;
@@ -881,7 +968,7 @@
         {
             //From album
             _picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-            
+        
             [self presentViewController:_picker animated:YES completion:^{
                 
                 [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
@@ -892,6 +979,12 @@
         case 2:
         {
             //发送文件
+            
+            FileManagerViewController *fileManeger = [[FileManagerViewController alloc]init];
+            fileManeger.isFromChat = YES;
+            
+            [self.navigationController pushViewController:fileManeger animated:YES];
+            
         }
             break;
             
@@ -1037,8 +1130,8 @@
 
 - (void)sendAsResource:(NSString *)path
 {
-    
-    NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
+        NSLog(@"filePath == %@",path);
+//    NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
     NSString * name = [NSString stringWithFormat:@"%@ForPic",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     
     NSURL * url = [NSURL fileURLWithPath:path];
@@ -1569,6 +1662,31 @@
             }
             
                 
+        }else if([name hasPrefix:@"file_"]){
+            
+            NSString *fileName = [name substringWithRange:NSMakeRange(5, name.length - 5)];
+            
+            NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
+            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+            if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
+                [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:nil error:nil];
+            }
+          
+            NSString *path = [BasePath stringByAppendingPathComponent:fileName];
+
+            
+           BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
+
+            
+            if (writeResult) {
+                
+                if ([[NSFileManager defaultManager]fileExistsAtPath:path]) {
+                    
+                    NSLog(@"接收文件成功");
+                    [[NSNotificationCenter defaultCenter]postNotificationName:@"getFileSuccess" object:nil];
+                }
+            }
+            
         }else{
             
             [self playSoundEffect:@"5097.mp3"];
@@ -1687,29 +1805,29 @@
     if(eventCode == NSStreamEventEndEncountered)
     {
         // 流结束事件，在此事件中负责做销毁工作
-//        // 同时也是获得最终数据的好地方
-//        [self playSoundEffect:@"5097.mp3"];
-//        ChatItem * chatItem = [[ChatItem alloc] init];
-//        chatItem.isSelf = NO;
-//        chatItem.displayName = _curretConnect.displayName;
-//        chatItem.states = videoStates;
-//        chatItem.data = self.streamData;
-//        NSDate *date = [NSDate date];
-//        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-//        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-//        NSString *dateStr = [formatter stringFromDate:date];
-//        chatItem.timeStr = dateStr;
-//        [self.datasource addObject:chatItem];
-//        [self insertTheTableToButtom];
-//        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
-//            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
-//        }
-//        [aStream close];
-//        [aStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-//        if([aStream isKindOfClass:[NSInputStream class]])
-//        {
-//            self.streamData = nil;
-//        }
+        // 同时也是获得最终数据的好地方
+        [self playSoundEffect:@"5097.mp3"];
+        ChatItem * chatItem = [[ChatItem alloc] init];
+        chatItem.isSelf = NO;
+        chatItem.displayName = _curretConnect.displayName;
+        chatItem.states = videoStates;
+        chatItem.data = self.streamData;
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
+        [self.datasource addObject:chatItem];
+        [self insertTheTableToButtom];
+        if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+            [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@",chatItem.displayName,@"发送了一段语音"]];
+        }
+        [aStream close];
+        [aStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        if([aStream isKindOfClass:[NSInputStream class]])
+        {
+            self.streamData = nil;
+        }
         
     }
     if(eventCode == NSStreamEventErrorOccurred)
@@ -1991,11 +2109,11 @@
     if (_recordCancel) {
         return;
     }
-//    if (self.sessionManager.session.connectedPeers.count > 1) {
+    if (self.sessionManager.session.connectedPeers.count > 1) {
         [self sendGroupChatVideoAsResource:[self getSavePath]];
-//    }else{
+    }else{
         [self  sendAsStream];
-//    }
+    }
 
 //    NSLog(@"录音完成!");
 }

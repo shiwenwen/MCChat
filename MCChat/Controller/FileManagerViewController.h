@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface FileManagerViewController : UIViewController
-
+@property (nonatomic,assign)BOOL isFromChat;
 @end

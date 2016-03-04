@@ -8,6 +8,7 @@
 
 #import "FileDetailViewController.h"
 #import <QuickLook/QuickLook.h>
+#import "PreviewViewController.h"
 @interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource>
 
 @end
@@ -16,33 +17,38 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.title = self.model.name;
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.logoImage.contentMode = UIViewContentModeScaleAspectFit;
+
     self.logoImage.image = self.model.logoImage;
     self.nameLabel.text = self.model.name;
     self.timeLabel.text = self.model.detail;
     self.sizeLabel.text = self.model.size;
-    CGFloat width = (KScreenWidth -45)/4;
-    CGFloat height = (self.toolBarView.height - 20);
+    CGFloat width = (KScreenWidth -60)/4;
+    CGFloat height = (self.toolBarView.height - 10);
     for (int i = 0; i < 3; i++) {
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         
         
         button.layer.cornerRadius = 5;
-        button.tag = 1000+i;
+        button.tag = 2000+i;
         button.layer.masksToBounds = YES;
-        button.layer.borderColor = [UIColor grayColor].CGColor;
-        button.layer.borderWidth = .5;
+        button.layer.borderColor = [UIColor colorWithWhite:0.763 alpha:1.000].CGColor;
+        button.layer.borderWidth = .25;
         button.titleLabel.font = [UIFont systemFontOfSize:15];
         [button addTarget:self action:@selector(fileButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        
+        [self.toolBarView addSubview:button];
         if (i == 0) {
-            button.frame = CGRectMake(15 + i * width, 10, width*2, height);
+            button.frame = CGRectMake(15 + i * width, 5, width*2, height);
             [button setTitle:@"使用其他程序打开" forState:UIControlStateNormal];
-            button.backgroundColor = [UIColor colorWithRed:0.109 green:0.463 blue:1.000 alpha:1.000];
+            button.backgroundColor = [UIColor colorWithRed:0.165 green:0.631 blue:1.000 alpha:1.000];
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             
         }else if (i == 1){
-            button.frame = CGRectMake(15*i + (i+1) * width, 10, width, height);
+            button.frame = CGRectMake( (i+1) * (width+15), 5, width, height);
             
             NSString *title;
             
@@ -72,7 +78,7 @@
                 }
                     break;
                 case image:{
-                    title = @"查看";
+                    title = @"保存到相册";
                 }
                     break;
                 default:{
@@ -82,17 +88,30 @@
             }
             
             [button setTitle:title forState:UIControlStateNormal];
-            [button setTitleColor:[UIColor colorWithRed:0.109 green:0.463 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor colorWithRed:0.165 green:0.631 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
+            
+            if ([title isEqualToString:@"暂不支持"]) {
+                button.alpha = 0.5;
+            
+            }
+            if ([title isEqualToString:@"保存到相册"]) {
+                self.logoImage.userInteractionEnabled = YES;
+                self.logoImage.frame = CGRectMake(self.logoImage.left - 50, self.logoImage.top + 100, self.logoImage.width + 100, self.logoImage.height+100);
+            }else{
+                self.logoImage.userInteractionEnabled = NO;
+            }
+            
         }else{
-            button.frame = CGRectMake(15*i + (i+1) * width, 10, width, height);
+            button.frame = CGRectMake((i+1) * (width+15), 5, width, height);
             [button setTitle:@"发送" forState:UIControlStateNormal];
-            [button setTitleColor:[UIColor colorWithRed:0.109 green:0.463 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor colorWithRed:0.165 green:0.631 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
         }
     }
 
     
     
 }
+
 - (void)fileButtonClick:(UIButton *)button{
     if (button.tag == 2000) {
         //使用其他程序打开
@@ -130,10 +149,16 @@
           
             [myQlPreViewController setCurrentPreviewItemIndex:0];
           
-        [self presentViewController:myQlPreViewController animated:YES completion:^{
+//        [self presentViewController:myQlPreViewController animated:YES completion:^{
+//            
+//        }];
+//
+            [self.navigationController pushViewController:myQlPreViewController animated:YES];
+        }else if ([button.titleLabel.text isEqualToString:@"保存到相册"]){
             
-        }];
-        
+            
+            UIImageWriteToSavedPhotosAlbum(self.logoImage.image, self,@selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
+            
         }
         
         
@@ -145,6 +170,19 @@
     
     
 }
+- (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    
+    if (!error) {
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"保存成功" viewController:nil];
+    }else
+    {
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"保存失败" viewController:nil];
+    }
+    
+}
+
+
 
 #pragma mark - UIDocumentInteractionControllerDelegate
 -(void)documentInteractionController:(UIDocumentInteractionController *)controller

@@ -67,7 +67,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "233"
             endingLineNumber = "233"
-            landmarkName = "-guestureLock:didGetCorrectPswd:"
+            landmarkName = "-hiddenLockView"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -83,7 +83,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "251"
             endingLineNumber = "251"
-            landmarkName = "-guestureLock:didGetIncorrectPswd:"
+            landmarkName = "-guestureLock:didGetCorrectPswd:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -93,13 +93,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MCChat/Controller/FileManagerViewController.m"
-            timestampString = "478594536.367655"
+            filePath = "MCChat/AppDelegate.m"
+            timestampString = "478781187.679405"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "165"
-            endingLineNumber = "165"
-            landmarkName = "-numberOfSectionsInTableView:"
+            startingLineNumber = "452"
+            endingLineNumber = "452"
+            landmarkName = "-alertView:clickedButtonAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -109,13 +109,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MCChat/Controller/FileManagerViewController.m"
-            timestampString = "478594536.367655"
+            filePath = "MCChat/Controller/ChatViewController.m"
+            timestampString = "478782224.625354"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "-tableView:numberOfRowsInSection:"
+            startingLineNumber = "1672"
+            endingLineNumber = "1672"
+            landmarkName = "-makeBlueData"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -125,13 +125,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MCChat/Controller/FileManagerViewController.m"
-            timestampString = "478594536.367655"
+            filePath = "MCChat/Controller/ChatViewController.m"
+            timestampString = "478782234.108621"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
-            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            startingLineNumber = "1671"
+            endingLineNumber = "1671"
+            landmarkName = "-makeBlueData"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

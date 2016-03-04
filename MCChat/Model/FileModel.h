@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 typedef NS_ENUM (NSInteger,FileType){
-    Word,//doc,docx
-    Excel,//xls,xlsx
-    PowerPoint,//ppt,pptx
+    Word,//doc,docx，pages
+    Excel,//xls,xlsx，numbers
+    PowerPoint,//ppt,pptx,keynote
     music,//mp3,wma,mac,aac,wav...
     video,//RMVB、WMV、ASF、AVI、3GP、MPG、MKV、MP4、DVD、OGM、MOV、MPEG2、MPEG4
     image,//GIF、JPEG、BMP、TIF、JPG、PCD、QTI、QTF、TIFF
@@ -26,6 +26,6 @@ typedef NS_ENUM (NSInteger,FileType){
 @property (nonatomic,assign)FileType fileType;
 @property (nonatomic,copy)NSString *path;
 @property (nonatomic,copy)NSString *size;
-
+@property (nonatomic,assign)double realitySize;
 - (instancetype)initWithName:(NSString *)name Detail:(NSString *)detail size:(NSString *)size FileType:(FileType )type Path:(NSString *)path;
 @end

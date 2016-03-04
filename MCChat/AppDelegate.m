@@ -404,12 +404,13 @@
             
         }
         self.getFilePath = string;
-        NSRange range = [string rangeOfString:@"/" options:NSAnchoredSearch];
+        NSRange range = [string rangeOfString:@"/" options:NSBackwardsSearch];
         NSString *name = @"未知";
         if (range.location != NSNotFound) {
             name = [string substringFromIndex:range.location + 1];
         }
-
+        
+      
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"新文件" message:name delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"发送",@"查看", nil];
         [alert show];
     }
@@ -448,7 +449,7 @@
     if (buttonIndex == 0) {
         
     }else if (buttonIndex == 1){
-         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:self.getFilePath];
+         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:[self getFileModelWithPath:self.getFilePath]];
         UINavigationController *navi = (UINavigationController *)self.mainTabBar.viewControllers.lastObject;
         if (navi.viewControllers > 0) {
             
@@ -457,7 +458,8 @@
         }
         
     }else{
-         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:self.getFilePath];
+//         [[NSNotificationCenter defaultCenter]postNotificationName:KGetNewFile object:[self getFileModelWithPath:self.getFilePath]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"getFileSuccess" object:nil];
          UINavigationController *navi = (UINavigationController *)self.mainTabBar.viewControllers.lastObject;
         FileDetailViewController *fileDetail = [[FileDetailViewController alloc]init];
         fileDetail.model= [self getFileModelWithPath:self.getFilePath];
@@ -500,8 +502,7 @@
     formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     NSString *dateStr = [formatter stringFromDate:modificationDate];
     
-    
-    NSRange range = [path rangeOfString:@"." options:NSAnchoredSearch];
+    NSRange range = [path rangeOfString:@"." options:NSBackwardsSearch];
     
     NSString *extension;
     
@@ -526,13 +527,13 @@
      other
      */
     extension = [extension lowercaseString];
-    if ([extension isEqualToString:@"doc"]||[extension isEqualToString:@"docx"]) {
+    if ([extension isEqualToString:@"doc"]||[extension isEqualToString:@"docx"]||[extension isEqualToString:@"pages"]) {
         type = Word;
-    }else if ([extension isEqualToString:@"xls"]||[extension isEqualToString:@"xlsx"]){
+    }else if ([extension isEqualToString:@"xls"]||[extension isEqualToString:@"xlsx"]||[extension isEqualToString:@"numbers"]){
         
         type = Excel;
         
-    }else if ([extension isEqualToString:@"ppt"]||[extension isEqualToString:@"pptx"]){
+    }else if ([extension isEqualToString:@"ppt"]||[extension isEqualToString:@"pptx"]||[extension isEqualToString:@"keynote"]){
         
         type = PowerPoint;
     }
@@ -555,18 +556,38 @@
     }else if ([extension isEqualToString:@"pdf"]){
         
         type = pdf;
+    }else if ([extension isEqualToString:@"txt"]){
+        
+        type = txt;
     }
-    NSRange range2 = [path rangeOfString:@"/" options:NSAnchoredSearch];
     NSString *name = @"未知";
+    range = [path rangeOfString:@"/" options:NSBackwardsSearch];
     if (range.location != NSNotFound) {
-        name = [path substringFromIndex:range2.location + 1];
+        name = [path substringFromIndex:range.location + 1];
     }
-    FileModel *model = [[FileModel alloc]initWithName:name Detail:dateStr size:fileSize FileType:type Path:path];
+    
+    FileModel *model = [[FileModel alloc]initWithName:name Detail:dateStr size:fileSize FileType:type Path:self.getFilePath];
+    
+    model.realitySize = [fileAttr[@"NSFileSize"] doubleValue];
     
     return model;
     
 }
-
+#pragma mark -- unicode转中文
++ (NSString *)replaceUnicode:(NSString *)unicodeStr
+{
+    
+    NSString *tempStr1 = [unicodeStr stringByReplacingOccurrencesOfString:@"\\u"withString:@"\\U"];
+    NSString *tempStr2 = [tempStr1 stringByReplacingOccurrencesOfString:@"" withString:@"\\"];
+    NSString *tempStr3 = [[@"" stringByAppendingString:tempStr2] stringByAppendingString:@""];
+                          NSData *tempData = [tempStr3 dataUsingEncoding:NSUTF8StringEncoding];
+                          NSString* returnStr = [NSPropertyListSerialization propertyListFromData:tempData
+                                                                                mutabilityOption:NSPropertyListImmutable
+                                                                                          format:NULL
+                                                                                errorDescription:NULL];
+                          NSLog(@"%@",returnStr);
+                          return [returnStr stringByReplacingOccurrencesOfString:@"\\r\\n"withString:@"\n"];
+                          }
 #pragma mark -- 尺寸计算
 - (NSString *)fileSizeTransform:(CGFloat )originalSize{
     

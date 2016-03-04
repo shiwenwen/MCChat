@@ -59,6 +59,9 @@
 				<string>public.movie</string>
 				<string>public.text</string>
 				<string>public.data</string>
+				<string>com.iwork.pages</string>
+				<string>com.iwork.keynote</string>
+				<string>com.iwork.numbers</string>
 			</array>
 		</dict>
 	</array>
