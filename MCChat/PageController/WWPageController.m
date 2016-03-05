@@ -72,7 +72,7 @@ static NSString *identifier = @"title_cell";
 
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     layout.minimumLineSpacing = 0;
-    _collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0,0, KScreenWidth, KNavigationBarHeight) collectionViewLayout:layout];
+    _collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0,KNavigationBarHeight, KScreenWidth, KNavigationBarHeight) collectionViewLayout:layout];
 
     if (self.navigationController) {
         
@@ -87,7 +87,7 @@ static NSString *identifier = @"title_cell";
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
     _collectionView.showsHorizontalScrollIndicator = NO;
-    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, KNavigationBarHeight, KScreenWidth, KScreenHeight - KNavigationBarHeight)];
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, KNavigationBarHeight*2, KScreenWidth, KScreenHeight - KNavigationBarHeight*2)];
     _scrollView.contentSize = CGSizeMake(KScreenWidth * self.page, _scrollView.height);
     _scrollView.pagingEnabled = YES;
     _scrollView.delegate = self;
@@ -125,6 +125,11 @@ static NSString *identifier = @"title_cell";
     _collectionView.backgroundColor = _titleTabColor;
     
 }
+- (void)setTitleColor:(UIColor *)titleColor{
+    
+    _titleColor = titleColor;
+    [self.collectionView reloadData];
+}
 /**
  *  代理方法
  */
@@ -150,7 +155,7 @@ static NSString *identifier = @"title_cell";
     
     cell.titleLabel.text = self.titles[indexPath.item];
     cell.isSelected = [_selected[indexPath.item]boolValue];
-    
+    cell.titleLabel.textColor = self.titleColor;
     return cell;
 }
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{

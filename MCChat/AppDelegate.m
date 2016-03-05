@@ -31,7 +31,7 @@
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+    NSLog(@"NSHomeDirectory == %@",NSHomeDirectory());
     
 //    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[RootViewController alloc]init]];
     self.mainTabBar = [[MainTabBarViewController alloc]init];

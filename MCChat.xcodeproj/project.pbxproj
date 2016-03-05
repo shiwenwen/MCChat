@@ -463,6 +463,7 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		8841B7551C89D381002252B0 /* FileListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8841B7541C89D381002252B0 /* FileListViewController.m */; };
 		8883BD051C8877DB006E3271 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8883BD041C8877DB006E3271 /* QuickLook.framework */; };
 		88BEE3AB1C85D26900293A82 /* FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BEE3AA1C85D26900293A82 /* FileModel.m */; };
 		88E749DE1C886E0F00F4BBE4 /* FileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E749DC1C886E0F00F4BBE4 /* FileDetailViewController.m */; };
@@ -1051,6 +1052,8 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		8841B7531C89D381002252B0 /* FileListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileListViewController.h; sourceTree = "<group>"; };
+		8841B7541C89D381002252B0 /* FileListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileListViewController.m; sourceTree = "<group>"; };
 		8883BD041C8877DB006E3271 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		88BEE3A91C85D26900293A82 /* FileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileModel.h; sourceTree = "<group>"; };
 		88BEE3AA1C85D26900293A82 /* FileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileModel.m; sourceTree = "<group>"; };
@@ -1376,6 +1379,8 @@
 				2BC89AEE1C895F2300782C45 /* PreviewViewController.h */,
 				2BC89AEF1C895F2300782C45 /* PreviewViewController.m */,
 				2BC89AF01C895F2300782C45 /* PreviewViewController.xib */,
+				8841B7531C89D381002252B0 /* FileListViewController.h */,
+				8841B7541C89D381002252B0 /* FileListViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2451,6 +2456,7 @@
 				2BC89AF11C895F2300782C45 /* PreviewViewController.m in Sources */,
 				2B7C9E191C86948700062209 /* UIImage+MultiFormat.m in Sources */,
 				2B7C9E1B1C86948700062209 /* UIImageView+HighlightedWebCache.m in Sources */,
+				8841B7551C89D381002252B0 /* FileListViewController.m in Sources */,
 				2B2A4E161C842F2F00FCF768 /* DBGuestureLock.m in Sources */,
 				2BC89B2E1C8964D100782C45 /* MJRefreshBackStateFooter.m in Sources */,
 				2B7C9E181C86948700062209 /* UIImage+GIF.m in Sources */,

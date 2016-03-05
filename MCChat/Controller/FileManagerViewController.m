@@ -11,10 +11,11 @@
 #import "FileCell.h"
 #import "FileDetailViewController.h"
 #import "MJRefresh.h"
-#import "WWPageController.h"
-@interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>
+#import "FileListViewController.h"
+@interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate,WWPageControllerDataSource,WWPageControllerDelegate>
 @property (nonatomic,strong)NSMutableArray *files;
 @property (nonatomic,strong)UITableView *tableView;
+
 @end
 
 @implementation FileManagerViewController
@@ -25,10 +26,139 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"文件管理";
-    [self _creatTableView];
-    
+//    [self _creatTableView];
+    self.dataSource = self;
+    self.delegate = self;
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewBeginRefresh) name:@"getFileSuccess" object:nil];
+    self.titleTabColor = [UIColor colorWithWhite:0.01 alpha:0.600];
+    self.titleColor = [UIColor whiteColor];
+}
 
+#pragma mark - WWPageControllerDelegate
+- (NSInteger)numberOfPages{
+    
+    return 6;
+}
+- (UIViewController *)controllerOfPage:(NSInteger)page{
+    
+    FileListViewController *fileListVC =[[FileListViewController alloc]initWithStyle:UITableViewStylePlain];
+    NSMutableArray *data = [NSMutableArray array];
+    
+    switch (page) {
+        case 0:
+        {
+            data = self.files;
+        }
+            break;
+        case 1:
+        {
+            for (FileModel *model in self.files) {
+                
+                if (model.fileType == Word||model.fileType == Excel||model.fileType == PowerPoint||model.fileType == txt||model.fileType == pdf) {
+                    
+                    
+                    [data addObject:model];
+                    
+                }
+                
+            }
+        }
+            break;
+        case 2:
+        {
+            for (FileModel *model in self.files) {
+                
+                if (model.fileType == music) {
+                    
+                    
+                    [data addObject:model];
+                    
+                }
+                
+            }        }
+            break;
+        case 3:
+        {
+            for (FileModel *model in self.files) {
+                
+                if (model.fileType == video) {
+                    
+                    
+                    [data addObject:model];
+                    
+                }
+                
+            }
+        }
+            break;
+        case 4:
+        {
+            for (FileModel *model in self.files) {
+                
+                if (model.fileType ==image) {
+                    
+                    
+                    [data addObject:model];
+                    
+                }
+                
+            }        }
+            break;
+            
+        default:{
+            for (FileModel *model in self.files) {
+                
+                if (model.fileType == other||model.fileType == zip) {
+                    
+                    
+                    [data addObject:model];
+                    
+                }
+                
+            }
+        }
+            break;
+    }
+    
+    fileListVC.data = data;
+    return fileListVC;
+}
+- (NSString *)pageTitle:(NSInteger)page{
+    
+    
+    switch (page) {
+        case 0:
+        {
+           return @"全部";
+        }
+            break;
+        case 1:
+        {
+            return @"文档";
+        }
+            break;
+        case 2:
+        {
+            return @"音乐";
+        }
+            break;
+        case 3:
+        {
+            return @"视频";
+        }
+            break;
+        case 4:
+        {
+            return @"图片";
+        }
+            break;
+            
+        default:{
+            return @"其它";
+        }
+            break;
+    }
+    
 }
 - (void)viewDidAppear:(BOOL)animated{
     
