@@ -13,7 +13,8 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "SSZipArchive.h"
 #import "MBProgressHUD.h"
-@interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate>
+#import "CLImageEditor.h"
+@interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>
 
 @end
 
@@ -26,7 +27,19 @@
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.logoImage.contentMode = UIViewContentModeScaleAspectFit;
 
+    
+    
+}
+- (void)viewWillAppear:(BOOL)animated{
+    [super  viewWillAppear:animated];
+    [self _createUI];
+}
+#pragma mark -_createUI
+- (void)_createUI{
     self.logoImage.image = self.model.logoImage;
+    if (self.model.fileType ==image) {
+        self.logoImage.image = [UIImage imageWithContentsOfFile:self.model.path];
+    }
     self.nameLabel.text = self.model.name;
     self.timeLabel.text = self.model.detail;
     self.sizeLabel.text = self.model.size;
@@ -82,7 +95,7 @@
                 }
                     break;
                 case image:{
-                    title = @"保存到相册";
+                    title = @"编辑";
                 }
                     break;
                 default:{
@@ -101,7 +114,7 @@
             
             if ([title isEqualToString:@"暂不支持"]) {
                 button.alpha = 0.5;
-            
+                
             }
             if ([title isEqualToString:@"保存到相册"]) {
                 self.logoImage.userInteractionEnabled = YES;
@@ -116,11 +129,9 @@
             [button setTitleColor:[UIColor colorWithRed:0.165 green:0.631 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
         }
     }
-
     
     
 }
-
 - (void)fileButtonClick:(UIButton *)button{
     if (button.tag == 2000) {
         //使用其他程序打开
@@ -163,10 +174,20 @@
 //        }];
 //
             [self.navigationController pushViewController:myQlPreViewController animated:YES];
-        }else if ([button.titleLabel.text isEqualToString:@"保存到相册"]){
+        }else if ([button.titleLabel.text isEqualToString:@"编辑"]){
             
             
-            UIImageWriteToSavedPhotosAlbum(self.logoImage.image, self,@selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
+            
+//            UIImageWriteToSavedPhotosAlbum(self.logoImage.image, self,@selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
+            
+            
+            CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:self.logoImage.image];
+            
+            editor.delegate = self;
+            
+            [self.navigationController pushViewController:editor animated:YES];
+            
+
             
         }else if (self.model.fileType == video||self.model.fileType == music){
 
@@ -254,6 +275,50 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     
+}
+#pragma mark- CLImageEditor delegate
+
+- (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
+{
+   
+    NSData *data;
+    NSString *type;
+    if (UIImagePNGRepresentation(image) == nil)
+    {
+        data = UIImageJPEGRepresentation(image, 1.0);
+        type = @".jpg";
+    }
+    else
+    {
+        data = UIImagePNGRepresentation(image);
+        type = @".png";
+    }
+
+    
+    BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:self.model.path contents:data attributes:nil];
+    
+    
+    if (writeResult) {
+        
+        if ([[NSFileManager defaultManager]fileExistsAtPath:self.model.path]) {
+            
+            NSLog(@"编辑图片文件保存成功");
+            
+        }
+    }
+
+    
+    
+  
+    
+          [self.navigationController popViewControllerAnimated:YES];
+}
+- (void)imageEditorDidCancel:(CLImageEditor*)editor{
+        [self.navigationController popViewControllerAnimated:YES];
+}
+- (void)imageEditor:(CLImageEditor *)editor willDismissWithImageView:(UIImageView *)imageView canceled:(BOOL)canceled
+{
+
 }
 
 - (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo

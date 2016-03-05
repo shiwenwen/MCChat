@@ -216,6 +216,7 @@
     if (cell.model.fileType == image) {
         
         cell.logoImageView.image = [UIImage imageWithContentsOfFile:cell.model.path];
+        
     }
     return cell;
 }
