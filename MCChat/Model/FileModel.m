@@ -69,12 +69,14 @@
             break;
         case other:
         {
-            self.logoImage = [UIImage imageNamed:@"other"];
+            self.logoImage = [UIImage imageNamed:@"未知"];
             
         }
             
             break;
-        default:
+        default:{
+            self.logoImage = [UIImage imageNamed:@"other"];
+        }
             break;
     }
     

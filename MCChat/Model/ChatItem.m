@@ -146,7 +146,10 @@
         _cellHeight = 45 + 60;
         
     }
-    
+    if (_states == fileStates ){
+        
+        _cellHeight = 140;
+    }
     
 }
 

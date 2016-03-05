@@ -85,6 +85,23 @@
         UIImage *rigthImage = [UIImage imageNamed:@"SenderTextNodeBkg"];
         rigthImage = [rigthImage stretchableImageWithLeftCapWidth:rigthImage.size.width * .5 topCapHeight:rigthImage.size.height *.65];
         _rightBgView.image = rigthImage;
+        //文件背景
+        _fileBackView1 = [[UIView alloc]init];
+        _fileBackView1.backgroundColor = [UIColor colorWithWhite:1 alpha:.95];
+        _fileBackView1.layer.cornerRadius = 2.5;
+        _fileBackView1.layer.masksToBounds = YES;
+        [_rightBgView addSubview:_fileBackView1];
+        _fileBackView2 = [[UIView alloc]init];
+        _fileBackView2.backgroundColor = [UIColor colorWithWhite:1 alpha:.95];
+        _fileBackView2.layer.cornerRadius = 2.5;
+        _fileBackView2.layer.masksToBounds = YES;
+        [_leftBgView addSubview:_fileBackView2];
+        UITapGestureRecognizer *tap1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookFileDetail)];
+        [_fileBackView1 addGestureRecognizer:tap1];
+        UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookFileDetail)];
+        _progressView = [[UIProgressView alloc]initWithProgressViewStyle:UIProgressViewStyleDefault];
+        
+        [_fileBackView2 addGestureRecognizer:tap2];
         [self.contentView addSubview:_leftBgView];
         [self.contentView addSubview:_rightBgView];
         
@@ -93,6 +110,9 @@
     return self;
 }
 
+- (void)lookFileDetail{
+    self.fileBlock(self.model.fileModel);
+}
 - (void)setModel:(ChatItem *)model{
     _model = model;
     
@@ -114,7 +134,7 @@
             self.postImageView.hidden = YES;
             self.postVoiceView.hidden = YES;
             self.rightTimeSecondLabel.hidden = YES;
-
+            self.fileBackView1.hidden = YES;
             self.rightChatLabel.text = _model.content;
             self.rightChatLabel.frame = CGRectMake(15,10,_model.textWidth,_model.textHeight);
       
@@ -132,6 +152,7 @@
             self.postImageView.hidden = NO;
             self.postVoiceView.hidden = YES;
             self.rightTimeSecondLabel.hidden = YES;
+            self.fileBackView1.hidden = YES;
             self.postImageView.image = _model.picImage;
             self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
 
@@ -146,7 +167,7 @@
             self.postImageView.hidden = YES;
             self.postVoiceView.hidden = NO;
             self.rightTimeSecondLabel.hidden = NO;
-
+            self.fileBackView1.hidden = YES;
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - 100*proportation,self.rightHeaderView.top, 90 * proportation,55);
             self.postVoiceView.frame = CGRectMake(self.rightBgView.width - 40,12 , 20, 20);
             if (!_tap) {
@@ -184,8 +205,35 @@
             
             
             
+        }else if (_model.states == fileStates){
+            
+            self.rightChatLabel.hidden = YES;
+            self.postImageView.hidden = YES;
+            self.postVoiceView.hidden = YES;
+            self.rightTimeSecondLabel.hidden = YES;
+            self.fileBackView1.hidden = NO;
+            self.fileLogo1.frame = CGRectMake(10, 10, 60, 60);
+            self.fileLogo1.image = _model.fileModel.logoImage;
+            self.fileNameLabel1.frame = CGRectMake(self.fileLogo1.right+5, 0, 120, 40);
+            self.fileNameLabel1.text = _model.fileModel.name;
+            self.fileSizeLabel1.text = _model.fileModel.size;
+            self.fileSizeLabel1.frame = CGRectMake(self.fileNameLabel1.left, self.fileNameLabel1.bottom + 5, self.fileNameLabel1.width, 20);
+            
+            self.fileBackView1.frame = CGRectMake(10, 5, self.fileNameLabel1.right + 20, 80);
+
+            
+            self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - self.fileBackView1.width - 30,self.rightHeaderView.top, self.fileBackView1.width + 20,self.fileBackView1.height + 20);
+            _progressView .frame = CGRectMake(5, 77, self.fileBackView1.width - 10, 5);
+            [self.fileBackView1 addSubview:_progressView];
+            
+            _progressView.progress = 0;
+            _progressView.progressTintColor = [UIColor colorWithRed:0.000 green:0.599 blue:1.000 alpha:1.000];
+            _progressView.trackTintColor = [UIColor whiteColor];
+            _progressView.layer.cornerRadius = 1;
+            _progressView.layer.masksToBounds = YES;
+            _progressView.layer.borderColor = [UIColor colorWithRed:0.173 green:0.677 blue:0.689 alpha:1.000].CGColor;
+            _progressView.layer.borderWidth = .5;
         }
-        
     }else{
             
         self.leftHeaderView.image = [UIImage imageNamed:@"无头像"];
@@ -264,6 +312,30 @@
             //保存数据地址
             self.dataPath = [NSURL URLWithString:filePath];
 
+            
+        }else if (_model.states == fileStates){
+            
+            
+            self.leftChatLabel.hidden = YES;
+            self.getImageView.hidden = YES;
+            self.getVoiceView.hidden = NO;
+            self.leftTimeSecondLabel.hidden = YES;
+
+            self.fileBackView2.hidden = NO;
+            self.fileLogo2.frame = CGRectMake(10, 10, 60, 60);
+            self.fileLogo2.image = _model.fileModel.logoImage;
+            self.fileNameLabel2.frame = CGRectMake(self.fileLogo2.right+5, 0, 120, 40);
+            self.fileNameLabel2.text = _model.fileModel.name;
+            self.fileSizeLabel2.frame = CGRectMake(self.fileNameLabel2.left, self.fileNameLabel2.bottom + 10, self.fileNameLabel2.width, 20);
+            
+            self.fileBackView2.frame = CGRectMake(10, 5, self.fileNameLabel2.right + 20, 80);
+            
+            
+            self.leftBgView.frame = CGRectMake(self.leftHeaderView.right + 5,self.NickNameLabel.bottom, self.fileBackView2.width + 20,self.fileBackView2.height + 20);
+
+                        self.fileSizeLabel2.text = _model.fileModel.size;
+
+            
             
         }
     
@@ -345,8 +417,39 @@
     return _rightTimeSecondLabel;
     
 }
+- (UILabel *)fileNameLabel1{
+    
+    if (!_fileNameLabel1) {
+        _fileNameLabel1 = [[UILabel alloc]initWithFrame:CGRectZero];
+        _fileNameLabel1.font = [UIFont systemFontOfSize:15];
+        _fileNameLabel1.textColor = [UIColor colorWithWhite:.2 alpha:1.000];
+        _fileNameLabel1.textAlignment = NSTextAlignmentLeft;
+        _fileNameLabel1.numberOfLines = 0;
+        [_fileBackView1 addSubview:_fileNameLabel1];
 
-
+    }
+    return _fileNameLabel1;
+}
+- (UILabel *)fileSizeLabel1{
+    
+    if (!_fileSizeLabel1) {
+        _fileSizeLabel1 = [[UILabel alloc]initWithFrame:CGRectZero];
+        _fileSizeLabel1.font = [UIFont systemFontOfSize:13];
+        _fileSizeLabel1.textColor = [UIColor colorWithWhite:0.5 alpha:1.000];
+        _fileSizeLabel1.textAlignment = NSTextAlignmentLeft;
+        [_fileBackView1 addSubview:_fileSizeLabel1];
+        
+    }
+    return _fileSizeLabel1;
+}
+- (UIImageView *)fileLogo1{
+    if (!_fileLogo1) {
+        _fileLogo1 = [[UIImageView alloc]initWithFrame:CGRectZero];
+        
+        [_fileBackView1 addSubview:_fileLogo1];
+    }
+    return _fileLogo1;
+}
 //-----------------------------------------------------------
 - (WXLabel *)leftChatLabel{
     
@@ -436,8 +539,38 @@
     
     return _voiceTime;
 }
+- (UILabel *)fileNameLabel2{
+    
+    if (!_fileNameLabel2) {
+        _fileNameLabel2 = [[UILabel alloc]initWithFrame:CGRectZero];
+        _fileNameLabel2.font = [UIFont systemFontOfSize:15];
+        _fileNameLabel2.textColor = [UIColor colorWithWhite:.2 alpha:1.000];
+        _fileNameLabel2.textAlignment = NSTextAlignmentLeft;
+        [_fileBackView2 addSubview:_fileNameLabel2];
+                _fileNameLabel2.numberOfLines = 0;
+    }
+    return _fileNameLabel2;
+}
+- (UILabel *)fileSizeLabel2{
+    
+    if (!_fileSizeLabel2) {
+        _fileSizeLabel2 = [[UILabel alloc]initWithFrame:CGRectZero];
+        _fileSizeLabel2.font = [UIFont systemFontOfSize:13];
+        _fileSizeLabel2.textColor = [UIColor colorWithWhite:0.5 alpha:1.000];
+        _fileSizeLabel2.textAlignment = NSTextAlignmentLeft;
+        [_fileBackView2 addSubview:_fileSizeLabel2];
+        
+    }
+    return _fileSizeLabel2;
+}
+- (UIImageView *)fileLogo2{
+    if (!_fileLogo2) {
+        _fileLogo2 = [[UIImageView alloc]initWithFrame:CGRectZero];
 
-
+        [_fileBackView2 addSubview:_fileLogo2];
+    }
+    return _fileLogo2;
+}
 - (void)layoutSubviews{
     
     [super layoutSubviews];

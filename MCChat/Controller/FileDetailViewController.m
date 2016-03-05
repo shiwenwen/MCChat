@@ -9,7 +9,11 @@
 #import "FileDetailViewController.h"
 #import <QuickLook/QuickLook.h>
 #import "PreviewViewController.h"
-@interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource>
+#import <AVKit/AVKit.h>
+#import <MediaPlayer/MediaPlayer.h>
+#import "SSZipArchive.h"
+#import "MBProgressHUD.h"
+@interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate>
 
 @end
 
@@ -71,7 +75,7 @@
                 }
                     break;
                 case music:{
-                    
+                    title = @"播放";
                 }
                 case video:{
                     title = @"播放";
@@ -82,7 +86,12 @@
                 }
                     break;
                 default:{
+                    
                     title = @"暂不支持";
+                    if ([[self.model.name pathExtension]isEqualToString:@"zip"]) {
+                        
+                        title = @"解压";
+                    }
                 }
                     break;
             }
@@ -159,17 +168,94 @@
             
             UIImageWriteToSavedPhotosAlbum(self.logoImage.image, self,@selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
             
+        }else if (self.model.fileType == video||self.model.fileType == music){
+
+
+            MPMoviePlayerViewController *playerVC = [[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:self.model.path]];
+            
+            
+            [self presentMoviePlayerViewControllerAnimated:playerVC];
+            
+            [playerVC.moviePlayer setControlStyle:MPMovieControlStyleFullscreen];
+            
+            [playerVC.view setBackgroundColor:[UIColor clearColor]];
+            
+            [playerVC.view setFrame:self.view.bounds];
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self
+             
+                                                    selector:@selector(movieFinishedCallback:)
+             
+                                                        name:MPMoviePlayerPlaybackDidFinishNotification
+             
+                                                      object:playerVC.moviePlayer];
+            
+            
+        }else if(self.model.fileType == zip){
+            NSString *destination = [self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""];
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            
+            // Set the label text.
+            hud.label.text = @"解压中";
+            // Set the details label text. Let's make it multiline this time.
+            hud.detailsLabel.text = @"文件\n(1/1)";
+            
+
+
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                // 解压(文件大, 会比较耗时，所以放到子线程中解压)
+              BOOL archiveResult =  [SSZipArchive unzipFileAtPath:self.model.path toDestination:destination progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total) {
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           hud.detailsLabel.text = [NSString stringWithFormat:@"文件\n(%ld/%ld)",entryNumber,total];
+
+                       });
+                    
+                } completionHandler:^(NSString *path, BOOL succeeded, NSError *error) {
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [hud hideAnimated:YES];
+                        
+                        if (succeeded) {
+                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"解压成功" message:self.model.name delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"查看", nil];
+                            [alert show];
+                        }else{
+                            
+                            [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"解压失败\n%@",error] viewController:nil];
+                            NSLog(@"%@",error);
+                        }
+                        
+                        
+                    });
+                   }];
+                        
+                        
+            });
+            
         }
-        
         
     }else{
         
         //发送
-        
+         [[NSNotificationCenter defaultCenter]postNotificationName:@"PostFile" object:self.model];
+        [self.navigationController popToRootViewControllerAnimated:YES];
     }
     
     
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    if (buttonIndex == 0) {
+        
+        
+    }else{
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
+}
+
 - (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     
@@ -221,6 +307,28 @@ didEndSendingToApplication:(NSString *)application
     
     return [NSURL fileURLWithPath:self.model.path];
     
+    
+}
+#pragma mark - moviePlayerNotification
+-(void)movieStateChangeCallback:(NSNotification*)notify  {
+    
+    //点击播放器中的播放/ 暂停按钮响应的通知
+    
+}
+
+-(void)movieFinishedCallback:(NSNotification*)notify{
+    
+    // 视频播放完或者在presentMoviePlayerViewControllerAnimated下的Done按钮被点击响应的通知。
+    
+    MPMoviePlayerController* theMovie = [notify object];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+     
+                                                   name:MPMoviePlayerPlaybackDidFinishNotification
+     
+                                                 object:theMovie];
+    
+    [self dismissMoviePlayerViewControllerAnimated];
     
 }
 

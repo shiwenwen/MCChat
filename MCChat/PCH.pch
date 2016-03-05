@@ -9,9 +9,13 @@
 #ifndef PCH_pch
 #define PCH_pch
 
+
+#ifdef __OBJC__
 #import "UICommons.h"
 #import "UIViewExt.h"
 #import "UIView+UIViewController.h"
 #import "Tools.h"
 #import "CustomAlertView.h"
+#endif
+
 #endif /* PCH_pch */

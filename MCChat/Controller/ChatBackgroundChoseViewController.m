@@ -7,8 +7,10 @@
 //
 
 #import "ChatBackgroundChoseViewController.h"
-
-@interface ChatBackgroundChoseViewController ()<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+#import "CLImageEditor.h"
+@interface ChatBackgroundChoseViewController ()<UIImagePickerControllerDelegate,UINavigationControllerDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
+    UIImagePickerController *_picker;
+}
 
 @end
 
@@ -104,26 +106,26 @@
         
     }
     
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
+    _picker = [[UIImagePickerController alloc] init];
+    _picker.delegate = self;
     
     if (indexPath.section == 1&& indexPath.row == 0) {
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
         {
             
-            picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+            _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
         }
         
-        [self presentViewController:picker animated:YES completion:nil];
+        [self presentViewController:_picker animated:YES completion:nil];
         
 
         
         
     }
     if (indexPath.section == 1&& indexPath.row == 1) {
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        _picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         
-        [self presentViewController:picker animated:YES completion:^{
+        [self presentViewController:_picker animated:YES completion:^{
             
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
         }];
@@ -147,68 +149,90 @@
     if ([type isEqualToString:@"public.image"])
     {
         
+        UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        
+        CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
+        
+        editor.delegate = self;
+        
+        [picker pushViewController:editor animated:YES];
+
         
         
-            [picker dismissViewControllerAnimated:YES completion:^{
-            
-            // 改变状态栏的颜色  改变为白色
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-            
-            //先把图片转成NSData
-            UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-            
-            
-            dispatch_sync(dispatch_get_global_queue(0, 0), ^{
-                NSData *data;
-                
-                NSString *type;
-                
-                if (UIImagePNGRepresentation(image) == nil)
-                {
-                    data = UIImageJPEGRepresentation(image, 1.0);
-                    type = @".jpg";
-                }
-                else
-                {
-                    data = UIImagePNGRepresentation(image);
-                    type = @".png";
-                }
-                
-                //图片保存的路径
-                //这里将图片放在沙盒的documents文件夹中
-                NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-                
-                //文件管理器
-                NSFileManager *fileManager = [NSFileManager defaultManager];
-                
-                //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
-                [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:NO attributes:nil error:nil];
-              BOOL succeed =  [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/背景%@",type]] contents:data attributes:nil];
-                
-                //得到选择后沙盒中图片的完整路径
-                NSString * filePath = [[NSString alloc]initWithFormat:@"%@/背景%@",DocumentsPath,type];
-                
-                if (succeed) {
-                    
-                    UserDefaultsSet(filePath, @"bgPath");
-                    [[NSUserDefaults standardUserDefaults]synchronize];
-                    
-                    [[NSNotificationCenter defaultCenter]postNotificationName:@"changeBg" object:nil];
-                    
-                }else{
-                    
-                    
-                    [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"切换失败" viewController:nil];
-                }
-               
-                
-            });
-            
-            
-                
-        }];
     }
     
+    
+}
+#pragma mark- CLImageEditor delegate
+
+- (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
+{
+    
+    
+    
+    [_picker dismissViewControllerAnimated:YES completion:^{
+        
+        // 改变状态栏的颜色  改变为白色
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        
+        //先把图片转成NSData
+        
+        
+        
+        dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+            NSData *data;
+            
+            NSString *type;
+            
+            if (UIImagePNGRepresentation(image) == nil)
+            {
+                data = UIImageJPEGRepresentation(image, 1.0);
+                type = @".jpg";
+            }
+            else
+            {
+                data = UIImagePNGRepresentation(image);
+                type = @".png";
+            }
+            
+            //图片保存的路径
+            //这里将图片放在沙盒的documents文件夹中
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+            
+            //文件管理器
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            
+            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+            [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:NO attributes:nil error:nil];
+            BOOL succeed =  [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/背景%@",type]] contents:data attributes:nil];
+            
+            //得到选择后沙盒中图片的完整路径
+            NSString * filePath = [[NSString alloc]initWithFormat:@"%@/背景%@",DocumentsPath,type];
+            
+            if (succeed) {
+                
+                UserDefaultsSet(filePath, @"bgPath");
+                [[NSUserDefaults standardUserDefaults]synchronize];
+                
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"changeBg" object:nil];
+                
+            }else{
+                
+                
+                [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"切换失败" viewController:nil];
+            }
+            
+            
+        });
+        
+        
+        
+    }];
+    [editor dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imageEditor:(CLImageEditor *)editor willDismissWithImageView:(UIImageView *)imageView canceled:(BOOL)canceled
+{
     
 }
 

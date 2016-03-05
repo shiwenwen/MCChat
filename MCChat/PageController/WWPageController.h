@@ -54,4 +54,5 @@
  */
 @property (nonatomic,weak)id<WWPageControllerDelegate> delegate;
 @property (nonatomic,strong,nullable)UIColor *titleTabColor;
+@property (nonatomic,strong,nullable)UIColor *titleColor;
 @end

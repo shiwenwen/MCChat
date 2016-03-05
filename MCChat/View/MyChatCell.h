@@ -12,10 +12,12 @@
 #import "ZoomImageView.h"
 #import "WXLabel.h"
 typedef void(^VoiceBlock)( NSURL * _Nonnull url, NSData * _Nullable data,UIImageView *_Nullable imageView);
+typedef void(^FileBlock)(FileModel *_Nullable model);
 @interface MyChatCell : UITableViewCell<WXLabelDelegate>{
     UITapGestureRecognizer *_tap;
-    
+    UIProgressView *_progressView;
 }
+
 @property (nonatomic,strong,readonly,nullable)UILabel *timeLabel;
 @property (nonatomic,strong,readonly,nullable)ZoomImageView *leftHeaderView;
 @property (nonatomic,strong,readonly,nullable)ZoomImageView *rightHeaderView;
@@ -35,4 +37,19 @@ typedef void(^VoiceBlock)( NSURL * _Nonnull url, NSData * _Nullable data,UIImage
 @property (nonatomic,strong,nullable)ChatItem *model;
 @property (nonatomic,strong,nullable)NSURL *dataPath;
 @property (nonnull,copy)VoiceBlock voiceBlock;
+
+//文件类型的cell
+@property(nonatomic,strong,nullable)UILabel *fileNameLabel1;
+@property(nonatomic,strong,nullable)UILabel *fileSizeLabel1;
+@property(nonatomic,strong,nullable)UIImageView* fileLogo1;
+@property (nonatomic,strong,nullable)UIView *fileBackView1;
+
+@property(nonatomic,strong,nullable)UILabel *fileNameLabel2;
+@property(nonatomic,strong,nullable)UILabel *fileSizeLabel2;
+@property(nonatomic,strong,nullable)UIImageView* fileLogo2;
+@property (nonatomic,strong,nullable)UIView *fileBackView2;
+
+@property (nonatomic,copy,nullable)FileBlock fileBlock;
+@property (nonatomic,strong,nullable)UIProgressView *progressView;
+
 @end

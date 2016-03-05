@@ -18,7 +18,8 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <LocalAuthentication/LAContext.h>
 #import "FileManagerViewController.h"
-@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,DBGuestureLockDelegate>{
+#import "CLImageEditor.h"
+@interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,DBGuestureLockDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
     
     UICollectionView *collection;
 }
@@ -380,7 +381,7 @@
             
             [self presentViewController:self.picker animated:YES completion:^{
                 
-                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
                  ];
             }];
             break;
@@ -402,23 +403,87 @@
     if ([type isEqualToString:@"public.image"])
     {
         
+//        
+//
+//            UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+//            
+//            
+//                
+//                MLImageCrop *imageCrop = [[MLImageCrop alloc]init];
+//                imageCrop.delegate = self;
+//                imageCrop.ratioOfWidthAndHeight = 120.0f/120.0f;
+//                imageCrop.image = image;
+//                [imageCrop showWithAnimation:YES];
+//
         
-
-            UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-            
-            
-                
-                MLImageCrop *imageCrop = [[MLImageCrop alloc]init];
-                imageCrop.delegate = self;
-                imageCrop.ratioOfWidthAndHeight = 120.0f/120.0f;
-                imageCrop.image = image;
-                [imageCrop showWithAnimation:YES];
+        UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        
+        CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
+        
+        editor.delegate = self;
+        
+        [picker pushViewController:editor animated:YES];
 
         
     }
     
     
 }
+- (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
+{
+    
+    NSData *data;
+    NSString *type;
+    if (UIImagePNGRepresentation(image) == nil)
+    {
+        data = UIImageJPEGRepresentation(image, 1.0);
+        type = @".jpg";
+    }
+    else
+    {
+        data = UIImagePNGRepresentation(image);
+        type = @".png";
+    }
+    
+    //图片保存的路径
+    //这里将图片放在沙盒的documents文件夹中
+    NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+    
+    //文件管理器
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+    [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/icon%@",type]] contents:data attributes:nil];
+    
+    //得到选择后沙盒中图片的完整路径
+    NSString * filePath = [[NSString alloc]initWithFormat:@"%@/icon%@",DocumentsPath,type];
+    
+    
+    UserDefaultsSet(filePath, @"headerIcon");
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeHeaderIcon" object:nil];
+    
+    
+    [self.picker dismissViewControllerAnimated:YES completion:^{
+        
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        [collection reloadData];
+    }];
+    
+
+    
+    
+    [editor dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imageEditor:(CLImageEditor *)editor willDismissWithImageView:(UIImageView *)imageView canceled:(BOOL)canceled
+{
+    
+}
+
 - (void)cropImage:(UIImage*)cropImage forOriginalImage:(UIImage*)originalImage{
     
     

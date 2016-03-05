@@ -26,7 +26,9 @@
 #import "HeaderCell.h"
 #import "FileModel.h"
 #import "FileManagerViewController.h"
-@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>{
+#import "FileDetailViewController.h"
+#import "CLImageEditor.h"
+@interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
     
     float _sendBackViewHeight;
     float _keyboardHeight;
@@ -42,6 +44,10 @@
     MCPeerID *_curretConnect;
     BOOL _showFacePanel;
     BOOL _showAttachment;
+    BOOL _isfileStream;
+    FileModel *_currentFileModel;
+    NSMutableDictionary *_progressDictionary;
+    
 }
 
 @property (nonatomic,strong)NSMutableDictionary *otherHeaderImages;
@@ -96,6 +102,13 @@
     }];
 
     
+    //监听键盘通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillHideNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillChangeFrameNotification object:nil];
+
     
       [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];   
 }
@@ -105,11 +118,14 @@
     self.sendBackView.hidden = YES;
     self.attachmentCollectionView.hidden = YES;
     
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-
+    _progressDictionary = [NSMutableDictionary dictionary];
     
     if (UserDefaultsGet(@"bgPath")) {
         
@@ -135,13 +151,6 @@
     
     [self buildVideoForWe];
     
-    //监听键盘通知
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillHideNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillChangeFrameNotification object:nil];
-    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenKeyboard)];
     [self.view addGestureRecognizer:tap];
     
@@ -157,24 +166,32 @@
 - (void)getNewFile:(NSNotification *)noti{
     
     FileModel *model = noti.object;
-    
-    if (model.realitySize <1000*1000*10) {
-        
-        [self postFile:model];
-        
-    }else{
-        
-        
-        
-        
-    }
+    _currentFileModel = model;
+    _isfileStream = YES;
+//    if (self.sessionManager.connectedPeers.count > 1 ) {
+//        if (model.realitySize <1000*1000*10) {
+          [self postFile:model];
+//        }else{
+//            
+//            [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"群聊暂不支持超过10M的文件" viewController:nil];
+//
+//        }
+//        
+//        
+//    }else{
+//        
+//     
+//        
+//        
+//        
+//    }
     
     
 }
 #pragma mark -- 发送文件
 - (void)postFile:(FileModel *)model{
     
-    
+
     if(!self.sessionManager.isConnected)
     {
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
@@ -209,6 +226,7 @@
       
         
         NSURL * url = [NSURL fileURLWithPath:model.path];
+        int index = 0;
         for (MCPeerID *peer in self.sessionManager.connectedPeers) {
             
             NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
@@ -221,7 +239,29 @@
             }];
             
             NSLog(@"%@", @(progress.fractionCompleted));
+            if (index == 0 && progress) {
+                
+                [_progressDictionary setObject:progress forKey:model.name];
+            }
+            
+            index ++;
         }
+        
+        
+        ChatItem * chatItem = [[ChatItem alloc] init];
+        chatItem.isSelf = YES;
+        chatItem.states = fileStates;
+        chatItem.fileModel = model;
+
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
+        [self.datasource addObject:chatItem];
+        
+        
+        [self insertTheTableToButtom];
         
 
         
@@ -959,7 +999,9 @@
                 _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
             }
             
-            [self presentViewController:_picker animated:YES completion:nil];
+            [self presentViewController:_picker animated:YES completion:^{
+                [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+            }];
             
 
         }
@@ -971,7 +1013,7 @@
         
             [self presentViewController:_picker animated:YES completion:^{
                 
-                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
                  ];
             }];
         }
@@ -1044,87 +1086,106 @@
     if ([type isEqualToString:@"public.image"])
     {
         
+        UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+
+        CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
+
+        editor.delegate = self;
         
-        
-        
-        [_picker dismissViewControllerAnimated:YES completion:^{
-            
-            // 改变状态栏的颜色  改变为白色
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        [picker pushViewController:editor animated:YES];
+
        
-            //先把图片转成NSData
-            UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
-
-            
-            dispatch_sync(dispatch_get_global_queue(0, 0), ^{
-                   NSData *data;
-                NSString *type;
-                if (UIImagePNGRepresentation(image) == nil)
-                {
-                    data = UIImageJPEGRepresentation(image, 1.0);
-                    type = @".jpg";
-                }
-                else
-                {
-                    data = UIImagePNGRepresentation(image);
-                    type = @".png";
-                }
-                
-                //图片保存的路径
-                //这里将图片放在沙盒的documents文件夹中
-                NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-                
-                //文件管理器
-                NSFileManager *fileManager = [NSFileManager defaultManager];
-                
-                //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
-                [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-                [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/image%@",type]] contents:data attributes:nil];
-                
-                //得到选择后沙盒中图片的完整路径
-                NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
-                
-                
-                
-                if(self.sessionManager.isConnected)
-                {
-                  [self sendAsResource:filePath];
-                }
-
-                
-            });
-         
-            
-            
-      
-            if(!self.sessionManager.isConnected)
-            {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-                [alertView show];
-                return;
-            }
-            
-            ChatItem * chatItem = [[ChatItem alloc] init];
-            chatItem.isSelf = YES;
-            chatItem.states = picStates;
-            chatItem.picImage = image;
-            NSDate *date = [NSDate date];
-            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-            NSString *dateStr = [formatter stringFromDate:date];
-            chatItem.timeStr = dateStr;
-            [self.datasource addObject:chatItem];
-            
-            
-            [self insertTheTableToButtom];
-            
-            
-
-            
-        }];
     }
     
     
+}
+#pragma mark- CLImageEditor delegate
+
+- (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
+{
+    
+    
+    [_picker dismissViewControllerAnimated:YES completion:^{
+        
+        // 改变状态栏的颜色  改变为白色
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        
+        //先把图片转成NSData
+        
+        
+        dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+            NSData *data;
+            NSString *type;
+            if (UIImagePNGRepresentation(image) == nil)
+            {
+                data = UIImageJPEGRepresentation(image, 1.0);
+                type = @".jpg";
+            }
+            else
+            {
+                data = UIImagePNGRepresentation(image);
+                type = @".png";
+            }
+            
+            //图片保存的路径
+            //这里将图片放在沙盒的documents文件夹中
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+            
+            //文件管理器
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            
+            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+            [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+            [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/image%@",type]] contents:data attributes:nil];
+            
+            //得到选择后沙盒中图片的完整路径
+            NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
+            
+            
+            
+            if(self.sessionManager.isConnected)
+            {
+                [self sendAsResource:filePath];
+            }
+            
+            
+        });
+        
+        
+        
+        
+        if(!self.sessionManager.isConnected)
+        {
+            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+            [alertView show];
+            return;
+        }
+        
+        ChatItem * chatItem = [[ChatItem alloc] init];
+        chatItem.isSelf = YES;
+        chatItem.states = picStates;
+        chatItem.picImage = image;
+        NSDate *date = [NSDate date];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        chatItem.timeStr = dateStr;
+        [self.datasource addObject:chatItem];
+        
+        
+        [self insertTheTableToButtom];
+        
+        
+        
+        
+    }];
+    
+    [editor dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imageEditor:(CLImageEditor *)editor willDismissWithImageView:(UIImageView *)imageView canceled:(BOOL)canceled
+{
+   
 }
 
 
@@ -1484,9 +1545,39 @@
         weakCell.leftCorner.hidden = YES;
         [self makeVideoPlayer:data];
     };
+    if (cell.model.states == fileStates && cell.model.isSelf) {
+        
+        NSProgress *progress = _progressDictionary[cell.model.fileModel.name];
+        if (progress) {
+            NSDictionary *userInfo = @{
+                                       @"progress":progress,
+                                       @"view":cell.progressView
+                                       };
+            [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+        }
+        
+        
+    }
+    
+    cell.fileBlock = ^(FileModel *model){
+        FileDetailViewController *fileDetailVC = [[FileDetailViewController alloc]init];
+        fileDetailVC.model = model;
+        [self.navigationController pushViewController:fileDetailVC animated:YES];
+        
+    };
     return cell;
 }
-
+- (void)updateProgress:(NSTimer *)timer{
+    
+    NSDictionary *dic = timer.userInfo;
+    
+    NSProgress *progress = dic[@"progress"];
+    UIProgressView *progressView = dic[@"view"];
+    progressView.progress = progress.completedUnitCount / progress.totalUnitCount;
+    if (progressView.progress >= 1) {
+        [timer invalidate];
+    }
+}
 - (void)cellSelectIndex:(UIButton *)cellBtn
 {
     
@@ -1785,7 +1876,13 @@
     {
         // 可以使用输出流的空间，此时可以发送数据给服务器
         // 发送数据的
-        NSData *data = [self getVideoStremData];
+        NSData *data ;
+        if (_isfileStream) {
+           data = [self getVideoStremData:[NSURL fileURLWithPath:_currentFileModel.path]];
+        }else{
+            data = [self getVideoStremData:nil];
+        }
+       
         ChatItem * chatItem = [[ChatItem alloc] init];
         chatItem.isSelf = YES;
         chatItem.states = videoStates;
@@ -1912,8 +2009,11 @@
     return url;
 }
 
-- (NSData *)getVideoStremData
+- (NSData *)getVideoStremData:(NSURL *)path
 {
+    if (path) {
+        return [NSData dataWithContentsOfURL:path];
+    }
     return [NSData dataWithContentsOfURL:[self getSavePath]];
 }
 
@@ -2112,6 +2212,7 @@
     if (self.sessionManager.session.connectedPeers.count > 1) {
         [self sendGroupChatVideoAsResource:[self getSavePath]];
     }else{
+        _isfileStream = NO;
         [self  sendAsStream];
     }
 

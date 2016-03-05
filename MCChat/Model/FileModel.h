@@ -14,10 +14,11 @@ typedef NS_ENUM (NSInteger,FileType){
     music,//mp3,wma,mac,aac,wav...
     video,//RMVB、WMV、ASF、AVI、3GP、MPG、MKV、MP4、DVD、OGM、MOV、MPEG2、MPEG4
     image,//GIF、JPEG、BMP、TIF、JPG、PCD、QTI、QTF、TIFF
-    txt,
+    txt,//txt,plist,m,c,h,webarchive,html
     zip,//rar,zip,tar,cab,uue,jar,iso,z,7-zip,ace,lzh,arj,gzip,bz2
     pdf,//pdf
-    other
+    other,
+    folder//文件夹
 };
 @interface FileModel : NSObject
 @property (nonatomic,strong)UIImage *logoImage;

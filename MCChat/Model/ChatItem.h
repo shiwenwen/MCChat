@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+#import "FileModel.h"
 
 typedef enum{
     textStates,
     picStates,
     videoStates,
-    
+    fileStates
 }newsStates;
 
 @interface ChatItem : NSObject
@@ -36,4 +36,5 @@ typedef enum{
 @property (nonatomic,assign)CGFloat textWidth;
 @property (nonatomic,assign)CGFloat imageHight;
 @property (nonatomic,assign)CGFloat imageWidth;
+@property (nonatomic,assign)FileModel *fileModel;
 @end
