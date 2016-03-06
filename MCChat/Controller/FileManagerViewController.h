@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "WWPageController.h"
-@interface FileManagerViewController : WWPageController
+@interface FileManagerViewController : UIViewController
 @property (nonatomic,assign)BOOL isFromChat;
 @property (nonatomic,strong)NSArray<NSString *> *contentPaths;
 @end

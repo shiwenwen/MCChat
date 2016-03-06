@@ -463,6 +463,8 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		884047BF1C8C4B57000D934F /* ChineseString.m in Sources */ = {isa = PBXBuildFile; fileRef = 884047BC1C8C4B57000D934F /* ChineseString.m */; };
+		884047C01C8C4B57000D934F /* pinyin.c in Sources */ = {isa = PBXBuildFile; fileRef = 884047BD1C8C4B57000D934F /* pinyin.c */; };
 		8841B7551C89D381002252B0 /* FileListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8841B7541C89D381002252B0 /* FileListViewController.m */; };
 		8883BD051C8877DB006E3271 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8883BD041C8877DB006E3271 /* QuickLook.framework */; };
 		8894B5861C8A7982005E0889 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8894B5851C8A7982005E0889 /* MBProgressHUD.m */; };
@@ -1118,6 +1120,10 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		884047BB1C8C4B57000D934F /* ChineseString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChineseString.h; sourceTree = "<group>"; };
+		884047BC1C8C4B57000D934F /* ChineseString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChineseString.m; sourceTree = "<group>"; };
+		884047BD1C8C4B57000D934F /* pinyin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinyin.c; sourceTree = "<group>"; };
+		884047BE1C8C4B57000D934F /* pinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pinyin.h; sourceTree = "<group>"; };
 		8841B7531C89D381002252B0 /* FileListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileListViewController.h; sourceTree = "<group>"; };
 		8841B7541C89D381002252B0 /* FileListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileListViewController.m; sourceTree = "<group>"; };
 		8883BD041C8877DB006E3271 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
@@ -1398,6 +1404,7 @@
 		2B4076BA1C4508F7003A7161 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				884047BA1C8C4B57000D934F /* ChineseSorting */,
 				8894B5841C8A7982005E0889 /* MBProgressHUD.h */,
 				8894B5851C8A7982005E0889 /* MBProgressHUD.m */,
 				8894B6B51C8A86F6005E0889 /* SSZipArchive */,
@@ -2164,6 +2171,17 @@
 				2B4076731C44FC22003A7161 /* MMChatLaunchImage */,
 			);
 			path = Resourse;
+			sourceTree = "<group>";
+		};
+		884047BA1C8C4B57000D934F /* ChineseSorting */ = {
+			isa = PBXGroup;
+			children = (
+				884047BB1C8C4B57000D934F /* ChineseString.h */,
+				884047BC1C8C4B57000D934F /* ChineseString.m */,
+				884047BD1C8C4B57000D934F /* pinyin.c */,
+				884047BE1C8C4B57000D934F /* pinyin.h */,
+			);
+			path = ChineseSorting;
 			sourceTree = "<group>";
 		};
 		8894B6B51C8A86F6005E0889 /* SSZipArchive */ = {
@@ -3023,6 +3041,7 @@
 				2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */,
 				8894B6DD1C8A86F6005E0889 /* aestab.c in Sources */,
 				2B71EFBA1C71BE110082BAE3 /* AFNetworkReachabilityManager.m in Sources */,
+				884047BF1C8C4B57000D934F /* ChineseString.m in Sources */,
 				2BC89B2F1C8964D100782C45 /* MJRefreshGifHeader.m in Sources */,
 				8894B7801C8B1043005E0889 /* _CLImageEditorViewController.m in Sources */,
 				2B7C9E0E1C86948700062209 /* MKAnnotationView+WebCache.m in Sources */,
@@ -3074,6 +3093,7 @@
 				8894B7771C8B1043005E0889 /* CLImageEditorTheme+Private.m in Sources */,
 				8894B7621C8B1043005E0889 /* CLImageToolInfo.m in Sources */,
 				8894B7711C8B1043005E0889 /* CLFilterTool.m in Sources */,
+				884047C01C8C4B57000D934F /* pinyin.c in Sources */,
 				8894B7851C8B1043005E0889 /* CLStickerTool.m in Sources */,
 				2B7C9E1A1C86948700062209 /* UIImage+WebP.m in Sources */,
 				8894B7701C8B1043005E0889 /* CLFilterBase.m in Sources */,

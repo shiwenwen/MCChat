@@ -28,6 +28,7 @@
 #import "FileManagerViewController.h"
 #import "FileDetailViewController.h"
 #import "CLImageEditor.h"
+
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
     
     float _sendBackViewHeight;
@@ -70,7 +71,9 @@
 @property (nonatomic,strong)RecordingView *recordingView;
 @property (nonatomic,strong)WeiboFacePanelView *facePanelView;
 @property (nonatomic,strong)UICollectionView *attachmentCollectionView;
-
+@property (nonatomic,strong)UICollectionView *groupChatCollectionView;
+@property (nonatomic,strong)UIButton *titleButton;
+@property (nonatomic,strong)UIView *blackBackView;
 // 语音播放
 @property (nonatomic,strong) AVAudioRecorder *audioRecorder;//音频录音机
 //音频播放器，用于播放录音文件
@@ -142,7 +145,7 @@
     
 //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 //    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:0.127 alpha:1.000];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.600];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.500];
     
     
     [self makeBlueData];
@@ -450,6 +453,14 @@
     
     self.otherHeaderImages = nil;
     
+    if (self.sessionManager.connectedPeers.count > 1) {
+        return;
+    }
+    
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
+                                                                 @"info":[NSString stringWithFormat:@"%@_disconnectSession",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name]
+                                                                 }];
+    [self.sessionManager sendDataToAllPeers:data];
     
 }
 #pragma mark -- 更换头像
@@ -948,12 +959,23 @@
 #pragma mark --UICollectionViewDataSource,UICollectionViewDelegate
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-
+    if ([collectionView isEqual:self.groupChatCollectionView]) {
+        
+        return [_otherHeaderImages allKeys].count;
+    }
     return 3;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
     HeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HeaderCell" forIndexPath:indexPath];
+    
+    if ([collectionView isEqual:self.groupChatCollectionView]) {
+        NSString *key = [_otherHeaderImages allKeys][indexPath.item];
+        cell.headImageVIew.image = [UIImage imageWithData:_otherHeaderImages[key]];
+        
+        return cell;
+    }
+    
     cell.headImageVIew.userInteractionEnabled = NO;    
     switch (indexPath.item) {
         case 0:
@@ -1643,7 +1665,48 @@
                 
                 if (self.sessionManager.session.connectedPeers.count == 2) {
                     
-                    self.title = @"群聊";
+//                    self.title = @"群聊";
+                    self.title = @"";
+                    if (!self.groupChatCollectionView) {
+                        
+                            self.blackBackView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight - 64)];
+                        [self.view addSubview:self.blackBackView];
+                        self.blackBackView.backgroundColor = [UIColor blackColor];
+                        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenGroupChatView)];
+                        [self.blackBackView addGestureRecognizer:tap];
+                        self.blackBackView.alpha = 0;
+                        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+                        CGFloat size = (KScreenWidth - 10 * 5) / 4;
+                        layout.itemSize = CGSizeMake(size, size);
+                        layout.minimumLineSpacing = 10;
+                        layout.minimumInteritemSpacing = 10;
+                        layout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+                        
+                        //
+                        self.groupChatCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, -size+10 *2 , KScreenWidth,size+10 *2 ) collectionViewLayout:layout];
+                        self.groupChatCollectionView.alwaysBounceHorizontal = YES;
+                        self.groupChatCollectionView.showsVerticalScrollIndicator = NO;
+                        self.groupChatCollectionView.showsHorizontalScrollIndicator = NO;
+                        [self.groupChatCollectionView registerNib:[UINib nibWithNibName:@"HeaderCell" bundle:nil] forCellWithReuseIdentifier:@"HeaderCell"];
+                        self.groupChatCollectionView.scrollEnabled = NO;
+                        self.groupChatCollectionView.backgroundColor = [UIColor whiteColor];
+                        self.groupChatCollectionView.dataSource = self;
+                        self.groupChatCollectionView.delegate = self;
+                        
+                        [self.view addSubview:self.groupChatCollectionView];
+                        //
+                        self.titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
+                        self.titleButton.frame = CGRectMake((KScreenWidth - 100 ) / 2, (KNavigationBarHeight - 30)/2, 100, 30);
+                        [self.titleButton setTitle:@"群聊" forState:UIControlStateNormal];
+                        [self.titleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                        [self.titleButton setImage:[UIImage imageNamed:@"上拉箭头"] forState:UIControlStateNormal];
+                        [self.titleButton setImage:[UIImage imageNamed:@"下拉箭头"] forState:UIControlStateSelected];
+                        
+                        [self.titleButton addTarget:self action:@selector(showGroupChatView:) forControlEvents:UIControlEventTouchUpInside];
+                        [self.navigationController.navigationBar addSubview:self.titleButton];
+                        
+                    
+                    }
                     
                 }else if(self.sessionManager.session.connectedPeers.count == 1) {
                     
@@ -1656,6 +1719,7 @@
                                                                                  @"GroupName":self.title
                                                                                  }];
                     [self.sessionManager sendDataToAllPeers:data];
+                    [self.groupChatCollectionView reloadData];
                     
                 }
                 
@@ -1683,6 +1747,12 @@
                 self.title = unarchiver[@"GroupName"];
                 
                 [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@修改群聊名称为“%@”",peer.displayName,unarchiver[@"GroupName"]] viewController:nil];
+            }if (unarchiver[@"info"]) {
+                NSString *info = unarchiver[@"info"];
+                if ([info isEqualToString:[NSString stringWithFormat:@"%@_disconnectSession",peer.displayName]]) {
+                    
+                    [_otherHeaderImages removeObjectForKey:peer.displayName];
+                }
             }
             
             return ;
@@ -1816,6 +1886,34 @@
         NSLog(@"we need");
         
     }];
+    
+}
+#pragma mark -- showGroupChatView
+-(void)showGroupChatView:(UIButton *)button{
+    
+    
+    button.selected = !button.selected;
+    
+    if (button.selected) {
+        [self.groupChatCollectionView reloadData];
+        [UIView animateWithDuration:.25 animations:^{
+        self.groupChatCollectionView.transform = CGAffineTransformMakeTranslation(0, self.groupChatCollectionView.height);
+            self.blackBackView.alpha = .6;
+        }];
+        
+    }else{
+        [UIView animateWithDuration:.25 animations:^{
+            self.groupChatCollectionView.transform = CGAffineTransformIdentity;
+            self.blackBackView.alpha = 0;
+        }];
+        
+    }
+    
+    
+}
+- (void)hiddenGroupChatView{
+
+    [self showGroupChatView:self.titleButton];
     
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

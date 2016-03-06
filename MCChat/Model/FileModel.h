@@ -28,5 +28,6 @@ typedef NS_ENUM (NSInteger,FileType){
 @property (nonatomic,copy)NSString *path;
 @property (nonatomic,copy)NSString *size;
 @property (nonatomic,assign)double realitySize;
+@property (nonatomic,strong)NSDate *date;
 - (instancetype)initWithName:(NSString *)name Detail:(NSString *)detail size:(NSString *)size FileType:(FileType )type Path:(NSString *)path;
 @end

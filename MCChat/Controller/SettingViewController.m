@@ -173,6 +173,8 @@
             collection.backgroundColor = [UIColor whiteColor];
             collection.dataSource = self;
             collection.delegate = self;
+            collection.showsHorizontalScrollIndicator = NO;
+            collection.showsVerticalScrollIndicator = NO;
             [headerCell.contentView addSubview:collection];
             
         }
@@ -536,13 +538,13 @@
     
     if (buttonIndex == 1) {
         
-        
-        [self.sessionManager disconnectSession];
-        
-        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"连接已断开" viewController:nil];
-        self.friendIcon  = nil;
         [[NSNotificationCenter defaultCenter]postNotificationName:@"disconnectSession" object:nil];
         [collection reloadData];
+
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"连接已断开" viewController:nil];
+        self.friendIcon  = nil;
+        
+        [self.sessionManager performSelector:@selector(disconnectSession) withObject:nil afterDelay:2];
     }
     
     

@@ -12,12 +12,30 @@
 #import "FileDetailViewController.h"
 #import "MJRefresh.h"
 #import "WWPageController.h"
-@interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>
+#import "ChineseString.h"
+@interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>{
+    
+    NSArray *_filterTitles1;
+    NSArray *_filterTitles2;
+    NSInteger _currentFilterTag;
+}
 @property (nonatomic,strong)NSMutableArray *files;
 @property (nonatomic,strong)UITableView *tableView;
+@property (nonatomic,strong)UIView *filterBackView;
+@property (nonatomic,strong)UIView *blackBackView;
+@property (nonatomic,strong)UITableView *filterTableView;
+
 @end
 
 @implementation FileManagerViewController
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.hidesBottomBarWhenPushed = YES;
+    }
+    return self;
+}
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self];
@@ -25,6 +43,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"文件管理";
+    _filterTitles1 = @[@"全部",@"文档",@"音乐",@"视频",@"图片",@"压缩文件",@"文件夹",@"其他"];
+    _filterTitles2 = @[@"默认排序",@"时间",@"大小",@"名称"];
     if (self.contentPaths) {
         
         NSString *title= self.contentPaths.lastObject;
@@ -35,8 +55,14 @@
         }
         
     }
-    [self _creatTableView];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
+    [self.view addSubview:label];
+    label.text = @"暂无文件";
+    label.font = [UIFont systemFontOfSize:23];
+    label.textAlignment = NSTextAlignmentCenter;
     
+    [self _creatTableView];
+  [self _createFilterViews];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewBeginRefresh) name:@"getFileSuccess" object:nil];
 
 }
@@ -57,7 +83,12 @@
     }
      NSFileManager *fileManager = [NSFileManager defaultManager];
     
-                self.files = [NSMutableArray array];
+    
+    if(!self.files){
+        self.files = [NSMutableArray array];
+    }else{
+        [self.files removeAllObjects];
+    }
     for (int i = 0;i < self.contentPaths.count ;i ++) {
         
         NSString *basePath = self.contentPaths[i];
@@ -137,25 +168,707 @@
                     }else if (extension.length == 0){
                         type = folder;
                     }
-                    
+                
                     FileModel *model = [[FileModel alloc]initWithName:subPath Detail:dateStr size:fileSize FileType:type Path:[basePath stringByAppendingPathComponent:subPath]];
-                    model.realitySize = [fileAttr[@"NSFileSize"] doubleValue];
+                                    model.realitySize = [fileAttr[@"NSFileSize"] doubleValue];
+                    model.date = modificationDate;
                     [self.files addObject:model];
-                    
+                   
+
                 }
                 
                 if (i == self.contentPaths.count - 1) {
+                    {//代码块
+                        UIButton *button1 = (UIButton *)[self.filterBackView viewWithTag:2000];
+                        UIButton *button2 = (UIButton *)[self.filterBackView viewWithTag:2001];
+
+                        if ([button1.titleLabel.text isEqualToString:@"文档"]) {
+                            
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == Word || model.fileType == Excel || model.fileType == PowerPoint ||model.fileType == pdf||model.fileType == txt) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+
+
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                        }else if ([button1.titleLabel.text isEqualToString:@"文件夹"]){
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == folder) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }else if ([button1.titleLabel.text isEqualToString:@"音乐"]){
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == music) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }else if ([button1.titleLabel.text isEqualToString:@"视频"]){
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == video) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }else if ([button1.titleLabel.text isEqualToString:@"图片"]){
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == image) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }else if ([button1.titleLabel.text isEqualToString:@"压缩文件"]){
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == zip) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }else if ([button1.titleLabel.text isEqualToString:@"其他"]){
+                            
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            for (FileModel *model in self.files) {
+                                
+                                if (model.fileType == other) {
+                                    
+                                    [temp1 addObject:model];
+                                }
+                                
+                            }
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        NSString *name = temp2[i];
+                                        
+                                        for (FileModel *model in temp1){
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                        }else{
+                            NSMutableArray *temp1 = [NSMutableArray array];
+                            
+                            temp1 = self.files;
+                            
+                            if (temp1.count > 1) {
+                                if ([button2.titleLabel.text isEqualToString:@"大小"]) {
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.realitySize < model2.realitySize) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"时间"]){
+                                    
+                                    NSInteger count = temp1.count;
+                                    int i, j;
+                                    for (j = 0; j < count - 1; j++)
+                                        for (i = 0; i < count - 1 - j; i++)
+                                        {
+                                            FileModel *model1 = temp1[i];
+                                            FileModel *model2 = temp1[i+1];
+                                            if (model1.date.timeIntervalSince1970 < model2.date.timeIntervalSince1970) {
+                                                
+                                                [temp1 exchangeObjectAtIndex:i withObjectAtIndex:i+1];
+                                            }
+                                        }
+                                    
+                                    
+                                }else if ([button2.titleLabel.text isEqualToString:@"名称"]){
+                                    
+                                    
+                                    NSMutableArray *nameArr = [NSMutableArray array];
+                                    for (FileModel *model in temp1) {
+                                        [nameArr addObject:model.name];
+                                    }
+                                    NSMutableArray *letterResultArr = [ChineseString LetterSortArray:nameArr];
+                                    NSMutableArray *temp2 = [NSMutableArray array];
+                                    for (int i = 0;i < letterResultArr.count; i++) {
+                                        NSArray *subArr =  letterResultArr[i];
+                                        for (NSString *name in subArr) {
+                                            
+                                            [temp2 addObject:name];
+                                        }
+                                        
+                                    }
+                                    NSMutableArray *temp3 = [NSMutableArray array];
+                                    
+                                    for (int i = 0; i < temp2.count; i++) {
+                                        
+                                        FileModel *model = self.files[i];
+                                        NSString *name = temp2[i];
+                                        if ([model.name isEqualToString:name]) {
+                                            
+                                            
+                                            if ([[[[[[model.name stringByReplacingOccurrencesOfString:@"." withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@"《" withString:@""] stringByReplacingOccurrencesOfString:@"》" withString:@""] stringByReplacingOccurrencesOfString:@"_" withString:@""]isEqualToString:name]) {
+                                                
+                                                [temp3 addObject:model];
+                                            }
+                                        }
+                                    }
+                                    
+                                    temp1 = temp3;
+                                }
+                            }
+                            
+                            
+                            self.files = temp1;
+                            
+                        }
+                        
+                    }
                     
                     if (self.files.count > 0) {
                         [self.tableView reloadData];
+                        self.tableView.hidden = NO;
                     }else{
                         self.tableView.hidden = YES;
                         
-                        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
-                        [self.view addSubview:label];
-                        label.text = @"暂无文件";
-                        label.font = [UIFont systemFontOfSize:23];
-                        label.textAlignment = NSTextAlignmentCenter;
+            
                     }
                     [self.tableView.header endRefreshing];
                     
@@ -163,18 +876,17 @@
                 
                 
             }else{
+                
                 if (i == self.contentPaths.count - 1) {
+                    
                     
                     if (self.files.count > 0) {
                         [self.tableView reloadData];
+                        self.tableView.hidden = NO;
                     }else{
                         self.tableView.hidden = YES;
                         
-                        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, KScreenWidth, 100)];
-                        [self.view addSubview:label];
-                        label.text = @"暂无文件";
-                        label.font = [UIFont systemFontOfSize:23];
-                        label.textAlignment = NSTextAlignmentCenter;
+
                     }
                     [self.tableView.header endRefreshing];
  
@@ -186,15 +898,126 @@
     
 }
 
+
+
+- (void)_createFilterViews{
+    
+    self.blackBackView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
+    [self.view addSubview:self.blackBackView];
+    self.blackBackView.backgroundColor = [UIColor blackColor];
+    self.blackBackView.alpha = 0;
+    self.filterBackView = [[UIView alloc]initWithFrame:CGRectMake(0, KNavigationBarHeight, KScreenWidth, 40)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenFilterView)];
+    [self.blackBackView addGestureRecognizer:tap];
+
+    self.filterBackView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.filterBackView];
+//    UIView *line1 = [[UIView alloc]initWithFrame:CGRectMake(0, 39.5, KScreenWidth, .5)];
+//    line1.backgroundColor = [UIColor colorWithWhite:0.161 alpha:1.000];
+//    [self.filterBackView addSubview:line1];
+    UIView *line2 = [[UIView alloc]initWithFrame:CGRectMake(KScreenWidth / 2 - .25, 5, .5, 30)];
+    line2.backgroundColor = [UIColor colorWithWhite:0.161 alpha:1.000];
+    [self.filterBackView addSubview:line2];
+    CGFloat width = (KScreenWidth- 80) / 2 ;
+    for (int i = 0 ; i < 2; i++) {
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+
+        button.frame = CGRectMake(20 + i * (width + 40 ),0,width,40);
+        button.tag = 2000 + i;
+        button.titleLabel.font = [UIFont systemFontOfSize:15];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [button setImage:[UIImage imageNamed:@"下拉箭头"] forState:UIControlStateNormal];
+        [button setImage:[UIImage imageNamed:@"上拉箭头"] forState:UIControlStateSelected];
+        if (i == 0) {
+            [button setTitle:_filterTitles1.firstObject forState:UIControlStateNormal];
+        }else{
+            [button setTitle:_filterTitles2.firstObject forState:UIControlStateNormal];
+        }
+        [button addTarget:self action:@selector(filterClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.filterBackView addSubview:button];
+
+    }
+    
+    self.filterTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
+    [self.view insertSubview:self.filterTableView belowSubview:self.filterBackView];
+    self.filterTableView.delegate = self;
+    self.filterTableView.dataSource = self;
+    
+}
+- (void)hiddenFilterView{
+    
+    
+           UIButton *button =(UIButton *) [self.filterBackView viewWithTag:_currentFilterTag];
+    button.selected = NO;
+        [UIView animateWithDuration:.25 animations:^{
+        
+        self.filterTableView.transform = CGAffineTransformIdentity;
+        self.blackBackView.alpha = 0;
+        }];
+    
+    
+
+    
+}
+- (void)filterClick:(UIButton *)button{
+    button.selected = !button.selected;
+        if (button.selected) {
+            
+            self.filterTableView.transform = CGAffineTransformIdentity;
+            _currentFilterTag = button.tag;
+
+        [self.filterTableView reloadData];
+        if (button.tag == 2000) {
+            
+             UIButton *sender =(UIButton *) [self.filterBackView viewWithTag:2001];
+            sender.selected = NO;
+            NSInteger row = _filterTitles1.count;
+            CGFloat y =  - (40.0 * row)+KNavigationBarHeight+40;
+            self.filterTableView.frame = CGRectMake(0, y, KScreenWidth, 40 * _filterTitles1.count);
+            [UIView animateWithDuration:.25 animations:^{
+                self.filterTableView.transform = CGAffineTransformMakeTranslation(0,row * 40.0);
+                self.blackBackView.alpha = .6;
+            }];
+        }else{
+            NSInteger row = _filterTitles2.count;
+            CGFloat y =  - (40.0 * row)+KNavigationBarHeight+40;
+            UIButton *sender =(UIButton *) [self.filterBackView viewWithTag:2000];
+            sender.selected = NO;
+            self.filterTableView.frame = CGRectMake(0,y, KScreenWidth, 40 * _filterTitles2.count);
+            [UIView animateWithDuration:.25 animations:^{
+                self.filterTableView.transform = CGAffineTransformMakeTranslation(0,row*40.0);
+                self.blackBackView.alpha = .6;
+            }];
+        }
+
+    }else{
+        
+        
+            [UIView animateWithDuration:.25 animations:^{
+                
+                self.filterTableView.transform = CGAffineTransformIdentity;
+                self.blackBackView.alpha = 0;
+            }];
+  
+        
+        
+    }
+
+    
+    
+}
 - (void)_creatTableView{
     
     
-    self.tableView = [[UITableView alloc]initWithFrame:self.view.frame style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40+KNavigationBarHeight, KScreenWidth,KScreenHeight - 40-KNavigationBarHeight) style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
     [self.tableView registerNib:[UINib nibWithNibName:@"FileCell" bundle:nil] forCellReuseIdentifier:@"FileCell"];
+    self.tableView.backgroundColor = [UIColor colorWithRed:0.757 green:0.779 blue:0.750 alpha:1.000];
    self.tableView.header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(getLocationFiles)];
+    self.tableView.footer = nil;
 
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -202,12 +1025,45 @@
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    
+    if ([tableView isEqual:self.filterTableView]) {
+        if (_currentFilterTag == 2000) {
+            return _filterTitles1.count;
+        }else{
+            return _filterTitles2.count;
+        }
+        
+        
+    }
     
     return self.files.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if ([tableView isEqual:self.filterTableView]) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"filter_cell"];
+        if (!cell) {
+             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"filter_cell"];
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            
+        }
+        UIButton *button = (UIButton *)[self.filterBackView viewWithTag:_currentFilterTag];
+        if (_currentFilterTag == 2000) {
+            cell.textLabel.text = _filterTitles1[indexPath.row];
+          
+        }else{
+            
+            cell.textLabel.text = _filterTitles2[indexPath.row];
+            
+        }
+        if ([cell.textLabel.text isEqualToString:button.titleLabel.text]) {
+            cell.textLabel.textColor = [UIColor colorWithRed:0.294 green:0.531 blue:1.000 alpha:1.000];
+        }else{
+            cell.textLabel.textColor = [UIColor colorWithRed:0.114 green:0.115 blue:0.118 alpha:1.000];
+        }
+        return cell;
+        
+    }
     
     FileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FileCell" forIndexPath:indexPath];
     
@@ -221,6 +1077,27 @@
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if ([tableView isEqual:self.filterTableView]) {
+        UIButton *button = (UIButton *)[self.filterBackView viewWithTag:_currentFilterTag];
+
+        if (_currentFilterTag == 2000) {
+           
+            [button setTitle:_filterTitles1[indexPath.row] forState:UIControlStateNormal];
+            
+
+        }else{
+           
+            [button setTitle:_filterTitles2[indexPath.row] forState:UIControlStateNormal];
+            
+        }
+        [self hiddenFilterView];
+        _currentFilterTag = 0;
+        [self.tableView.header beginRefreshing];
+        return;
+    }
+    
+    
     FileModel *model = self.files[indexPath.row];
     if (self.isFromChat) {
         
@@ -251,12 +1128,17 @@
 }
 
 - (CGFloat )tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+    if ([tableView isEqual:self.filterTableView]) {
+        return 40;
+    }
     return 60;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    
-    return 0.000001;
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+//    
+//    return 0.000001;
+//}
+- (CGFloat )tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 2.5;
 }
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
