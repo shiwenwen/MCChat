@@ -109,13 +109,39 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MCChat/Controller/ChatViewController.m"
-            timestampString = "478782224.625354"
+            filePath = "MCChat/Controller/FileManagerViewController.m"
+            timestampString = "479022993.508981"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1672"
-            endingLineNumber = "1672"
-            landmarkName = "-makeBlueData"
+            startingLineNumber = "887"
+            endingLineNumber = "887"
+            landmarkName = "-getLocationFiles"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MCChat/Controller/ChatViewController.m"
+            timestampString = "479027262.084594"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "506"
+            endingLineNumber = "506"
+            landmarkName = "-ChangeHeaderIcon"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -126,13 +152,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/Controller/ChatViewController.m"
-            timestampString = "478782234.108621"
+            timestampString = "479027266.144861"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1671"
-            endingLineNumber = "1671"
-            landmarkName = "-makeBlueData"
+            startingLineNumber = "508"
+            endingLineNumber = "508"
+            landmarkName = "-ChangeHeaderIcon"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ChatViewController ChangeHeaderIcon]"
+                  moduleName = "MCChat"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Shiwenwen/MCChat-3-7/MCChat/Controller/ChatViewController.m"
+                  timestampString = "479027266.156443"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "508"
+                  endingLineNumber = "508"
+                  offsetFromSymbolStart = "1474">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ChatViewController ChangeHeaderIcon]"
+                  moduleName = "MCChat"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Shiwenwen/MCChat-3-7/MCChat/Controller/ChatViewController.m"
+                  timestampString = "479027266.157115"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "508"
+                  endingLineNumber = "508"
+                  offsetFromSymbolStart = "1492">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

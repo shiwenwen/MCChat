@@ -55,8 +55,8 @@
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.view.backgroundColor = [UIColor colorWithWhite:0.905 alpha:1.000];
     self.tableView.backgroundColor = self.view.backgroundColor;
- 
-
+    self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.showsHorizontalScrollIndicator = NO;
 }
 - (void)initSessionManager{
     ChatViewController *chat = (ChatViewController *)self.navigationController.viewControllers.firstObject;

@@ -569,7 +569,7 @@
     FileModel *model = [[FileModel alloc]initWithName:name Detail:dateStr size:fileSize FileType:type Path:self.getFilePath];
     
     model.realitySize = [fileAttr[@"NSFileSize"] doubleValue];
-    
+    model.date = modificationDate;
     return model;
     
 }

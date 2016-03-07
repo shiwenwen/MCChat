@@ -36,5 +36,5 @@ typedef enum{
 @property (nonatomic,assign)CGFloat textWidth;
 @property (nonatomic,assign)CGFloat imageHight;
 @property (nonatomic,assign)CGFloat imageWidth;
-@property (nonatomic,assign)FileModel *fileModel;
+@property (nonatomic,strong)FileModel *fileModel;
 @end

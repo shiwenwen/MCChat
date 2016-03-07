@@ -103,7 +103,15 @@
         self.facePanelView.hidden = NO;
         self.attachmentCollectionView.hidden = NO;
     }];
+    if (self.titleButton) {
+        if (self.sessionManager.connectedPeers.count > 1) {
 
+            self.titleButton.hidden = NO;
+
+        }else{
+            self.title = self.sessionManager.firstPeer.displayName;
+        }
+    }
     
     //监听键盘通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillShowNotification object:nil];
@@ -120,7 +128,12 @@
     [super viewWillDisappear:animated];
     self.sendBackView.hidden = YES;
     self.attachmentCollectionView.hidden = YES;
+    if (self.titleButton) {
+        self.titleButton.hidden = YES;
+    }
+        
     
+
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
@@ -206,22 +219,31 @@
     
     if (model.fileType == image) {
         
+        dispatch_sync(dispatch_get_global_queue(0, 1), ^{
+            [self sendAsResource:model.path];
+            ChatItem * chatItem = [[ChatItem alloc] init];
+            chatItem.isSelf = YES;
+            chatItem.states = picStates;
+            chatItem.picImage = [UIImage imageWithContentsOfFile:model.path];
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
+            [self.datasource addObject:chatItem];
+
+            dispatch_sync(dispatch_get_main_queue(), ^{
+
+                
+                
+            });
+            [self insertTheTableToButtom];
+        });
+
         
-    [self sendAsResource:model.path];
-        
-        ChatItem * chatItem = [[ChatItem alloc] init];
-        chatItem.isSelf = YES;
-        chatItem.states = picStates;
-        chatItem.picImage = [UIImage imageWithContentsOfFile:model.path];
-        NSDate *date = [NSDate date];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-        NSString *dateStr = [formatter stringFromDate:date];
-        chatItem.timeStr = dateStr;
-        [self.datasource addObject:chatItem];
         
         
-        [self insertTheTableToButtom];
+
 
         
     }else{
@@ -431,8 +453,8 @@
     self.otherHeaderImages = imagesDic;
     setting.friendIcon = [self.otherHeaderImages allValues];
     if (self.sessionManager.session.connectedPeers.count > 1) {
-        setting.groupName = self.title;
-        
+//        setting.groupName = self.title;
+        setting.groupName = self.titleButton.titleLabel.text;
     }
     
     [self.navigationController pushViewController:setting animated:YES];
@@ -461,7 +483,12 @@
                                                                  @"info":[NSString stringWithFormat:@"%@_disconnectSession",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name]
                                                                  }];
     [self.sessionManager sendDataToAllPeers:data];
-    
+    if (self.sessionManager.connectedPeers.count < 2) {
+        
+
+        self.title = self.titleButton.titleLabel.text;
+        self.titleButton.hidden = YES;
+    }
 }
 #pragma mark -- 更换头像
 - (void)ChangeHeaderIcon{
@@ -473,6 +500,11 @@
     NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
     NSString * name = [NSString stringWithFormat:@"%@ForIcon",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     NSURL * url = [NSURL fileURLWithPath:UserDefaultsGet(@"headerIcon")];
+    
+    UIImage *image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"headerIcon")];
+    if (!image) {
+        url = [NSURL URLWithString:[[NSBundle mainBundle]pathForResource:@"无头像@3x" ofType:@"png"]];
+    }
         for (MCPeerID *peer in self.sessionManager.connectedPeers) {
             
             NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
@@ -492,9 +524,10 @@
 }
 #pragma mark -- 更换群名称
 - (void)ChangeGroupName:(NSNotification *)noti{
-    self.title = (NSString *)noti.object;
+//    self.title = (NSString *)noti.object;
+    self.titleButton.titleLabel.text = (NSString *)noti.object;
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
-                                                                 @"GroupName":self.title
+                                                                 @"GroupName":(NSString *)noti.object
                                                                  }];
     [self.sessionManager sendDataToAllPeers:data];
 
@@ -1575,7 +1608,7 @@
                                        @"progress":progress,
                                        @"view":cell.progressView
                                        };
-            [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+            [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
         }
         
         
@@ -1666,10 +1699,10 @@
                 if (self.sessionManager.session.connectedPeers.count == 2) {
                     
 //                    self.title = @"群聊";
-                    self.title = @"";
+                    self.title = @"          ";
                     if (!self.groupChatCollectionView) {
                         
-                            self.blackBackView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight - 64)];
+                            self.blackBackView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
                         [self.view addSubview:self.blackBackView];
                         self.blackBackView.backgroundColor = [UIColor blackColor];
                         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenGroupChatView)];
@@ -1683,12 +1716,12 @@
                         layout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
                         
                         //
-                        self.groupChatCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, -size+10 *2 , KScreenWidth,size+10 *2 ) collectionViewLayout:layout];
-                        self.groupChatCollectionView.alwaysBounceHorizontal = YES;
+                        self.groupChatCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, -size+10 *2 + 20 , KScreenWidth,size+10 *2 ) collectionViewLayout:layout];
+
                         self.groupChatCollectionView.showsVerticalScrollIndicator = NO;
                         self.groupChatCollectionView.showsHorizontalScrollIndicator = NO;
                         [self.groupChatCollectionView registerNib:[UINib nibWithNibName:@"HeaderCell" bundle:nil] forCellWithReuseIdentifier:@"HeaderCell"];
-                        self.groupChatCollectionView.scrollEnabled = NO;
+                        self.groupChatCollectionView.scrollEnabled = YES;
                         self.groupChatCollectionView.backgroundColor = [UIColor whiteColor];
                         self.groupChatCollectionView.dataSource = self;
                         self.groupChatCollectionView.delegate = self;
@@ -1696,16 +1729,21 @@
                         [self.view addSubview:self.groupChatCollectionView];
                         //
                         self.titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                        self.titleButton.frame = CGRectMake((KScreenWidth - 100 ) / 2, (KNavigationBarHeight - 30)/2, 100, 30);
+                        self.titleButton.frame = CGRectMake(80, (KNavigationBarHeight -50)/2 , KScreenWidth - 160, 30);
                         [self.titleButton setTitle:@"群聊" forState:UIControlStateNormal];
                         [self.titleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                        [self.titleButton setImage:[UIImage imageNamed:@"上拉箭头"] forState:UIControlStateNormal];
-                        [self.titleButton setImage:[UIImage imageNamed:@"下拉箭头"] forState:UIControlStateSelected];
+                        [self.titleButton setImage:[UIImage imageNamed:@"下拉箭头"] forState:UIControlStateNormal];
+                        [self.titleButton setImage:[UIImage imageNamed:@"上拉箭头"] forState:UIControlStateSelected];
                         
                         [self.titleButton addTarget:self action:@selector(showGroupChatView:) forControlEvents:UIControlEventTouchUpInside];
                         [self.navigationController.navigationBar addSubview:self.titleButton];
                         
                     
+                    }
+                    if (self.navigationController.viewControllers.count > 1) {
+                        self.titleButton.hidden = YES;
+                    }else{
+                        self.titleButton.hidden = NO;
                     }
                     
                 }else if(self.sessionManager.session.connectedPeers.count == 1) {
@@ -1716,7 +1754,7 @@
                 if (self.sessionManager.session.connectedPeers.count > 2) {
                     
                     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
-                                                                                 @"GroupName":self.title
+                                                                                 @"GroupName":self.titleButton.titleLabel.text
                                                                                  }];
                     [self.sessionManager sendDataToAllPeers:data];
                     [self.groupChatCollectionView reloadData];
@@ -1743,15 +1781,22 @@
             
         
             if (unarchiver[@"GroupName"]) {
-                
-                self.title = unarchiver[@"GroupName"];
-                
+        
+//                self.title = unarchiver[@"GroupName"];
+                [self.titleButton setTitle:unarchiver[@"GroupName"] forState:UIControlStateNormal];
                 [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@修改群聊名称为“%@”",peer.displayName,unarchiver[@"GroupName"]] viewController:nil];
             }if (unarchiver[@"info"]) {
+                
                 NSString *info = unarchiver[@"info"];
                 if ([info isEqualToString:[NSString stringWithFormat:@"%@_disconnectSession",peer.displayName]]) {
                     
                     [_otherHeaderImages removeObjectForKey:peer.displayName];
+                    
+                    if (_otherHeaderImages.count < 2) {
+                        
+                        self.title = self.sessionManager.firstPeer.displayName;
+                        self.titleButton.hidden = YES;
+                    }
                 }
             }
             
@@ -1828,16 +1873,17 @@
             NSString *fileName = [name substringWithRange:NSMakeRange(5, name.length - 5)];
             
             NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
-            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+
             if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
                 [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:nil error:nil];
             }
           
             NSString *path = [BasePath stringByAppendingPathComponent:fileName];
 
+//        dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+            BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
+          
             
-           BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
-
             
             if (writeResult) {
                 
@@ -1845,8 +1891,38 @@
                     
                     NSLog(@"接收文件成功");
                     [[NSNotificationCenter defaultCenter]postNotificationName:@"getFileSuccess" object:nil];
+                    
+                    [self playSoundEffect:@"5097.mp3"];
+                    ChatItem * chatItem = [[ChatItem alloc] init];
+                    chatItem.isSelf = NO;
+       
+                    chatItem.states = fileStates;
+                    FileModel *model = [self getFileModelWithPath:path];
+                    chatItem.fileModel = model;
+                    chatItem.displayName = peer.displayName;
+
+
+                    
+                    NSDate *date = [NSDate date];
+                    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+                    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+                    NSString *dateStr = [formatter stringFromDate:date];
+                    chatItem.timeStr = dateStr;
+                    [strongSelf.datasource addObject:chatItem];
+//                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        [strongSelf insertTheTableToButtom];
+//                    });
+
+                    
+                    if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+                        [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@（%@）",chatItem.displayName,@"发送了一个文件",chatItem.fileModel.name]];
+                    }
+                    
                 }
             }
+            
+//        });
+            
             
         }else{
             
@@ -2460,7 +2536,106 @@ void soundCompleteCallback(SystemSoundID soundID,void * clientData){
     
 }
 
+#pragma mark -- 文件地址转fileModel
+- (FileModel *)getFileModelWithPath:(NSString *)path{
+    
 
+    
+        
+
+        NSError *error;
+        NSDictionary *fileAttr =  [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+        
+        
+        NSString *fileSize = [self fileSizeTransform:[fileAttr[@"NSFileSize"] floatValue]];
+        
+        NSDate *modificationDate = fileAttr[@"NSFileModificationDate"];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+        NSString *dateStr = [formatter stringFromDate:modificationDate];
+        
+        
+        NSRange range = [path rangeOfString:@"." options:NSBackwardsSearch];
+        
+        NSString *extension;
+        
+        if (range.location != NSNotFound) {
+            
+            extension = [path substringFromIndex:range.location + 1];
+            
+            
+        }
+        
+        FileType type = other;
+        extension = [extension lowercaseString];
+        if ([extension isEqualToString:@"doc"]||[extension isEqualToString:@"docx"]||[extension isEqualToString:@"pages"]) {
+            type = Word;
+        }else if ([extension isEqualToString:@"xls"]||[extension isEqualToString:@"xlsx"]||[extension isEqualToString:@"numbers"]){
+            
+            type = Excel;
+            
+        }else if ([extension isEqualToString:@"ppt"]||[extension isEqualToString:@"pptx"]||[extension isEqualToString:@"keynote"]){
+            
+            type = PowerPoint;
+        }
+        else if ([extension isEqualToString:@"mp3"]||[extension isEqualToString:@"wma"]||[extension isEqualToString:@"mac"]||[extension isEqualToString:@"aac"]||[extension isEqualToString:@"wav"]){
+            
+            
+            type = music;
+            
+        }else if ([extension isEqualToString:@"rmvb"]||[extension isEqualToString:@"wmv"]||[extension isEqualToString:@"asf"]||[extension isEqualToString:@"avi"]||[extension isEqualToString:@"3gp"]||[extension isEqualToString:@"mpg"]||[extension isEqualToString:@"mkv"]||[extension isEqualToString:@"mp4"]||[extension isEqualToString:@"ogm"]||[extension isEqualToString:@"mov"]||[extension isEqualToString:@"mpeg2"]||[extension isEqualToString:@"mpeg4"]){
+            
+            type = video;
+            
+        }else if ([extension isEqualToString:@"gif"]||[extension isEqualToString:@"jpeg"]||[extension isEqualToString:@"bmp"]||[extension isEqualToString:@"tif"]||[extension isEqualToString:@"jpg"]||[extension isEqualToString:@"pcd"]||[extension isEqualToString:@"qti"]||[extension isEqualToString:@"qtf"]||[extension isEqualToString:@"tiff"]||[extension isEqualToString:@"qtf"]||[extension isEqualToString:@"png"]){
+            
+            type = image;
+            
+        }else if ([extension isEqualToString:@"rar"]||[extension isEqualToString:@"zip"]||[extension isEqualToString:@"tar"]||[extension isEqualToString:@"cab"]||[extension isEqualToString:@"uue"]||[extension isEqualToString:@"jar"]||[extension isEqualToString:@"iso"]||[extension isEqualToString:@"z"]||[extension isEqualToString:@"7-zip"]||[extension isEqualToString:@"gzip"]||[extension isEqualToString:@"bz2"]){
+            
+            type = zip;
+        }else if ([extension isEqualToString:@"pdf"]){
+            
+            type = pdf;
+        }else if ([extension isEqualToString:@"txt"]||[extension isEqualToString:@"m"]||[extension isEqualToString:@"c"]||[extension isEqualToString:@"webarchive"]||[extension isEqualToString:@"plist"]||[extension isEqualToString:@"h"]||[extension isEqualToString:@"html"]){
+            
+            type = txt;
+        }else if (extension.length == 0){
+            type = folder;
+        }
+    NSString *name = @"未知";
+    range = [path rangeOfString:@"/" options:NSBackwardsSearch];
+    if (range.location != NSNotFound) {
+        name = [path substringFromIndex:range.location + 1];
+    }
+        FileModel *model = [[FileModel alloc]initWithName:name Detail:dateStr size:fileSize FileType:type Path:path];
+        model.realitySize = [fileAttr[@"NSFileSize"] doubleValue];
+        model.date = modificationDate;
+
+        
+        
+
+    
+    return model;
+}
+#pragma mark -- 尺寸计算
+- (NSString *)fileSizeTransform:(CGFloat )originalSize{
+    
+    if (originalSize / (1000 * 1000) < 1) {
+        
+        return [NSString stringWithFormat:@"%.2fKB",originalSize / 1000.0];
+    }else if (originalSize / (1000 * 1000) >= 1){
+        
+        
+        return [NSString stringWithFormat:@"%.2fMB",originalSize / (1000.0 * 1000.0)];
+        
+        
+    }else{
+        
+        return [NSString stringWithFormat:@"%.2fGB",originalSize / (1000.0 * 1000 * 1000)];
+    }
+    
+}
 /*
 #pragma mark - Navigation
 

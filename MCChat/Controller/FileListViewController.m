@@ -8,7 +8,7 @@
 
 #import "FileListViewController.h"
 #import "FileCell.h"
-#import "FileModel.h";
+#import "FileModel.h"
 #import "FileDetailViewController.h"
 @interface FileListViewController ()
 
