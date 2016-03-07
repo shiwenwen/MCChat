@@ -219,8 +219,8 @@
     
     if (model.fileType == image) {
         
-        dispatch_sync(dispatch_get_global_queue(0, 1), ^{
-            [self sendAsResource:model.path];
+        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+
             ChatItem * chatItem = [[ChatItem alloc] init];
             chatItem.isSelf = YES;
             chatItem.states = picStates;
@@ -237,7 +237,11 @@
                 
                 
             });
-            [self insertTheTableToButtom];
+//            [self insertTheTableToButtom];
+            
+                        [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
+        [self sendAsResource:model.path];
+            
         });
 
         
@@ -251,42 +255,47 @@
       
         
         NSURL * url = [NSURL fileURLWithPath:model.path];
-        int index = 0;
-        for (MCPeerID *peer in self.sessionManager.connectedPeers) {
-            
-            NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
-                if(!error) {
-                    NSLog(@"finished sending resource");
-                }
-                else {
-                    NSLog(@"%@", error);
-                }
-            }];
-            
-            NSLog(@"%@", @(progress.fractionCompleted));
-            if (index == 0 && progress) {
+
+        
+        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+                int index = 0;
+            for (MCPeerID *peer in self.sessionManager.connectedPeers) {
                 
-                [_progressDictionary setObject:progress forKey:model.name];
+                NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
+                    if(!error) {
+                        NSLog(@"finished sending resource");
+                    }
+                    else {
+                        NSLog(@"%@", error);
+                    }
+                }];
+                
+                NSLog(@"%@", @(progress.fractionCompleted));
+                if (index == 0 && progress) {
+                    
+                    [_progressDictionary setObject:progress forKey:model.name];
+                }
+                
+                index ++;
             }
             
-            index ++;
-        }
+            
+            ChatItem * chatItem = [[ChatItem alloc] init];
+            chatItem.isSelf = YES;
+            chatItem.states = fileStates;
+            chatItem.fileModel = model;
+            
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
+            [self.datasource addObject:chatItem];
+            
+            
+            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
+        });
         
-        
-        ChatItem * chatItem = [[ChatItem alloc] init];
-        chatItem.isSelf = YES;
-        chatItem.states = fileStates;
-        chatItem.fileModel = model;
-
-        NSDate *date = [NSDate date];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-        NSString *dateStr = [formatter stringFromDate:date];
-        chatItem.timeStr = dateStr;
-        [self.datasource addObject:chatItem];
-        
-        
-        [self insertTheTableToButtom];
         
 
         
@@ -1159,7 +1168,26 @@
 - (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
 {
     
+    if(!self.sessionManager.isConnected)
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        [alertView show];
+        return;
+    }
     
+    ChatItem * chatItem = [[ChatItem alloc] init];
+    chatItem.isSelf = YES;
+    chatItem.states = picStates;
+    chatItem.picImage = image;
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+    NSString *dateStr = [formatter stringFromDate:date];
+    chatItem.timeStr = dateStr;
+    [self.datasource addObject:chatItem];
+    
+    
+    [self insertTheTableToButtom];
     [_picker dismissViewControllerAnimated:YES completion:^{
         
         // 改变状态栏的颜色  改变为白色
@@ -1168,7 +1196,7 @@
         //先把图片转成NSData
         
         
-        dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
             NSData *data;
             NSString *type;
             if (UIImagePNGRepresentation(image) == nil)
@@ -1209,26 +1237,7 @@
         
         
         
-        if(!self.sessionManager.isConnected)
-        {
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-            [alertView show];
-            return;
-        }
         
-        ChatItem * chatItem = [[ChatItem alloc] init];
-        chatItem.isSelf = YES;
-        chatItem.states = picStates;
-        chatItem.picImage = image;
-        NSDate *date = [NSDate date];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-        NSString *dateStr = [formatter stringFromDate:date];
-        chatItem.timeStr = dateStr;
-        [self.datasource addObject:chatItem];
-        
-        
-        [self insertTheTableToButtom];
         
         
         
@@ -1628,7 +1637,12 @@
     
     NSProgress *progress = dic[@"progress"];
     UIProgressView *progressView = dic[@"view"];
-    progressView.progress = progress.completedUnitCount / progress.totalUnitCount;
+    
+    NSLog(@"%@",progress);
+    
+//    NSLog(@"progress.completedUnitCount === %ld\nprogress.totalUnitCount == %ld",progress.completedUnitCount,progress.totalUnitCount);
+    
+    progressView.progress = progress.fractionCompleted;
     if (progressView.progress >= 1) {
         [timer invalidate];
     }
@@ -1880,7 +1894,7 @@
           
             NSString *path = [BasePath stringByAppendingPathComponent:fileName];
 
-//        dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
             BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
           
             
@@ -1910,9 +1924,9 @@
                     chatItem.timeStr = dateStr;
                     [strongSelf.datasource addObject:chatItem];
 //                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        [strongSelf insertTheTableToButtom];
+//                        [strongSelf insertTheTableToButtom];
 //                    });
-
+            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
                     
                     if (![UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
                         [self registerLocalNotification:0 message:[NSString stringWithFormat:@"%@:%@（%@）",chatItem.displayName,@"发送了一个文件",chatItem.fileModel.name]];
@@ -1921,7 +1935,7 @@
                 }
             }
             
-//        });
+        });
             
             
         }else{

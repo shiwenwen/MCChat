@@ -46,6 +46,10 @@
 			<string>com.myapp.common-data</string>
 			<key>LSItemContentTypes</key>
 			<array>
+				<string>public.folder</string>
+				<string>public.directory</string>
+				<string>public.source-code</string>
+				<string>public.html</string>
 				<string>com.microsoft.powerpoint.ppt</string>
 				<string>public.item</string>
 				<string>com.microsoft.word.doc</string>

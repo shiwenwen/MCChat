@@ -4,26 +4,6 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            scope = "0"
-            stopOnStyle = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            scope = "0"
-            stopOnStyle = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "Yes"
@@ -120,27 +100,17 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            scope = "0"
-            stopOnStyle = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/Controller/ChatViewController.m"
-            timestampString = "479027262.084594"
+            timestampString = "479035606.634596"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "506"
-            endingLineNumber = "506"
+            startingLineNumber = "515"
+            endingLineNumber = "515"
             landmarkName = "-ChangeHeaderIcon"
             landmarkType = "5">
          </BreakpointContent>
@@ -152,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/Controller/ChatViewController.m"
-            timestampString = "479027266.144861"
+            timestampString = "479035606.634596"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "508"
-            endingLineNumber = "508"
+            startingLineNumber = "517"
+            endingLineNumber = "517"
             landmarkName = "-ChangeHeaderIcon"
             landmarkType = "5">
             <Locations>
@@ -168,11 +138,11 @@
                   moduleName = "MCChat"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/Shiwenwen/MCChat-3-7/MCChat/Controller/ChatViewController.m"
-                  timestampString = "479027266.156443"
+                  timestampString = "479037493.652724"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "508"
-                  endingLineNumber = "508"
+                  startingLineNumber = "517"
+                  endingLineNumber = "517"
                   offsetFromSymbolStart = "1474">
                </Location>
                <Location
@@ -183,14 +153,62 @@
                   moduleName = "MCChat"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/Shiwenwen/MCChat-3-7/MCChat/Controller/ChatViewController.m"
-                  timestampString = "479027266.157115"
+                  timestampString = "479037493.652871"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "508"
-                  endingLineNumber = "508"
+                  startingLineNumber = "517"
+                  endingLineNumber = "517"
                   offsetFromSymbolStart = "1492">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MCChat/Controller/FileDetailViewController.m"
+            timestampString = "479034505.86432"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "365"
+            endingLineNumber = "365"
+            landmarkName = "-documentInteractionController:willBeginSendingToApplication:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MCChat/Controller/FileDetailViewController.m"
+            timestampString = "479034505.86432"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
+            landmarkName = "-documentInteractionControllerDidDismissOpenInMenu:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MCChat/Controller/FileDetailViewController.m"
+            timestampString = "479034505.86432"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "-documentInteractionController:didEndSendingToApplication:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

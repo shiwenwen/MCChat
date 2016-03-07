@@ -151,13 +151,14 @@
         
         
         
-        [documentController presentOpenInMenuFromRect:CGRectZero
-         
-                                               inView:self.view
-         
-                                             animated:YES];
+//        [documentController presentOpenInMenuFromRect:CGRectZero
         
+//                                               inView:self.view
         
+//                                             animated:YES];
+        [documentController presentOptionsMenuFromRect:CGRectZero inView:self.view animated:YES];
+//        [documentController presentPreviewAnimated:YES];
+
     }else if (button.tag == 2001){
         //打开 预留 播放
         if ([button.titleLabel.text isEqualToString:@"预览"]) {
@@ -356,6 +357,37 @@ didEndSendingToApplication:(NSString *)application
     
     
 }
+-(void)documentInteractionController:(UIDocumentInteractionController *)controller
+
+       willBeginSendingToApplication:(NSString *)application
+
+{
+    
+    
+}
+
+- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController*)controller
+{
+
+}
+
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller
+{
+    return self;
+}
+
+- (UIView *)documentInteractionControllerViewForPreview:(UIDocumentInteractionController *)controller
+{
+    return self.view;
+}
+
+- (CGRect)documentInteractionControllerRectForPreview:(UIDocumentInteractionController *)controller
+{
+    return  self.view.frame;
+}
+
+
 #pragma mark - QuickLook Delegate DataSource
 
 - (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller
