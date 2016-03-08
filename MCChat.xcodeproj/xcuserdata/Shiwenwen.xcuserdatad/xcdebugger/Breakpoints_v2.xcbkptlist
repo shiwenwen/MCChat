@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/AppDelegate.m"
-            timestampString = "478435625.780711"
+            timestampString = "479120722.227716"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
             landmarkName = "-guestureLock:didGetCorrectPswd:"
             landmarkType = "5">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/AppDelegate.m"
-            timestampString = "478435625.780711"
+            timestampString = "479120722.227716"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "362"
+            endingLineNumber = "362"
             landmarkName = "-guestureLock:didGetIncorrectPswd:"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/AppDelegate.m"
-            timestampString = "478435625.780711"
+            timestampString = "479120722.227716"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "339"
+            endingLineNumber = "339"
             landmarkName = "-hiddenLockView"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,28 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MCChat/AppDelegate.m"
-            timestampString = "478435625.780711"
+            timestampString = "479120722.227716"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
+            startingLineNumber = "357"
+            endingLineNumber = "357"
             landmarkName = "-guestureLock:didGetCorrectPswd:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MCChat/AppDelegate.m"
-            timestampString = "478781187.679405"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "452"
-            endingLineNumber = "452"
-            landmarkName = "-alertView:clickedButtonAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -144,6 +128,22 @@
             startingLineNumber = "345"
             endingLineNumber = "345"
             landmarkName = "-documentInteractionController:didEndSendingToApplication:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MCChat/Controller/ChatViewController.m"
+            timestampString = "479124711.087318"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1822"
+            endingLineNumber = "1822"
+            landmarkName = "-makeBlueData"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

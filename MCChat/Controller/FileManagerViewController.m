@@ -84,7 +84,7 @@
 }
 - (void)getLocationFiles{
     if (!self.contentPaths) {
-        self.contentPaths = @[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"],[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/InBox"]];
+        self.contentPaths = @[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"],[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"]];
     }
      NSFileManager *fileManager = [NSFileManager defaultManager];
     

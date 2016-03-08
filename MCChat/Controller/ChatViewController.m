@@ -107,9 +107,10 @@
         if (self.sessionManager.connectedPeers.count > 1) {
 
             self.titleButton.hidden = NO;
-
+            
         }else{
             self.title = self.sessionManager.firstPeer.displayName;
+            self.titleButton.hidden = YES;
         }
     }
     
@@ -119,7 +120,12 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillHideNotification object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fitKeyboardSize:) name:UIKeyboardWillChangeFrameNotification object:nil];
-
+//
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeBackground) name:@"changeBg" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeGroupName:) name:@"ChangeGroupName" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(haveDisconnectSession) name:@"disconnectSession" object:nil];
     
       [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];   
 }
@@ -454,7 +460,9 @@
     for (MCPeerID *peer in peers) {
         
         if (self.otherHeaderImages[peer.displayName]) {
-          [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer];
+          [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer.displayName];
+        }else{
+          [imagesDic setObject: UIImagePNGRepresentation([UIImage imageNamed:@"无头像"]) forKey:peer.displayName];
         }
         
         
@@ -467,11 +475,7 @@
     }
     
     [self.navigationController pushViewController:setting animated:YES];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeBackground) name:@"changeBg" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeHeaderIcon) name:@"ChangeHeaderIcon" object:nil];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeGroupName:) name:@"ChangeGroupName" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(haveDisconnectSession) name:@"disconnectSession" object:nil];
     
     if (_showFacePanel) {
         self.facePanelView.hidden = YES;
@@ -484,20 +488,21 @@
     
     self.otherHeaderImages = nil;
     
-    if (self.sessionManager.connectedPeers.count > 1) {
-        return;
-    }
+//    if (self.sessionManager.connectedPeers.count > 1) {
+//        return;
+//    }
     
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@{
                                                                  @"info":[NSString stringWithFormat:@"%@_disconnectSession",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name]
                                                                  }];
     [self.sessionManager sendDataToAllPeers:data];
-    if (self.sessionManager.connectedPeers.count < 2) {
-        
+//    if (self.sessionManager.connectedPeers.count < 2) {
+    
 
         self.title = self.titleButton.titleLabel.text;
+        
         self.titleButton.hidden = YES;
-    }
+//    }
 }
 #pragma mark -- 更换头像
 - (void)ChangeHeaderIcon{
@@ -1012,10 +1017,11 @@
     HeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HeaderCell" forIndexPath:indexPath];
     
     if ([collectionView isEqual:self.groupChatCollectionView]) {
-//        NSString *key = [_otherHeaderImages allKeys][indexPath.item];
-//        cell.headImageVIew.image = [UIImage imageWithData:_otherHeaderImages[key]];
-        NSString *key = self.sessionManager.connectedPeers[indexPath.item];
+        NSString *key = [_otherHeaderImages allKeys][indexPath.item];
+        cell.headImageVIew.image = [UIImage imageWithData:_otherHeaderImages[key]];
+//        NSString *key = self.sessionManager.connectedPeers[indexPath.item];
         if (self.otherHeaderImages[key]) {
+            
                     cell.headImageVIew.image = [UIImage imageWithData:self.otherHeaderImages[key]];
         }else{
             
@@ -1760,7 +1766,7 @@
                         [self.titleButton addTarget:self action:@selector(showGroupChatView:) forControlEvents:UIControlEventTouchUpInside];
                         [self.navigationController.navigationBar addSubview:self.titleButton];
                         
-                    
+                        self.titleButton.hidden = YES;
                     }
                     if (self.navigationController.viewControllers.count > 1) {
                         self.titleButton.hidden = YES;
@@ -1789,7 +1795,7 @@
         }
     }];
     
-    // 收到正常数据的返回
+    // 正常数据的返回
     [self.sessionManager receiveDataOnMainQueue:YES block:^(NSData *data, MCPeerID *peer) {
         
         
@@ -1807,16 +1813,19 @@
 //                self.title = unarchiver[@"GroupName"];
                 [self.titleButton setTitle:unarchiver[@"GroupName"] forState:UIControlStateNormal];
                 [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:[NSString stringWithFormat:@"%@修改群聊名称为“%@”",peer.displayName,unarchiver[@"GroupName"]] viewController:nil];
-            }if (unarchiver[@"info"]) {
+
+            }
+            if (unarchiver[@"info"]) {
                 
                 NSString *info = unarchiver[@"info"];
                 if ([info isEqualToString:[NSString stringWithFormat:@"%@_disconnectSession",peer.displayName]]) {
                     
-                    [_otherHeaderImages removeObjectForKey:peer.displayName];
+//                    [_otherHeaderImages removeObjectForKey:peer.displayName];
                     
                     if (_otherHeaderImages.count < 2) {
                         
                         self.title = self.sessionManager.firstPeer.displayName;
+                        
                         self.titleButton.hidden = YES;
                     }
                 }
@@ -1894,7 +1903,7 @@
             
             NSString *fileName = [name substringWithRange:NSMakeRange(5, name.length - 5)];
             
-            NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
+            NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInbox"];
 
             if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
                 [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -1993,6 +2002,25 @@
     button.selected = !button.selected;
     
     if (button.selected) {
+        
+        NSArray *peers = self.sessionManager.session.connectedPeers;
+        
+        NSMutableDictionary *imagesDic = [NSMutableDictionary dictionary];
+        for (MCPeerID *peer in peers) {
+            
+            if (self.otherHeaderImages[peer.displayName]) {
+                
+                [imagesDic setObject:self.otherHeaderImages[peer.displayName] forKey:peer.displayName];
+                
+            }else{
+                
+                [imagesDic setObject: UIImagePNGRepresentation([UIImage imageNamed:@"无头像"]) forKey:peer.displayName];
+            }
+            
+            
+        }
+        self.otherHeaderImages = imagesDic;
+        
         [self.groupChatCollectionView reloadData];
         [UIView animateWithDuration:.25 animations:^{
         self.groupChatCollectionView.transform = CGAffineTransformMakeTranslation(0, self.groupChatCollectionView.height);

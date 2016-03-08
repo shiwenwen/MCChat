@@ -117,9 +117,12 @@
     
 
     UIScrollView *scrollView = (UIScrollView *)[[UIApplication sharedApplication].keyWindow viewWithTag:10000];
-    
-    [UIView animateWithDuration:0.15 animations:^{
-        scrollView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+    CGPoint point = [self convertPoint:self.center toView:[UIApplication sharedApplication].keyWindow];
+    scrollView.backgroundColor = [UIColor clearColor];
+    [UIView animateWithDuration:0.35 animations:^{
+        CGAffineTransform transfrom1 = CGAffineTransformMakeScale( self.width / KScreenWidth , self.width/KScreenWidth );
+        CGAffineTransform transfrom2 = CGAffineTransformMakeTranslation(point.x - KScreenWidth / 2, point.y - KScreenHeight / 2);
+        scrollView.transform = CGAffineTransformConcat(transfrom1, transfrom2);
         scrollView.alpha = 0;
     } completion:^(BOOL finished) {
         

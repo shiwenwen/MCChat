@@ -27,6 +27,112 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+   /*
+    // Override point for customization after application launch.
+    桌面icon plist 的文件重压效果可以使用系统的然后进行调取使用Type 当然也可以进行自定义还可以将其进行本地化静态处理存储为一个
+    // 系统提供的部分的类型 直接可以使用  并且附带   icon
+    UIApplicationShortcutIconTypeCompose,
+    UIApplicationShortcutIconTypePlay,
+    UIApplicationShortcutIconTypePause,
+    UIApplicationShortcutIconTypeAdd,
+    UIApplicationShortcutIconTypeLocation,
+    UIApplicationShortcutIconTypeSearch,
+    UIApplicationShortcutIconTypeShare
+*/
+    
+    if ([[UIDevice currentDevice].systemVersion floatValue] > 9.0) {
+        
+        UIApplicationShortcutItem
+        *item1 = [[
+                   UIApplicationShortcutItem
+                   alloc
+                   ]
+                  initWithType
+                  :
+                  @"TYShortcut1"
+                  localizedTitle
+                  :
+                  @"TYLocation"
+                  localizedSubtitle
+                  :
+                  @"你点一下试试（定位"
+                  icon
+                  :[
+                    UIApplicationShortcutIcon
+                    iconWithType:UIApplicationShortcutIconTypeLocation] userInfo:nil];
+        
+        UIApplicationShortcutItem
+        *item2 = [[
+                   UIApplicationShortcutItem
+                   alloc
+                   ]
+                  initWithType
+                  :
+                  @"TYShortcut2"
+                  localizedTitle
+                  :
+                  @"TYLocaPlay"
+                  localizedSubtitle
+                  :
+                  @"点一下试试呗（播放）"
+                  icon
+                  :[
+                    UIApplicationShortcutIcon
+                    iconWithType:UIApplicationShortcutIconTypePlay] userInfo:nil];
+        
+        UIApplicationShortcutItem
+        *item3 = [[
+                   UIApplicationShortcutItem
+                   alloc
+                   ]
+                  initWithType
+                  :
+                  @"TYShortcut3"
+                  localizedTitle
+                  :
+                  @"TYShare"
+                  localizedSubtitle
+                  :
+                  @"点一下试试吧（分享）"
+                  icon
+                  :[
+                    UIApplicationShortcutIcon
+                    iconWithType:UIApplicationShortcutIconTypeShare] userInfo:nil];
+        // 这里是可以自定义的效果  可以自己设置  Icon
+        
+        UIApplicationShortcutItem
+        * item4 = [[
+                    UIApplicationShortcutItem
+                    alloc
+                    ]
+                   initWithType
+                   :
+                   @"TYShortcut4"
+                   localizedTitle
+                   :
+                   @"TYCustom"
+                   localizedSubtitle
+                   :
+                   @"来点一下!(自定义)"
+                   icon
+                   :[
+                     UIApplicationShortcutIcon
+                     iconWithTemplateImageName:@"ToolViewEmotion"] userInfo:nil];
+        
+        [[UIApplication sharedApplication] setShortcutItems: @[item1, item2, item3, item4 ]];
+        // 这个鬼东西实现起来是不是还是很简单的啊
+
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     NSLog(@"NSHomeDirectory == %@",NSHomeDirectory());
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
@@ -395,6 +501,10 @@
 {
     if (url != nil) {
         NSString *path = [url absoluteString];
+        
+
+        path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
         NSMutableString *string = [[NSMutableString alloc] initWithString:path];
         
         
@@ -403,6 +513,8 @@
             NSLog(@"文件的路径%@",string);
             
         }
+        
+    
         self.getFilePath = string;
         NSRange range = [string rangeOfString:@"/" options:NSBackwardsSearch];
         NSString *name = @"未知";
