@@ -1012,8 +1012,16 @@
     HeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HeaderCell" forIndexPath:indexPath];
     
     if ([collectionView isEqual:self.groupChatCollectionView]) {
-        NSString *key = [_otherHeaderImages allKeys][indexPath.item];
-        cell.headImageVIew.image = [UIImage imageWithData:_otherHeaderImages[key]];
+//        NSString *key = [_otherHeaderImages allKeys][indexPath.item];
+//        cell.headImageVIew.image = [UIImage imageWithData:_otherHeaderImages[key]];
+        NSString *key = self.sessionManager.connectedPeers[indexPath.item];
+        if (self.otherHeaderImages[key]) {
+                    cell.headImageVIew.image = [UIImage imageWithData:self.otherHeaderImages[key]];
+        }else{
+            
+            cell.headImageVIew.image = [UIImage imageNamed:@"无头像"];
+        }
+
         
         return cell;
     }
