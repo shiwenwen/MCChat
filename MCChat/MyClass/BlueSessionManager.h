@@ -32,6 +32,7 @@
 @property(strong, nonatomic) NSDictionary *discoveryInfo; // 发现设备的特征
 
 @property(strong, nonatomic, readonly) MCPeerID *firstPeer; // 第一个连接的 用户
+@property(strong, nonatomic) MCPeerID *peerID; // 用户
 
 /**
  * The service type provided for browsing and advertising.

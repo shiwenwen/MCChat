@@ -18,7 +18,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SMe-Br-1oC">
-                    <rect key="frame" x="15" y="89" width="290" height="30"/>
+                    <rect key="frame" x="20" y="89" width="280" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="cm0-Zx-uBQ"/>
                     </constraints>
@@ -38,8 +38,8 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="aL1-bZ-M16" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="5QA-fr-t6i"/>
-                <constraint firstItem="SMe-Br-1oC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="CeI-HY-8hr"/>
-                <constraint firstAttribute="trailing" secondItem="SMe-Br-1oC" secondAttribute="trailing" constant="15" id="Zmi-9W-kiz"/>
+                <constraint firstItem="SMe-Br-1oC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="CeI-HY-8hr"/>
+                <constraint firstAttribute="trailing" secondItem="SMe-Br-1oC" secondAttribute="trailing" constant="20" id="Zmi-9W-kiz"/>
                 <constraint firstItem="aL1-bZ-M16" firstAttribute="top" secondItem="SMe-Br-1oC" secondAttribute="bottom" constant="15" id="Zxz-Go-0FO"/>
                 <constraint firstAttribute="trailing" secondItem="aL1-bZ-M16" secondAttribute="trailing" constant="15" id="bWY-AC-eCe"/>
                 <constraint firstItem="SMe-Br-1oC" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="89" id="w3D-Fj-iVw"/>

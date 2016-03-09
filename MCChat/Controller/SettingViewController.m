@@ -292,13 +292,15 @@
 
             changeName.style = nickName;
             changeName.placehold = UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[[UIDevice currentDevice]name];
-            changeName.changeBlock = ^(NSString *name, ChangeStyle style){
 
+            changeName.changeBlock = ^(NSString *name, ChangeStyle style){
+//            [self.sessionManager.peerID setValue:name forKey:@"_displayName"];
                     UserDefaultsSet(name, MyNickName);
                     [[NSUserDefaults standardUserDefaults]synchronize];
                     [weakSelf initSessionManager];
                     [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
             };
+            [self.navigationController pushViewController:changeName animated:YES];
         }else if (indexPath.row == 2){
             changeName.style = groupName;
             changeName.placehold = self.groupName;

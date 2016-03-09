@@ -27,7 +27,7 @@
 @property(strong, nonatomic) MCAdvertiserAssistant *advertisingAssistant; // 宣传助手
 @property(strong, nonatomic) MCNearbyServiceAdvertiser *advertiser; // 服务助手
 @property(strong, nonatomic) MCNearbyServiceBrowser *browser; // 搜索蓝牙者
-@property(strong, nonatomic) MCPeerID *peerID; // 用户
+
 
 //  以下都是用到的block
 @property(nonatomic, copy) void(^receiveDataBlock)(NSData *data, MCPeerID *peer);
