@@ -16,8 +16,11 @@
 #import "WPHotspotLabel.h"
 #import <SafariServices/SafariServices.h>
 #import "WebViewController.h"
+
 #define HEIGHT [UIScreen mainScreen].bounds.size.height
 #define WIDTH [UIScreen mainScreen].bounds.size.width
+
+
 @implementation MyChatCell
 
 - (void)awakeFromNib {
@@ -157,6 +160,36 @@
             self.postImageView.frame = CGRectMake(10,5,_model.imageWidth,_model.imageHight);
 
             self.rightBgView.frame = CGRectMake(self.rightHeaderView.left - _model.imageWidth - 30,self.rightHeaderView.top, _model.imageWidth + 20,_model.imageHight + 20);
+            
+            
+            
+//            _progressView .frame = CGRectMake(5, self.postImageView.height - 5, self.rightBgView.width - 10, 5);
+            
+//            [self.rightBgView addSubview:_progressView];
+            
+//            _progressView.progress = 0;
+//            _progressView.progressTintColor = [UIColor colorWithRed:0.000 green:0.599 blue:1.000 alpha:1.000];
+//            _progressView.trackTintColor = [UIColor whiteColor];
+//            _progressView.layer.cornerRadius = 1;
+//            _progressView.layer.masksToBounds = YES;
+//            _progressView.layer.borderColor = [UIColor colorWithRed:0.173 green:0.677 blue:0.689 alpha:1.000].CGColor;
+//            _progressView.layer.borderWidth = .5;
+            
+            _HUD = [MBProgressHUD showHUDAddedTo:self.postImageView animated:YES];
+            
+            // Set the determinate mode to show task progress.
+            _HUD.mode = MBProgressHUDModeDeterminate;
+            _HUD.label.text = @"发送中";
+            
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+                // Do something useful in the background and update the HUD periodically.
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_HUD hideAnimated:YES];
+                });
+            });
+            
+            
             if (_tap) {
                 [self.rightBgView removeGestureRecognizer:_tap];
             }
@@ -183,6 +216,10 @@
 
            
             [self.rightBgView addGestureRecognizer:_tap];
+            
+            
+            
+            
             //生产16位随机音频文件名
             NSString *dataName = [NSString stringWithFormat:@"%@.caf",[Tools randomStringWithBit:16]];
             

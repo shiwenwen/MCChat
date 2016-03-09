@@ -11,6 +11,7 @@
 #import "ChatItem.h"
 #import "ZoomImageView.h"
 #import "WXLabel.h"
+#import "MBProgressHUD.h"
 typedef void(^VoiceBlock)( NSURL * _Nonnull url, NSData * _Nullable data,UIImageView *_Nullable imageView);
 typedef void(^FileBlock)(FileModel *_Nullable model);
 @interface MyChatCell : UITableViewCell<WXLabelDelegate>{
@@ -50,6 +51,8 @@ typedef void(^FileBlock)(FileModel *_Nullable model);
 @property (nonatomic,strong,nullable)UIView *fileBackView2;
 
 @property (nonatomic,copy,nullable)FileBlock fileBlock;
-@property (nonatomic,strong,nullable)UIProgressView *progressView;
 
+//进度
+@property (nonatomic,strong,nullable)UIProgressView *progressView;
+@property (nonatomic,strong,nullable)MBProgressHUD *HUD;
 @end

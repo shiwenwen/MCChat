@@ -236,6 +236,7 @@
             [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
             NSString *dateStr = [formatter stringFromDate:date];
             chatItem.timeStr = dateStr;
+            [self sendAsResource:model.path key:chatItem.timeStr];
             [self.datasource addObject:chatItem];
 
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -246,7 +247,7 @@
 //            [self insertTheTableToButtom];
             
                         [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
-        [self sendAsResource:model.path];
+
             
         });
 
@@ -1189,19 +1190,9 @@
         return;
     }
     
-    ChatItem * chatItem = [[ChatItem alloc] init];
-    chatItem.isSelf = YES;
-    chatItem.states = picStates;
-    chatItem.picImage = image;
-    NSDate *date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-    NSString *dateStr = [formatter stringFromDate:date];
-    chatItem.timeStr = dateStr;
-    [self.datasource addObject:chatItem];
     
     
-    [self insertTheTableToButtom];
+
     [_picker dismissViewControllerAnimated:YES completion:^{
         
         // 改变状态栏的颜色  改变为白色
@@ -1213,9 +1204,21 @@
         dispatch_sync(dispatch_get_global_queue(2, 0), ^{
             NSData *data;
             NSString *type;
+           
             if (UIImagePNGRepresentation(image) == nil)
             {
                 data = UIImageJPEGRepresentation(image, 1.0);
+                NSInteger length = data.length;
+            
+                if (length > 1024 *1024) {
+                    
+                    data = UIImageJPEGRepresentation(image, 1024.0*1024.0 / length);
+
+                    
+                }
+                
+                
+
                 type = @".jpg";
             }
             else
@@ -1238,13 +1241,24 @@
             //得到选择后沙盒中图片的完整路径
             NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
             
-            
+            ChatItem * chatItem = [[ChatItem alloc] init];
+            chatItem.isSelf = YES;
+            chatItem.states = picStates;
+            chatItem.picImage = image;
+            NSDate *date = [NSDate date];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+            NSString *dateStr = [formatter stringFromDate:date];
+            chatItem.timeStr = dateStr;
+            [self.datasource addObject:chatItem];
+
             
             if(self.sessionManager.isConnected)
             {
-                [self sendAsResource:filePath];
+                [self sendAsResource:filePath key:chatItem.timeStr];
             }
             
+            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
             
         });
         
@@ -1267,13 +1281,14 @@
 }
 
 
-- (void)sendAsResource:(NSString *)path
+- (void)sendAsResource:(NSString *)path key:(NSString *)key
 {
         NSLog(@"filePath == %@",path);
 //    NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
     NSString * name = [NSString stringWithFormat:@"%@ForPic",UserDefaultsGet(MyNickName)?UserDefaultsGet(MyNickName):[UIDevice currentDevice].name];
     
     NSURL * url = [NSURL fileURLWithPath:path];
+    NSInteger index = 0;
     for (MCPeerID *peer in self.sessionManager.connectedPeers) {
         
         NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
@@ -1284,7 +1299,14 @@
                 NSLog(@"%@", error);
             }
         }];
+        if (index == 0 && progress) {
+            if (key) {
+                [_progressDictionary setObject:progress forKey:key];
+            }
+
+        }
         
+        index ++;
         NSLog(@"%@", @(progress.fractionCompleted));
     }
     
@@ -1629,13 +1651,35 @@
         if (progress) {
             NSDictionary *userInfo = @{
                                        @"progress":progress,
-                                       @"view":cell.progressView
+                                       @"view":cell.progressView,
+                                       @"name":cell.model.fileModel.name
                                        };
-            [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+            
+            [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+            
+
+            
+            
+        
         }
+    }else if (cell.model.states == picStates && cell.model.isSelf){
         
-        
+        NSProgress *progress = _progressDictionary[cell.model.timeStr];
+        if (progress) {
+            NSDictionary *userInfo = @{
+                                       @"progress":progress,
+                                       @"view":cell.HUD,
+                                       @"name":cell.model.timeStr
+                                       };
+         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+            
+             [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+            
+        }
+            
     }
+
     
     cell.fileBlock = ^(FileModel *model){
         FileDetailViewController *fileDetailVC = [[FileDetailViewController alloc]init];
@@ -1649,18 +1693,37 @@
     
     NSDictionary *dic = timer.userInfo;
     
-    NSProgress *progress = dic[@"progress"];
-    UIProgressView *progressView = dic[@"view"];
-    
+       NSProgress *progress = dic[@"progress"];
+    UIView *view = dic[@"view"];
+    NSString *name = dic[@"name"];
     NSLog(@"%@",progress);
+
+    if ([view isKindOfClass:[UIProgressView class]]) {
+        
+        UIProgressView *progressView = (UIProgressView *)view;
+        progressView.progress = progress.fractionCompleted;
+        if (progressView.progress >= 1) {
+            [timer invalidate];
+            [_progressDictionary removeObjectForKey:name];
+            progress = nil;
+        }
+
+    }else{
+        
+        MBProgressHUD *hud = (MBProgressHUD *)view;
+        hud.progress = progress.fractionCompleted;
+        if (hud.progress >= 1) {
+            [timer invalidate];
+            [_progressDictionary removeObjectForKey:name];
+            progress = nil;
+        }
+        
+    }
+    
     
 //    NSLog(@"progress.completedUnitCount === %ld\nprogress.totalUnitCount == %ld",progress.completedUnitCount,progress.totalUnitCount);
     
-    progressView.progress = progress.fractionCompleted;
-    if (progressView.progress >= 1) {
-        [timer invalidate];
-    }
-}
+  }
 - (void)cellSelectIndex:(UIButton *)cellBtn
 {
     
