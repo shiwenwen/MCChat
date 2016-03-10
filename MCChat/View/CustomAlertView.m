@@ -113,8 +113,8 @@ static CustomAlertView * _shareCustomAlertView;
                                              attributes:[NSDictionary dictionaryWithObjectsAndKeys:titleLabel.font,NSFontAttributeName, nil]
                                                 context:nil];
     if (rect.size.height <= 20) {
-        kCustomViewWidth =  title.length * 16 + 20 * 2;
-        
+//        kCustomViewWidth =  title.length * 16 + 20 * 2;
+                kCustomViewWidth = rect.size.width + 20*2;
     }
     
     titleLabel.frame =CGRectMake(20, 40 - 35, kCustomViewWidth-20*2, rect.size.height+20);
@@ -132,6 +132,66 @@ static CustomAlertView * _shareCustomAlertView;
     
     
     [[UIApplication sharedApplication].keyWindow addSubview:self];
+    [self performSelector:@selector(finishShow) withObject:self afterDelay:2];
+}
+#pragma mark - 底部小提示框
+- (void)showBottomAlertViewWtihTitle:(NSString *)title viewController:(UIViewController *)viewController{
+    
+    _shareCustomAlertView.backgroundColor = [UIColor clearColor];
+    self.isHidden = NO;
+    CGFloat kCustomViewWidth = kScreenWidth - 40*2;
+    CGFloat kCustomViewHight = kCustomViewWidth/2.f;
+    
+    [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    _alertView = nil;
+    _alertView = [[UIView alloc]initWithFrame: CGRectMake((kScreenWidth-kCustomViewWidth)/2, (kCustomViewHight-kCustomViewHight)/2 - 40, kCustomViewWidth,kCustomViewHight)];
+    //    _alertView.backgroundColor = [UIColor whiteColor];
+    
+    _alertView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:.8];
+    
+    _alertView.layer.cornerRadius = 8.f;
+//    [self addSubview:_alertView];
+    //    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, kCustomViewWidth, 20)];
+    //    //    label.textColor = kLightBlue;
+    //    label.textColor = [UIColor whiteColor];
+    //    label.font = [UIFont systemFontOfSize:kTitlelFont];
+    //    label.textAlignment = NSTextAlignmentCenter;
+    //    label.text = @"提示";
+    //    [_alertView addSubview:label];
+    
+    UILabel * titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 40 - 20, kCustomViewWidth-20*2, CGFLOAT_MAX)];
+    //    titleLabel.textColor = k99Gray;
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.font = [UIFont systemFontOfSize:kContentFont];
+    titleLabel.numberOfLines = 0;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.text = title;
+    [_alertView addSubview:titleLabel];
+    //label自适应高度
+    CGRect rect = [titleLabel.text boundingRectWithSize:CGSizeMake(kCustomViewWidth-20*2, CGFLOAT_MAX)
+                                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                             attributes:[NSDictionary dictionaryWithObjectsAndKeys:titleLabel.font,NSFontAttributeName, nil]
+                                                context:nil];
+    if (rect.size.height <= 20) {
+//        kCustomViewWidth =  title.length * 16 + 20 * 2;
+        kCustomViewWidth = rect.size.width + 20*2;
+    }
+    
+    titleLabel.frame =CGRectMake(20, 40 - 35, kCustomViewWidth-20*2, rect.size.height+20);
+    
+    
+    CGFloat alertHeight = titleLabel.frame.origin.y + titleLabel.frame.size.height + 10 - 5 ;
+    //    _alertView.frame = CGRectMake((kScreenWidth-kCustomViewWidth)/2, (kScreenHeight-kCustomViewHight)/2, kCustomViewWidth, 50+rect.size.height);
+    _alertView.frame = CGRectMake((kScreenWidth-kCustomViewWidth)/2, (kScreenHeight-kCustomViewHight) - 80, kCustomViewWidth, alertHeight );
+    
+    if (rect.size.height <= 20) {
+        
+        
+    }
+    
+    
+    
+    [[UIApplication sharedApplication].keyWindow addSubview:_alertView];
     [self performSelector:@selector(finishShow) withObject:self afterDelay:2];
 }
 
@@ -240,6 +300,7 @@ static CustomAlertView * _shareCustomAlertView;
 - (void)finishShow{
     [self removeFromSuperview];
     self.isHidden = YES;
+    _alertView.hidden = YES;
 }
 @end
 

@@ -37,4 +37,5 @@ typedef enum{
 @property (nonatomic,assign)CGFloat imageHight;
 @property (nonatomic,assign)CGFloat imageWidth;
 @property (nonatomic,strong)FileModel *fileModel;
+@property (nonatomic,strong)NSProgress *progress;
 @end

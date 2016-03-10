@@ -236,7 +236,7 @@
             [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
             NSString *dateStr = [formatter stringFromDate:date];
             chatItem.timeStr = dateStr;
-            [self sendAsResource:model.path key:chatItem.timeStr];
+           chatItem.progress =  [self sendAsResource:model.path key:chatItem.timeStr];
             [self.datasource addObject:chatItem];
 
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -1190,9 +1190,18 @@
         return;
     }
     
-    
-    
-
+    ChatItem * chatItem = [[ChatItem alloc] init];
+    chatItem.isSelf = YES;
+    chatItem.states = picStates;
+    chatItem.picImage = image;
+    NSDate *date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+    NSString *dateStr = [formatter stringFromDate:date];
+    chatItem.timeStr = dateStr;
+    [self.datasource addObject:chatItem];
+    [self insertTheTableToButtom];
+    NSInteger index = self.datasource.count - 1;
     [_picker dismissViewControllerAnimated:YES completion:^{
         
         // 改变状态栏的颜色  改变为白色
@@ -1241,25 +1250,18 @@
             //得到选择后沙盒中图片的完整路径
             NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
             
-            ChatItem * chatItem = [[ChatItem alloc] init];
-            chatItem.isSelf = YES;
-            chatItem.states = picStates;
-            chatItem.picImage = image;
-            NSDate *date = [NSDate date];
-            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-            [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
-            NSString *dateStr = [formatter stringFromDate:date];
-            chatItem.timeStr = dateStr;
-            [self.datasource addObject:chatItem];
-
             
             if(self.sessionManager.isConnected)
             {
-                [self sendAsResource:filePath key:chatItem.timeStr];
+               chatItem.progress =  [self sendAsResource:filePath key:chatItem.timeStr];
             }
+
+//            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
             
-            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
-            
+//            });
+           
+            [self performSelectorOnMainThread:@selector(reloadTableVIewAtIndexPath:) withObject:[NSIndexPath indexPathForRow:index inSection:0] waitUntilDone:YES];
         });
         
         
@@ -1279,9 +1281,15 @@
 {
    
 }
+#pragma mark -- 发送图片后重新刷新tableView
+- (void)reloadTableVIewAtIndexPath:(NSIndexPath *)indexPath{
+    
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    
+    
+}
 
-
-- (void)sendAsResource:(NSString *)path key:(NSString *)key
+- (NSProgress *)sendAsResource:(NSString *)path key:(NSString *)key
 {
         NSLog(@"filePath == %@",path);
 //    NSLog(@"dispaly ====%@",self.sessionManager.firstPeer.displayName);
@@ -1289,6 +1297,7 @@
     
     NSURL * url = [NSURL fileURLWithPath:path];
     NSInteger index = 0;
+    NSProgress *_progress;
     for (MCPeerID *peer in self.sessionManager.connectedPeers) {
         
         NSProgress *progress = [self.sessionManager sendResourceWithName:name atURL:url toPeer:peer complete:^(NSError *error) {
@@ -1300,9 +1309,7 @@
             }
         }];
         if (index == 0 && progress) {
-            if (key) {
-                [_progressDictionary setObject:progress forKey:key];
-            }
+            _progress = progress;
 
         }
         
@@ -1310,7 +1317,7 @@
         NSLog(@"%@", @(progress.fractionCompleted));
     }
     
-    
+    return _progress;
 }
 #pragma mark -- 群聊语音
 - (void)sendGroupChatVideoAsResource:(NSURL *)path
@@ -1664,20 +1671,20 @@
         
         }
     }else if (cell.model.states == picStates && cell.model.isSelf){
+//        
+//        NSProgress *progress = _progressDictionary[cell.model.timeStr];
+//        if (progress) {
+//            NSDictionary *userInfo = @{
+//                                       @"progress":progress,
+//                                       @"view":cell.HUD,
+//                                       @"name":cell.model.timeStr
+//                                       };
+//         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
+//            
+//             [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
         
-        NSProgress *progress = _progressDictionary[cell.model.timeStr];
-        if (progress) {
-            NSDictionary *userInfo = @{
-                                       @"progress":progress,
-                                       @"view":cell.HUD,
-                                       @"name":cell.model.timeStr
-                                       };
-         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(updateProgress:) userInfo:userInfo repeats:YES];
-            
-             [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-            
-        }
-            
+//        }
+        
     }
 
     
@@ -1710,13 +1717,13 @@
 
     }else{
         
-        MBProgressHUD *hud = (MBProgressHUD *)view;
-        hud.progress = progress.fractionCompleted;
-        if (hud.progress >= 1) {
-            [timer invalidate];
-            [_progressDictionary removeObjectForKey:name];
-            progress = nil;
-        }
+//        MBProgressHUD *hud = (MBProgressHUD *)view;
+//        hud.progress = progress.fractionCompleted;
+//        if (hud.progress >= 1) {
+//            [timer invalidate];
+//            [_progressDictionary removeObjectForKey:name];
+//            progress = nil;
+//        }
         
     }
     
@@ -1781,11 +1788,20 @@
                 
                 
             }else{
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:[NSString stringWithFormat:@"已连接 %@！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                
+                if (self.sessionManager.connectedPeers.count > 1) {
+                    
+                    [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:[NSString stringWithFormat:@"%@加入聊天",peer.displayName] viewController:nil];
+                    
+                }else{
+                    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:[NSString stringWithFormat:@"已连接 %@！", peer.displayName] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+                 [alertView show];
+                }
+                
                 
                 _curretConnect = peer;
                 
-                [alertView show];
+               
                 
                 if (self.sessionManager.session.connectedPeers.count == 2) {
                     

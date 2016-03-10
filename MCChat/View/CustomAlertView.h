@@ -46,4 +46,6 @@ typedef void(^TapEvent)();
                      sureTitle:(NSString *)sureTitle
                    cancleTitle:(NSString *)cancleTitle
                 viewController:(UIViewController *)viewController;
+#pragma mark - 底部小提示框
+- (void)showBottomAlertViewWtihTitle:(NSString *)title viewController:(UIViewController *)viewController;
 @end

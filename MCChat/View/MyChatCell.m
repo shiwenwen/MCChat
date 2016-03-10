@@ -174,20 +174,20 @@
 //            _progressView.layer.masksToBounds = YES;
 //            _progressView.layer.borderColor = [UIColor colorWithRed:0.173 green:0.677 blue:0.689 alpha:1.000].CGColor;
 //            _progressView.layer.borderWidth = .5;
-            
-            _HUD = [MBProgressHUD showHUDAddedTo:self.postImageView animated:YES];
-            
-            // Set the determinate mode to show task progress.
-            _HUD.mode = MBProgressHUDModeDeterminate;
-            _HUD.label.text = @"发送中";
-            
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-                // Do something useful in the background and update the HUD periodically.
+            if (self.model.progress) {
+                _HUD = [MBProgressHUD showHUDAddedTo:self.postImageView animated:YES];
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_HUD hideAnimated:YES];
-                });
-            });
+                // Set the determinate mode to show task progress.
+                _HUD.mode = MBProgressHUDModeDeterminate;
+                _HUD.label.text = @"发送中";
+                
+                
+                // Do something useful in the background and update the HUD periodically.
+                NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(timeAction:) userInfo:nil repeats:YES];
+                [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+            }
+            
+            
             
             
             if (_tap) {
@@ -703,6 +703,19 @@
     }
 
 
+    
+}
+- (void)timeAction:(NSTimer *)timer{
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        _HUD.progress = self.model.progress.fractionCompleted;
+        if (_HUD.progress >= 1) {
+            [_HUD hideAnimated:YES];
+            self.model.progress = nil;
+        }
+        
+    });
     
 }
 @end
