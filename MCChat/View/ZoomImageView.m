@@ -110,7 +110,6 @@
         }];
         
         
-        
     }
 }
 - (void)closeOriginal_pic{
@@ -120,10 +119,18 @@
     CGPoint point = [self convertPoint:self.center toView:[UIApplication sharedApplication].keyWindow];
     scrollView.backgroundColor = [UIColor clearColor];
     [UIView animateWithDuration:0.35 animations:^{
+        
         CGAffineTransform transfrom1 = CGAffineTransformMakeScale( self.width / KScreenWidth , self.width/KScreenWidth );
+        scrollView.transform = transfrom1;
+//
         CGAffineTransform transfrom2 = CGAffineTransformMakeTranslation(point.x - KScreenWidth / 2, point.y - KScreenHeight / 2);
-        scrollView.transform = CGAffineTransformConcat(transfrom1, transfrom2);
-        scrollView.alpha = 0;
+//
+        CGAffineTransform transfrom3 = CGAffineTransformConcat(transfrom1, transfrom2);
+        CGAffineTransform transfrom4 = CGAffineTransformMakeRotation(-M_PI );
+        scrollView.transform = CGAffineTransformConcat(transfrom4, transfrom3);
+        scrollView.alpha = 0.1;
+
+        
     } completion:^(BOOL finished) {
         
         [scrollView removeFromSuperview];

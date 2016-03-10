@@ -1183,12 +1183,12 @@
 - (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
 {
     
-    if(!self.sessionManager.isConnected)
-    {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-        [alertView show];
-        return;
-    }
+//    if(!self.sessionManager.isConnected)
+//    {
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+//        [alertView show];
+//        return;
+//    }
     
     ChatItem * chatItem = [[ChatItem alloc] init];
     chatItem.isSelf = YES;
