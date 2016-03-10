@@ -174,11 +174,20 @@
 //            _progressView.layer.masksToBounds = YES;
 //            _progressView.layer.borderColor = [UIColor colorWithRed:0.173 green:0.677 blue:0.689 alpha:1.000].CGColor;
 //            _progressView.layer.borderWidth = .5;
+            
             if (self.model.progress) {
                 _HUD = [MBProgressHUD showHUDAddedTo:self.postImageView animated:YES];
-                
+                _postImageView.layer.masksToBounds = YES;
+                if (_model.imageHight > _model.imageWidth) {
+                    _HUD.width = _HUD.height;
+                    
+                }else{
+                    _HUD.height = _HUD.width;
+                }
+                _HUD.center = CGPointMake(self.postImageView.width / 2, self.postImageView.height / 2);
                 // Set the determinate mode to show task progress.
                 _HUD.mode = MBProgressHUDModeDeterminate;
+                
                 _HUD.label.text = @"发送中";
                 
                 
