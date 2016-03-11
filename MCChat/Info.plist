@@ -4,10 +4,40 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>com.myapp.common-data</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.folder</string>
+				<string>public.directory</string>
+				<string>public.source-code</string>
+				<string>public.html</string>
+				<string>com.microsoft.powerpoint.ppt</string>
+				<string>public.item</string>
+				<string>com.microsoft.word.doc</string>
+				<string>com.adobe.pdf</string>
+				<string>com.microsoft.excel.xls</string>
+				<string>public.image</string>
+				<string>public.content</string>
+				<string>public.composite-content</string>
+				<string>public.archive</string>
+				<string>public.audio</string>
+				<string>public.movie</string>
+				<string>public.text</string>
+				<string>public.data</string>
+				<string>com.iwork.pages</string>
+				<string>com.iwork.keynote</string>
+				<string>com.iwork.numbers</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.sww.MCChat</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -39,35 +69,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>com.myapp.common-data</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>public.folder</string>
-				<string>public.directory</string>
-				<string>public.source-code</string>
-				<string>public.html</string>
-				<string>com.microsoft.powerpoint.ppt</string>
-				<string>public.item</string>
-				<string>com.microsoft.word.doc</string>
-				<string>com.adobe.pdf</string>
-				<string>com.microsoft.excel.xls</string>
-				<string>public.image</string>
-				<string>public.content</string>
-				<string>public.composite-content</string>
-				<string>public.archive</string>
-				<string>public.audio</string>
-				<string>public.movie</string>
-				<string>public.text</string>
-				<string>public.data</string>
-				<string>com.iwork.pages</string>
-				<string>com.iwork.keynote</string>
-				<string>com.iwork.numbers</string>
-			</array>
-		</dict>
-	</array>
 </dict>
 </plist>

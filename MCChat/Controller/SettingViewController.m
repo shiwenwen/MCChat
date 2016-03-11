@@ -701,7 +701,7 @@
      ^(BOOL success, NSError *authenticationError) {
          if (success) {
              
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
              msg =[NSString stringWithFormat:NSLocalizedString(@"验证成功", nil)];

@@ -225,7 +225,7 @@
     
     if (model.fileType == image) {
         
-        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+        dispatch_async(dispatch_get_global_queue(2, 0), ^{
 
             ChatItem * chatItem = [[ChatItem alloc] init];
             chatItem.isSelf = YES;
@@ -239,7 +239,7 @@
            chatItem.progress =  [self sendAsResource:model.path key:chatItem.timeStr];
             [self.datasource addObject:chatItem];
 
-            dispatch_sync(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
 
                 
                 
@@ -264,7 +264,7 @@
         NSURL * url = [NSURL fileURLWithPath:model.path];
 
         
-        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+        dispatch_async(dispatch_get_global_queue(2, 0), ^{
                 int index = 0;
             for (MCPeerID *peer in self.sessionManager.connectedPeers) {
                 
@@ -1210,7 +1210,7 @@
         //先把图片转成NSData
         
         
-        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+        dispatch_async(dispatch_get_global_queue(2, 0), ^{
             NSData *data;
             NSString *type;
            
@@ -1257,7 +1257,7 @@
             }
 
 //            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
-//            dispatch_sync(dispatch_get_main_queue(), ^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
             
 //            });
            
@@ -1982,15 +1982,19 @@
             
             NSString *fileName = [name substringWithRange:NSMakeRange(5, name.length - 5)];
             
-            NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInbox"];
+            NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
 
             if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
-                [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:nil error:nil];
+                [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:@{
+                                                                                                                            NSFileAppendOnly:@(NO),
+                                                                                                                            }error:nil];
             }
           
+            BOOL isDic;
+            BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:BasePath isDirectory:&isDic];
             NSString *path = [BasePath stringByAppendingPathComponent:fileName];
 
-        dispatch_sync(dispatch_get_global_queue(2, 0), ^{
+        dispatch_async(dispatch_get_global_queue(2, 0), ^{
             BOOL writeResult = [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
           
             
@@ -2019,7 +2023,7 @@
                     NSString *dateStr = [formatter stringFromDate:date];
                     chatItem.timeStr = dateStr;
                     [strongSelf.datasource addObject:chatItem];
-//                    dispatch_sync(dispatch_get_main_queue(), ^{
+//                    dispatch_async(dispatch_get_main_queue(), ^{
 //                        [strongSelf insertTheTableToButtom];
 //                    });
             [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];

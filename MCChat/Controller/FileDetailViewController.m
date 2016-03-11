@@ -14,6 +14,7 @@
 #import "SSZipArchive.h"
 #import "MBProgressHUD.h"
 #import "CLImageEditor.h"
+#import "FileManagerViewController.h"
 @interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>
 
 @end
@@ -116,7 +117,7 @@
                 button.alpha = 0.5;
                 
             }
-            if ([title isEqualToString:@"保存到相册"]) {
+            if ([title isEqualToString:@"编辑"]) {
                 self.logoImage.userInteractionEnabled = YES;
                 self.logoImage.frame = CGRectMake(self.logoImage.left - 50, self.logoImage.top + 100, self.logoImage.width + 100, self.logoImage.height+100);
             }else{
@@ -214,7 +215,26 @@
             
             
         }else if(self.model.fileType == zip){
-            NSString *destination = [self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""];
+        
+            NSString *destination ;
+            
+            if ([self.model.path hasPrefix:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"]]) {
+                NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
+                
+                if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
+                    [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:@{
+                                                                                                                                NSFileAppendOnly:@(NO),
+                                                                                                                                }error:nil];
+                }
+
+                  destination =   [[self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""]stringByReplacingOccurrencesOfString:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"] withString:BasePath];
+                
+            }else{
+                
+               destination =  [self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""];
+                
+            }
+
             MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             
             // Set the label text.
@@ -272,8 +292,37 @@
         
         
     }else{
-        
-        [self.navigationController popViewControllerAnimated:YES];
+        NSArray *VCs = self.navigationController.viewControllers;
+        UIViewController *vc = VCs[VCs.count - 2];
+        if ([vc isKindOfClass:[FileManagerViewController class]]) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }else{
+            
+            FileManagerViewController *fileVC = [[FileManagerViewController alloc]init];
+            
+            
+            NSString *destination ;
+            
+            if ([self.model.path hasPrefix:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"]]) {
+                NSString *BasePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"];
+                
+                if (![[NSFileManager defaultManager]fileExistsAtPath:BasePath]) {
+                    [[NSFileManager defaultManager] createDirectoryAtPath:BasePath withIntermediateDirectories:YES attributes:@{
+                                                                                                                                NSFileAppendOnly:@(NO),
+                                                                                                                                }error:nil];
+                }
+                
+                destination =   [[self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""]stringByReplacingOccurrencesOfString:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"] withString:BasePath];
+                
+            }else{
+                
+               destination = [self.model.path stringByReplacingOccurrencesOfString:@".zip" withString:@""];
+                
+            }
+            fileVC.contentPaths = @[destination];
+            [self.navigationController pushViewController:fileVC animated:YES];
+        }
+
     }
     
 }
