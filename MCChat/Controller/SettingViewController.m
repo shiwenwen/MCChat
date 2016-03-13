@@ -441,6 +441,7 @@
     
     NSData *data;
     NSString *type;
+    
     if (UIImagePNGRepresentation(image) == nil)
     {
         data = UIImageJPEGRepresentation(image, 1.0);
