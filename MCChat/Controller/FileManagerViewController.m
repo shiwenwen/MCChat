@@ -40,6 +40,9 @@
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
+- (BOOL)shouldAutorotate{
+    return NO;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"文件管理";

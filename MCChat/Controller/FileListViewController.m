@@ -26,6 +26,9 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
      [self.tableView registerNib:[UINib nibWithNibName:@"FileCell" bundle:nil] forCellReuseIdentifier:@"FileCell"];
 }
+- (BOOL)shouldAutorotate{
+    return NO;
+}
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self.tableView reloadData];

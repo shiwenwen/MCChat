@@ -96,6 +96,14 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
 }
+- (BOOL)shouldAutorotate{
+    return YES;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
+    
+    return UIInterfaceOrientationMaskPortrait;
+}
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [UIView animateWithDuration:.25 animations:^{

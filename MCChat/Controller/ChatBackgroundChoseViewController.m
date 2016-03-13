@@ -15,7 +15,9 @@
 @end
 
 @implementation ChatBackgroundChoseViewController
-
+- (BOOL)shouldAutorotate{
+    return NO;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"选择聊天背景";

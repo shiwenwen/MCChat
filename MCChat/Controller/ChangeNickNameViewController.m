@@ -14,7 +14,9 @@
 @end
 
 @implementation ChangeNickNameViewController
-
+- (BOOL)shouldAutorotate{
+    return NO;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
