@@ -16,7 +16,7 @@
 #import "CLImageEditor.h"
 #import "FileManagerViewController.h"
 @interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>
-
+@property (nonatomic,strong)UIDocumentInteractionController *documentController;
 @end
 
 @implementation FileDetailViewController
@@ -141,14 +141,14 @@
         
         
         
-        UIDocumentInteractionController *documentController =
+        self.documentController =
         
         
         [UIDocumentInteractionController
          
          interactionControllerWithURL:[NSURL fileURLWithPath:cachePath]];
         
-        documentController.delegate = self;
+        self.documentController.delegate = self;
         
         
         
@@ -157,7 +157,7 @@
 //                                               inView:self.view
         
 //                                             animated:YES];
-        [documentController presentOptionsMenuFromRect:CGRectZero inView:self.view animated:YES];
+        [self.documentController presentOptionsMenuFromRect:CGRectZero inView:self.view animated:YES];
 //        [documentController presentPreviewAnimated:YES];
 
     }else if (button.tag == 2001){
