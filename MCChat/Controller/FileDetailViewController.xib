@@ -24,7 +24,7 @@
                     <rect key="frame" x="0.0" y="519" width="320" height="49"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MEc-aF-zi1" userLabel="line">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="0.5"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
                             <color key="backgroundColor" red="0.85442708333333339" green="0.85442708333333339" blue="0.85442708333333339" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="1" id="6Xq-WE-bWe"/>
@@ -52,7 +52,7 @@
                         <constraint firstAttribute="height" constant="21" id="X0o-z0-tYo"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rnr-Y9-uFL">

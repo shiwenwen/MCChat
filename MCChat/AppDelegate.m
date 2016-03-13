@@ -267,7 +267,7 @@
     
     if (!self.LockView) {
         self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
-        self.LockView.backgroundColor = [UIColor colorWithWhite:0.05 alpha:1];
+        self.LockView.backgroundColor = [UIColor colorWithRed:0.308 green:0.730 blue:1.000 alpha:1.000];
         self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 80)];
         self.lockStatusLabel.numberOfLines = 0;
         [self.LockView addSubview:self.lockStatusLabel];

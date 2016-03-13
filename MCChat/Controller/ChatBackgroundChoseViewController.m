@@ -28,7 +28,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     self.tableView.scrollEnabled = NO;
-    self.view.backgroundColor = [UIColor colorWithWhite:0.905 alpha:1.000];
+    self.view.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.000];
 }
 
 - (void)didReceiveMemoryWarning {

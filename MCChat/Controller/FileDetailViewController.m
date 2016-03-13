@@ -17,6 +17,7 @@
 #import "FileManagerViewController.h"
 @interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>
 @property (nonatomic,strong)UIDocumentInteractionController *documentController;
+@property (nonatomic,strong)UIImageView *imageView;
 @end
 
 @implementation FileDetailViewController
@@ -40,9 +41,18 @@
 }
 #pragma mark -_createUI
 - (void)_createUI{
+    
     self.logoImage.image = self.model.logoImage;
     if (self.model.fileType ==image) {
-        self.logoImage.image = [UIImage imageWithContentsOfFile:self.model.path];
+        
+        self.logoImage.hidden = YES;
+        UIImage *image= [UIImage imageWithContentsOfFile:self.model.path];
+        float scale = image.size.width / image.size.height;
+        
+        self.imageView = [[ZoomImageView alloc]initWithFrame:CGRectMake(KScreenWidth/2 - 50*scale, 164, 100*scale, 100)];
+        self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        [self.view addSubview:self.imageView];
+        self.imageView.image = image;
     }
     self.nameLabel.text = self.model.name;
     self.timeLabel.text = self.model.detail;

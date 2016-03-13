@@ -56,7 +56,7 @@
 //    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:@selector(goBack)];
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.view.backgroundColor = [UIColor colorWithWhite:0.905 alpha:1.000];
+    self.view.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.000];
     self.tableView.backgroundColor = self.view.backgroundColor;
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.showsHorizontalScrollIndicator = NO;
@@ -604,7 +604,7 @@
     
     if (!self.LockView) {
         self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
-        self.LockView.backgroundColor = [UIColor colorWithWhite:0.05 alpha:1];
+        self.LockView.backgroundColor = [UIColor colorWithRed:0.308 green:0.730 blue:1.000 alpha:1.000];
         self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 80)];
         self.lockStatusLabel.numberOfLines = 0;
         [self.LockView addSubview:self.lockStatusLabel];

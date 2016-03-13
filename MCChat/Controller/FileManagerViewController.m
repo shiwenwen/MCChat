@@ -1758,7 +1758,7 @@
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
     [self.tableView registerNib:[UINib nibWithNibName:@"FileCell" bundle:nil] forCellReuseIdentifier:@"FileCell"];
-    self.tableView.backgroundColor = [UIColor colorWithRed:0.848 green:0.879 blue:0.850 alpha:1.000];
+    self.tableView.backgroundColor = [UIColor colorWithRed:0.901 green:0.929 blue:0.908 alpha:1.000];
    self.tableView.header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(getLocationFiles)];
     self.tableView.footer = nil;
 

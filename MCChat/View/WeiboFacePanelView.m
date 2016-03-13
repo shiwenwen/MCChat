@@ -16,7 +16,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self _createSubViews];
-        self.backgroundColor = [UIColor colorWithWhite:.8 alpha:.95];
+        self.backgroundColor = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
     }
     return self;
 }

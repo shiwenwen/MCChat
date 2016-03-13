@@ -172,7 +172,7 @@
     
 //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 //    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:0.127 alpha:1.000];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.01 alpha:0.500];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.236 green:0.620 blue:0.995 alpha:0.492];
     
     
     [self makeBlueData];
@@ -962,7 +962,7 @@
             self.attachmentCollectionView.backgroundColor = [UIColor whiteColor];
             self.attachmentCollectionView.dataSource = self;
             self.attachmentCollectionView.delegate = self;
-            self.attachmentCollectionView.backgroundColor  = [UIColor colorWithWhite:.8 alpha:.95];
+            self.attachmentCollectionView.backgroundColor  = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
             [self.tabBarController.view addSubview:self.attachmentCollectionView];
             
             
@@ -1191,12 +1191,12 @@
 - (void)imageEditor:(CLImageEditor *)editor didFinishEdittingWithImage:(UIImage *)image
 {
     
-//    if(!self.sessionManager.isConnected)
-//    {
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-//        [alertView show];
-//        return;
-//    }
+    if(!self.sessionManager.isConnected)
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        [alertView show];
+        return;
+    }
     
     ChatItem * chatItem = [[ChatItem alloc] init];
     chatItem.isSelf = YES;
@@ -1210,6 +1210,7 @@
     [self.datasource addObject:chatItem];
     [self insertTheTableToButtom];
     NSInteger index = self.datasource.count - 1;
+    /*
     [_picker dismissViewControllerAnimated:YES completion:^{
         
         // 改变状态栏的颜色  改变为白色
@@ -1281,8 +1282,78 @@
         
         
     }];
-    
-    [editor dismissViewControllerAnimated:YES completion:nil];
+    */
+    [editor dismissViewControllerAnimated:YES completion:^{
+        
+        // 改变状态栏的颜色  改变为白色
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        
+        //先把图片转成NSData
+        
+        
+        dispatch_async(dispatch_get_global_queue(2, 0), ^{
+            NSData *data;
+            NSString *type;
+            
+            if (UIImagePNGRepresentation(image) == nil)
+            {
+                data = UIImageJPEGRepresentation(image, 1.0);
+                NSInteger length = data.length;
+                
+                if (length > 1024 *1024) {
+                    
+                    data = UIImageJPEGRepresentation(image, 1024.0*1024.0 / length);
+                    
+                    
+                }
+                
+                
+                
+                type = @".jpg";
+            }
+            else
+            {
+                data = UIImagePNGRepresentation(image);
+                type = @".png";
+            }
+            
+            //图片保存的路径
+            //这里将图片放在沙盒的documents文件夹中
+            NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+            
+            //文件管理器
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            
+            //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+            [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+            [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/image%@",type]] contents:data attributes:nil];
+            
+            //得到选择后沙盒中图片的完整路径
+            NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
+            
+            
+            if(self.sessionManager.isConnected)
+            {
+                chatItem.progress =  [self sendAsResource:filePath key:chatItem.timeStr];
+            }
+            
+            //            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
+            //            dispatch_async(dispatch_get_main_queue(), ^{
+            
+            //            });
+            
+            [self performSelectorOnMainThread:@selector(reloadTableVIewAtIndexPath:) withObject:[NSIndexPath indexPathForRow:index inSection:0] waitUntilDone:YES];
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    }];
 }
 
 - (void)imageEditor:(CLImageEditor *)editor willDismissWithImageView:(UIImageView *)imageView canceled:(BOOL)canceled
