@@ -16,6 +16,8 @@
 #import "UIView+UIViewController.h"
 #import "Tools.h"
 #import "CustomAlertView.h"
+#import "UITool.h"
+#import "ImageTools.h"
 #endif
 
 #endif /* PCH_pch */

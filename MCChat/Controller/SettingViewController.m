@@ -129,6 +129,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     static NSString *identifier = @"setting_cell";
     static NSString *headerId = @"header_cell";
     static NSString *switchIdenti = @"switch_cell";

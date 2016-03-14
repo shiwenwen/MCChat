@@ -132,6 +132,8 @@
 		2BB5604C1C967342006B9F26 /* UIImage+Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB560271C967342006B9F26 /* UIImage+Utility.m */; };
 		2BB5604D1C967342006B9F26 /* UIView+Frame.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB560291C967342006B9F26 /* UIView+Frame.m */; };
 		2BB5604E1C967342006B9F26 /* _CLImageEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB5602C1C967342006B9F26 /* _CLImageEditorViewController.m */; };
+		2BB560571C96995F006B9F26 /* UITool.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB560541C96995F006B9F26 /* UITool.m */; };
+		2BB560581C96995F006B9F26 /* ImageTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB560561C96995F006B9F26 /* ImageTools.m */; };
 		2BC741651C85A207002D036F /* FileManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC741641C85A207002D036F /* FileManagerViewController.m */; };
 		2BC741691C85AC8E002D036F /* FileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC741671C85AC8E002D036F /* FileCell.m */; };
 		2BC7416A1C85AC8E002D036F /* FileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BC741681C85AC8E002D036F /* FileCell.xib */; };
@@ -777,6 +779,10 @@
 		2BB560291C967342006B9F26 /* UIView+Frame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frame.m"; sourceTree = "<group>"; };
 		2BB5602B1C967342006B9F26 /* _CLImageEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CLImageEditorViewController.h; sourceTree = "<group>"; };
 		2BB5602C1C967342006B9F26 /* _CLImageEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CLImageEditorViewController.m; sourceTree = "<group>"; };
+		2BB560531C96995F006B9F26 /* UITool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITool.h; sourceTree = "<group>"; };
+		2BB560541C96995F006B9F26 /* UITool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITool.m; sourceTree = "<group>"; };
+		2BB560551C96995F006B9F26 /* ImageTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageTools.h; sourceTree = "<group>"; };
+		2BB560561C96995F006B9F26 /* ImageTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageTools.m; sourceTree = "<group>"; };
 		2BC741631C85A207002D036F /* FileManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileManagerViewController.h; sourceTree = "<group>"; };
 		2BC741641C85A207002D036F /* FileManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileManagerViewController.m; sourceTree = "<group>"; };
 		2BC741661C85AC8E002D036F /* FileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCell.h; sourceTree = "<group>"; };
@@ -1404,6 +1410,7 @@
 		2B4076BA1C4508F7003A7161 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				2BB560521C969956006B9F26 /* Tools */,
 				2BB55FDA1C967342006B9F26 /* CLImageEditor */,
 				884047BA1C8C4B57000D934F /* ChineseSorting */,
 				8894B5841C8A7982005E0889 /* MBProgressHUD.h */,
@@ -1420,8 +1427,6 @@
 				2BC9D5351C733D02005F3954 /* WXLabel.m */,
 				2B71EF911C71BE110082BAE3 /* AFNetworking */,
 				2B71EF8B1C71B30C0082BAE3 /* MLImageCrop */,
-				2BAD25D61C4903AE007EBFAE /* UICommons.h */,
-				2BAD25D71C4903D2007EBFAE /* PCH.pch */,
 				2BEA0B781C4624BF00A719A8 /* DateTools */,
 				2B4076A91C4508EB003A7161 /* Extras */,
 				2B4076B01C4508EB003A7161 /* WPAttributedMarkup */,
@@ -1790,6 +1795,19 @@
 				2BB5602C1C967342006B9F26 /* _CLImageEditorViewController.m */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		2BB560521C969956006B9F26 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				2BB560531C96995F006B9F26 /* UITool.h */,
+				2BB560541C96995F006B9F26 /* UITool.m */,
+				2BB560551C96995F006B9F26 /* ImageTools.h */,
+				2BB560561C96995F006B9F26 /* ImageTools.m */,
+				2BAD25D61C4903AE007EBFAE /* UICommons.h */,
+				2BAD25D71C4903D2007EBFAE /* PCH.pch */,
+			);
+			name = Tools;
 			sourceTree = "<group>";
 		};
 		2BC89AF31C8964D100782C45 /* MJRefresh */ = {
@@ -3061,6 +3079,7 @@
 				2B71EFB91C71BE110082BAE3 /* AFHTTPSessionManager.m in Sources */,
 				2BEA0B8F1C4624BF00A719A8 /* DTTimePeriodGroup.m in Sources */,
 				2BC9D5331C73395C005F3954 /* WebViewController.m in Sources */,
+				2BB560571C96995F006B9F26 /* UITool.m in Sources */,
 				8894B6E11C8A86F6005E0889 /* prng.c in Sources */,
 				88BEE3AB1C85D26900293A82 /* FileModel.m in Sources */,
 				2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */,
@@ -3085,6 +3104,7 @@
 				2BC89B3D1C89A0DE00782C45 /* TitleCell.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
 				2B7C9E141C86948700062209 /* SDWebImageDownloaderOperation.m in Sources */,
+				2BB560581C96995F006B9F26 /* ImageTools.m in Sources */,
 				2B71EFB71C71BE110082BAE3 /* AFHTTPRequestOperation.m in Sources */,
 				2BC89B311C8964D100782C45 /* MJRefreshStateHeader.m in Sources */,
 				2BC741691C85AC8E002D036F /* FileCell.m in Sources */,

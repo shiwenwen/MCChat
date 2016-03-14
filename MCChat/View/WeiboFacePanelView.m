@@ -16,7 +16,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self _createSubViews];
-        self.backgroundColor = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
+//        self.backgroundColor = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
+        self.backgroundColor = [UIColor whiteColor];
     }
     return self;
 }
@@ -44,11 +45,13 @@
     _pageCtrl = [[UIPageControl alloc]initWithFrame:CGRectMake(0, _scrollView.bottom, KScreenWidth, 30)];
     _pageCtrl.currentPage = 0;
     _pageCtrl.numberOfPages = _faceView.items.count;
-    
+    _pageCtrl.currentPageIndicatorTintColor = [UIColor colorWithRed:0.297 green:0.724 blue:1.000 alpha:1.000];
+    _pageCtrl.pageIndicatorTintColor = [UIColor colorWithWhite:0.921 alpha:1.000];
     [self addSubview:_pageCtrl];
     
     self.width = _scrollView.width;
     self.height = _scrollView.height + _pageCtrl.height;
+
 }
 
 
@@ -68,6 +71,7 @@
     UIButton *send = [[UIButton alloc]initWithFrame:CGRectMake(self.width - 60, self.height - 30, 60, 30)];
     [self addSubview:send];
     [send setTitle:@"发送" forState:UIControlStateNormal];
+    [send setTitleColor:[UIColor colorWithRed:0.088 green:0.703 blue:1.000 alpha:1.000] forState:UIControlStateNormal];
     [send addTarget:target action:sel forControlEvents:UIControlEventTouchUpInside];
 }
 @end

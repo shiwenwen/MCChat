@@ -579,7 +579,7 @@
     self.sendBackView.frame = CGRectMake(0, self.view.height - ChatHeight, WIDTH, ChatHeight);
     
     UIView *backLine = [[UIView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, .5)];
-    backLine.backgroundColor = [UIColor colorWithWhite:0.078 alpha:1.000];
+    backLine.backgroundColor = [UIColor colorWithWhite:0.85 alpha:1.000];
     [self.sendBackView addSubview:backLine];
     
     for (UIView * view in self.tabVC.tabBar.subviews) {
@@ -606,7 +606,7 @@
     self.sendTextView.returnKeyType = UIReturnKeySend;
     self.sendTextView.font = [UIFont systemFontOfSize:17];
     self.sendTextView.layer.cornerRadius = 5;
-    self.sendTextView.layer.borderColor =[UIColor colorWithWhite:0.449 alpha:1.000].CGColor;
+    self.sendTextView.layer.borderColor =[UIColor colorWithWhite:0.743 alpha:1.000].CGColor;
     self.sendTextView.layer.borderWidth = .5;
     self.sendTextView.layer.masksToBounds = YES;
     self.sendTextView.editable = YES;
@@ -962,9 +962,11 @@
             self.attachmentCollectionView.backgroundColor = [UIColor whiteColor];
             self.attachmentCollectionView.dataSource = self;
             self.attachmentCollectionView.delegate = self;
-            self.attachmentCollectionView.backgroundColor  = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
+//            self.attachmentCollectionView.backgroundColor  = [UIColor colorWithRed:0.282 green:0.716 blue:1.000 alpha:0.600];
             [self.tabBarController.view addSubview:self.attachmentCollectionView];
-            
+            UIView *backLine = [[UIView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, .5)];
+            backLine.backgroundColor = [UIColor colorWithWhite:.85 alpha:1.000];
+            [self.attachmentCollectionView addSubview:backLine];
             
             
             

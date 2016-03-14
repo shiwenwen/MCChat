@@ -20,4 +20,20 @@
 #define KHaveGesturePsd @"haveGesturePsd"
 #define KHaveFingerprint @"haveFingerprint"
 #define KGetNewFile @"getNewFile"
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+// 颜色(RGB)
+#define RGBColor(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define RGBACOLOR(r, g, b, a)   [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
+
+// 常用颜色
+#define k99Gray [UIColor colorWithRed:153.f/255 green:153.f/255 blue:153.f/255 alpha:1.00f]
+#define kb5Gray [UIColor colorWithRed:181.f/255 green:181.f/255 blue:181.f/255 alpha:1.00f]
+#define kd9Gray [UIColor colorWithRed:217.f/255 green:217.f/255 blue:217.f/255 alpha:1.00f]
+#define klineGray [UIColor colorWithRed:208.f/255 green:208.f/255 blue:208.f/255 alpha:1.00f]
+#define kLightBlue [UIColor colorWithRed:9.f/255 green:150.f/255 blue:255.f/255 alpha:1.00f]
+#define kBgGray [UIColor colorWithRed:243.f/255 green:242.f/255 blue:241.f/255 alpha:1.00f]
+#define KMoneyRed [UIColor colorWithRed:0.961 green:0.271 blue:0.278 alpha:1.000]
+
+#define BlueFontColor [UIColor colorWithRed:38.f/255 green:143.f/255 blue:254.f/255 alpha:1.0]
+
 #endif /* UICommons_h */
