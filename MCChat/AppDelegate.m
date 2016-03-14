@@ -40,7 +40,7 @@
     UIApplicationShortcutIconTypeSearch,
     UIApplicationShortcutIconTypeShare
 */
-    
+    /*
     if ([[UIDevice currentDevice].systemVersion floatValue] > 9.0) {
         
         UIApplicationShortcutItem
@@ -121,12 +121,12 @@
                      iconWithTemplateImageName:@"ToolViewEmotion"] userInfo:nil];
         
         [[UIApplication sharedApplication] setShortcutItems: @[item1, item2, item3, item4 ]];
-        // 这个鬼东西实现起来是不是还是很简单的啊
+
 
     
     }
     
-    
+*/    
     
     
     
