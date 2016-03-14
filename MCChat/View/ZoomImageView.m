@@ -9,6 +9,7 @@
 #import "ZoomImageView.h"
 #import "CustomAlertView.h"
 #import "UIView+UIViewController.h"
+
 #define KScreenHeight [UIScreen mainScreen].bounds.size.height
 #define KScreenWidth [UIScreen mainScreen].bounds.size.width
 @implementation ZoomImageView
@@ -27,12 +28,111 @@
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(loadOriginal_pic:)];
         self.userInteractionEnabled = YES;
+        
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(showUMSocial:)];
+        longPress.minimumPressDuration = 1;
+        
         [self addGestureRecognizer:tap];
-
+        [self addGestureRecognizer:longPress];
         
     }
     return self;
 }
+- (void)showUMSocial:(UILongPressGestureRecognizer *)longPress{
+    
+    if (longPress.state == UIGestureRecognizerStateBegan) {
+        NSString *shareText = @"~分享自MCChat";             //分享内嵌文字
+        //    UIImage *shareImage = [UIImage imageNamed:@"UMS_social_demo"];          //分享内嵌图片
+        UIImage *shareImage = self.image;
+        //调用快速分享接口
+        [UMSocialSnsService presentSnsIconSheetView:self.viewController
+                                             appKey:UMENG_KEY
+                                          shareText:shareText
+                                         shareImage:shareImage
+                                    shareToSnsNames:@[UMShareToSina]
+                                           delegate:self];
+        
+   
+    }
+    
+    
+}
+
+#pragma mark -- UM 
+/**
+ 自定义关闭授权页面事件
+ 
+ @param navigationCtroller 关闭当前页面的navigationCtroller对象
+ 
+ */
+//-(BOOL)closeOauthWebViewController:(UINavigationController *)navigationCtroller socialControllerService:(UMSocialControllerService *)socialControllerService;
+
+/**
+ 关闭当前页面之后
+ 
+ @param fromViewControllerType 关闭的页面类型
+ 
+ */
+-(void)didCloseUIViewController:(UMSViewControllerType)fromViewControllerType{
+ 
+    
+}
+
+/**
+ 各个页面执行授权完成、分享完成、或者评论完成时的回调函数
+ 
+ @param response 返回`UMSocialResponseEntity`对象，`UMSocialResponseEntity`里面的viewControllerType属性可以获得页面类型
+ */
+-(void)didFinishGetUMSocialDataInViewController:(UMSocialResponseEntity *)response{
+    
+    NSLog(@"didFinishGetUMSocialDataInViewController with response is %@",response);
+    //根据`responseCode`得到发送结果,如果分享成功
+    if(response.responseCode == UMSResponseCodeSuccess)
+    {
+        //得到分享到的微博平台名
+        NSLog(@"share to sns name is %@",[[response.data allKeys] objectAtIndex:0]);
+        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
+        
+    }else{
+        
+        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
+    }
+    
+    
+}
+
+/**
+ 点击分享列表页面，之后的回调方法，你可以通过判断不同的分享平台，来设置分享内容。
+ 例如：
+ 
+ -(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData
+ {
+ if (platformName == UMShareToSina) {
+ socialData.shareText = @"分享到新浪微博的文字内容";
+ }
+ else{
+ socialData.shareText = @"分享到其他平台的文字内容";
+ }
+ }
+ 
+ @param platformName 点击分享平台
+ 
+ @prarm socialData   分享内容
+ */
+//-(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData;
+
+
+/**
+ 配置点击分享列表后是否弹出分享内容编辑页面，再弹出分享，默认需要弹出分享编辑页面
+ 
+ @result 设置是否需要弹出分享内容编辑页面，默认需要
+ 
+ */
+- (BOOL)isDirectShareInIconActionSheet{
+    
+    return YES;
+}
+
 - (void)loadOriginal_pic:(UILongPressGestureRecognizer *)tap{
     
 

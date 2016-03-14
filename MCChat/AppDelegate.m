@@ -16,7 +16,21 @@
 #import "FileDetailViewController.h"
 #import "FileManagerViewController.h"
 #import "FileModel.h"
-@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>
+#import "UMSocial.h"
+
+
+
+#import "WeiboSDK.h"
+
+#import "UMSocialWechatHandler.h"
+
+#import "UMSocialQQHandler.h"
+
+#import "UMSocialSinaSSOHandler.h"
+#import "UMSocialRenrenHandler.h"
+
+
+@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate,WeiboSDKDelegate>
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
 @property (nonatomic,strong)MainTabBarViewController *mainTabBar;
@@ -251,9 +265,23 @@
     
     
     
-//手势锁
+//----手势锁
     [self showGesLock:.15];
     
+//-----社会化分享
+    //友盟
+    [UMSocialData setAppKey:UMENG_KEY];
+    
+    [UMSocialData openLog:YES];
+    
+    //设置微信AppId，设置分享url，默认使用友盟的网址
+//    [UMSocialWechatHandler setWXAppId:@"wxdc1e388c3822c80b" appSecret:@"a393c1527aaccb95f3a4c88d6d1455f6" url:@"http://www.umeng.com/social"];
+    
+    // 打开新浪微博的SSO开关
+
+    [UMSocialSinaSSOHandler openNewSinaSSOWithAppKey:SINA_APPKEY
+                                              secret:SINA_APPSECRET
+                                         RedirectURL:SINA_RedirectURL];
     
     
     return YES;
@@ -430,7 +458,7 @@
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 
-    
+       [UMSocialSnsService  applicationDidBecomeActive];
     
 }
 
@@ -499,34 +527,53 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    if (url != nil) {
-        NSString *path = [url absoluteString];
-        
-
-        path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-        NSMutableString *string = [[NSMutableString alloc] initWithString:path];
-        
-        
-        if ([path hasPrefix:@"file:///private"]) {
-            [string replaceOccurrencesOfString:@"file:///private" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, path.length)];
-            NSLog(@"文件的路径%@",string);
-            
-        }
-        
+    NSString *schemeStr = [url scheme];
     
-        self.getFilePath = string;
-        NSRange range = [string rangeOfString:@"/" options:NSBackwardsSearch];
-        NSString *name = @"未知";
-        if (range.location != NSNotFound) {
-            name = [string substringFromIndex:range.location + 1];
-        }
+    BOOL result = [UMSocialSnsService handleOpenURL:url];
+    if (result == FALSE) {
+            //调用其他SDK，例如支付宝SDK等
         
-      
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"新文件" message:name delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"发送",@"查看", nil];
-        [alert show];
+        //文件
+        if (url != nil) {
+            NSString *path = [url absoluteString];
+            
+            
+            path = [path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            
+            NSMutableString *string = [[NSMutableString alloc] initWithString:path];
+            
+            
+            if ([path hasPrefix:@"file:///private"]) {
+                [string replaceOccurrencesOfString:@"file:///private" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, path.length)];
+                NSLog(@"文件的路径%@",string);
+                
+            }
+            
+            
+            self.getFilePath = string;
+            NSRange range = [string rangeOfString:@"/" options:NSBackwardsSearch];
+            NSString *name = @"未知";
+            if (range.location != NSNotFound) {
+                name = [string substringFromIndex:range.location + 1];
+            }
+            
+            
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"新文件" message:name delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"发送",@"查看", nil];
+            [alert show];
+        }
+        return YES;
+        
+  
+        
     }
-    return YES;
+
+
+    return result;
+    
+    
+    
+    
+   
 }
 
 

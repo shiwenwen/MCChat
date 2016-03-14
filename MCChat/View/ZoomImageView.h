@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "UIImage+GIF.h"
 #import "UIView+UIViewController.h"
-@interface ZoomImageView : UIImageView<UIScrollViewDelegate,UIAlertViewDelegate>
+#import "UMSocialShakeService.h"
+@interface ZoomImageView : UIImageView<UIScrollViewDelegate,UIAlertViewDelegate,UMSocialUIDelegate>
 
 
 @property (nonatomic,strong)UIImageView *lagerImageView;

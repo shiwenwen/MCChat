@@ -35,5 +35,11 @@
 #define KMoneyRed [UIColor colorWithRed:0.961 green:0.271 blue:0.278 alpha:1.000]
 
 #define BlueFontColor [UIColor colorWithRed:38.f/255 green:143.f/255 blue:254.f/255 alpha:1.0]
+//社会化分享
 
+#define UMENG_KEY  @"56e682aee0f55a65e5000e0c"
+//新浪
+#define SINA_APPKEY @"3914267365"
+#define SINA_APPSECRET @"0b98291d8c114162bdd1b984aa885621"
+#define SINA_RedirectURL @"http://sns.whalecloud.com/sina2/callback"
 #endif /* UICommons_h */
