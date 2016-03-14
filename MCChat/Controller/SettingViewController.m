@@ -431,7 +431,7 @@
         CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
         
         editor.delegate = self;
-        [UIApplication sharedApplication].statusBarHidden = NO;
+
         [picker pushViewController:editor animated:YES];
 
         
@@ -472,13 +472,17 @@
         
         //得到选择后沙盒中图片的完整路径
         NSString * filePath = [[NSString alloc]initWithFormat:@"%@/icon%@",DocumentsPath,type];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UserDefaultsSet(filePath, @"headerIcon");
+            
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeHeaderIcon" object:nil];
+            
+             [collection reloadData];
+        });
         
-        
-        UserDefaultsSet(filePath, @"headerIcon");
-        
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeHeaderIcon" object:nil];
+      
     });
     
     
@@ -494,7 +498,7 @@
     
     [editor dismissViewControllerAnimated:YES completion:^{
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-        [collection reloadData];
+       
     }];
 }
 

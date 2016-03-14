@@ -1088,8 +1088,9 @@
             
             [self presentViewController:_picker animated:YES completion:^{
                 [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+             
             }];
-            
+       
 
         }
             break;
@@ -1124,6 +1125,7 @@
 }
 
 #pragma mark UIActionSheetDelegate Method
+/*
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     _picker = [[UIImagePickerController alloc] init];
@@ -1145,8 +1147,8 @@
                  ];
             }];
             
-            
-            
+
+
             break;
             
         case 1:
@@ -1166,7 +1168,7 @@
     }
 }
 
-
+*/
 
 // 相册
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -1182,7 +1184,7 @@
         CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
 
         editor.delegate = self;
-        [UIApplication sharedApplication].statusBarHidden = NO;
+
         [picker pushViewController:editor animated:YES];
 
        

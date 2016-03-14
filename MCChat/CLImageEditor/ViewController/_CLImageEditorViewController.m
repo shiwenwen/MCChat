@@ -32,6 +32,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.toolInfo = [CLImageToolInfo toolInfoForToolClass:[self class]];
+        
     }
     return self;
 }
@@ -54,6 +55,7 @@
 {
     self = [self init];
     if (self){
+        [UIApplication sharedApplication].statusBarHidden = NO;
         _originalImage = [image deepCopy];
         self.delegate = delegate;
     }
@@ -76,27 +78,28 @@
 
 #pragma mark- Custom initialization
 
+
 - (void)initNavigationBar
 {
     UIBarButtonItem *rightBarButtonItem = nil;
     NSString *doneBtnTitle = [CLImageEditorTheme localizedString:@"CLImageEditor_DoneBtnTitle" withDefault:nil];
     
     if(![doneBtnTitle isEqualToString:@"CLImageEditor_DoneBtnTitle"]){
-//        rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:doneBtnTitle style:UIBarButtonItemStyleDone target:self action:@selector(pushedFinishBtn:)];
-         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(pushedFinishBtn:)];
+        //        rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:doneBtnTitle style:UIBarButtonItemStyleDone target:self action:@selector(pushedFinishBtn:)];
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(pushedFinishBtn:)];
     }
     else{
-//        rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(pushedFinishBtn:)];
-         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(pushedFinishBtn:)];
+        //        rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(pushedFinishBtn:)];
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(pushedFinishBtn:)];
     }
     
-//    self.navigationItem.rightBarButtonItem = rightBarButtonItem;
+    //    self.navigationItem.rightBarButtonItem = rightBarButtonItem;
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     
     if(_navigationBar==nil){
         UINavigationItem *navigationItem  = [[UINavigationItem alloc] init];
-//        navigationItem.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(pushedCloseBtn:)];
-         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(pushedCloseBtn:)];
+        //        navigationItem.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(pushedCloseBtn:)];
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(pushedCloseBtn:)];
         navigationItem.rightBarButtonItem = rightBarButtonItem;
         
         CGFloat dy = ([UIDevice iosVersion]<7) ? 0 : MIN([UIApplication sharedApplication].statusBarFrame.size.height, [UIApplication sharedApplication].statusBarFrame.size.width);
@@ -127,6 +130,7 @@
         _navigationBar.barStyle = UIBarStyleBlackTranslucent;
     }
 }
+
 
 - (void)initMenuScrollView
 {
@@ -227,6 +231,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
     if(self.targetImageView){
         [self expropriateImageView];
     }
@@ -234,7 +239,11 @@
         [self refreshImageView];
     }
 }
-
+- (void)viewWillDisappear:(BOOL)animated{
+    
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].statusBarHidden = NO;
+}
 #pragma mark- View transition
 
 - (void)copyImageViewInfo:(UIImageView*)fromView toView:(UIImageView*)toView
@@ -392,7 +401,7 @@
 
 + (NSString*)defaultTitle
 {
-    return [CLImageEditorTheme localizedString:@"CLImageEditor_DefaultTitle" withDefault:@"编辑"];
+    return [CLImageEditorTheme localizedString:@"CLImageEditor_DefaultTitle" withDefault:@"Edit"];
 }
 
 + (BOOL)isAvailable
@@ -575,8 +584,8 @@
     
     if(self.currentTool){
         UINavigationItem *item  = [[UINavigationItem alloc] initWithTitle:self.currentTool.toolInfo.title];
-        item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_OKBtnTitle" withDefault:@"确定"] style:UIBarButtonItemStyleDone target:self action:@selector(pushedDoneBtn:)];
-        item.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_BackBtnTitle" withDefault:@"返回"] style:UIBarButtonItemStylePlain target:self action:@selector(pushedCancelBtn:)];
+        item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_OKBtnTitle" withDefault:@"OK"] style:UIBarButtonItemStyleDone target:self action:@selector(pushedDoneBtn:)];
+        item.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_BackBtnTitle" withDefault:@"Back"] style:UIBarButtonItemStylePlain target:self action:@selector(pushedCancelBtn:)];
         
         [_navigationBar pushNavigationItem:item animated:(self.navigationController==nil)];
     }
@@ -628,7 +637,7 @@
     
     [self.currentTool executeWithCompletionBlock:^(UIImage *image, NSError *error, NSDictionary *userInfo) {
         if(error){
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:error.localizedDescription delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
         else if(image){
@@ -649,7 +658,13 @@
             [self.delegate imageEditorDidCancel:self];
         }
         else{
-            [self dismissViewControllerAnimated:YES completion:nil];
+
+            [self dismissViewControllerAnimated:YES completion:^{
+                
+                [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent ;
+                
+            }];
+
         }
     }
     else{

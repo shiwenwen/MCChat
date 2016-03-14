@@ -24,7 +24,7 @@
 
 + (NSString*)defaultTitle
 {
-    return [CLImageEditorTheme localizedString:@"CLFilterTool_DefaultTitle" withDefault:@"滤镜"];
+    return [CLImageEditorTheme localizedString:@"CLFilterTool_DefaultTitle" withDefault:@"Filter"];
 }
 
 + (BOOL)isAvailable

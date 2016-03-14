@@ -158,7 +158,7 @@
         CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
         
         editor.delegate = self;
-        [UIApplication sharedApplication].statusBarHidden = NO;
+
         [picker pushViewController:editor animated:YES];
 
         

@@ -197,7 +197,7 @@
             
             
             CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:self.logoImage.image];
-            [UIApplication sharedApplication].statusBarHidden = NO;
+
             editor.delegate = self;
             
             [self.navigationController pushViewController:editor animated:YES];
