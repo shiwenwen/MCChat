@@ -1139,7 +1139,11 @@
                 _picker.sourceType = UIImagePickerControllerSourceTypeCamera;
             }
             
-            [self presentViewController:_picker animated:YES completion:nil];
+            [self presentViewController:_picker animated:YES completion:^{
+                
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                 ];
+            }];
             
             
             
@@ -1178,7 +1182,7 @@
         CLImageEditor *editor = [[CLImageEditor alloc] initWithImage:image];
 
         editor.delegate = self;
-        
+        [UIApplication sharedApplication].statusBarHidden = NO;
         [picker pushViewController:editor animated:YES];
 
        
