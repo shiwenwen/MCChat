@@ -67,11 +67,11 @@
 	<array>
 		<string>wechat</string>
 		<string>weixin</string>
-        <string>sinaweibohd</string>
-        <string>sinaweibo</string>
-        <string>sinaweibosso</string>
-        <string>weibosdk</string>
-        <string>weibosdk2.5</string>
+		<string>sinaweibohd</string>
+		<string>sinaweibo</string>
+		<string>sinaweibosso</string>
+		<string>weibosdk</string>
+		<string>weibosdk2.5</string>
 		<string>mqqapi</string>
 		<string>mqq</string>
 		<string>mqqOpensdkSSoLogin</string>

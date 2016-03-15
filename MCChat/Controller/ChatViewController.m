@@ -1726,13 +1726,28 @@
     
     __weak __typeof(cell)weakCell = cell;
     cell.voiceBlock = ^(NSURL *url,NSData *data,UIImageView *imageView){
-        if (_currentVoiceView.isAnimating) {
+        if ([_currentVoiceView isEqual:imageView]) {
             
-            [_currentVoiceView stopAnimating];
-            self.audioPlayer = nil;
-        }
-        
-        if (![_currentVoiceView isEqual:imageView]) {
+            if (_currentVoiceView.isAnimating) {
+                
+                [_currentVoiceView stopAnimating];
+                self.audioPlayer = nil;
+            }else{
+                
+                [_currentVoiceView startAnimating];
+                
+                weakCell.leftCorner.hidden = YES;
+                [self makeVideoPlayer:data];
+                
+            }
+        }else{
+            
+            if (_currentVoiceView.isAnimating) {
+                
+                [_currentVoiceView stopAnimating];
+                self.audioPlayer = nil;
+    
+            }
             _currentVoiceView = imageView;
             
             
@@ -1740,8 +1755,10 @@
             
             weakCell.leftCorner.hidden = YES;
             [self makeVideoPlayer:data];
-            
         }
+        
+  
+
        
     };
     if (cell.model.states == fileStates && cell.model.isSelf) {

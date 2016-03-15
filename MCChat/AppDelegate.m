@@ -22,15 +22,11 @@
 
 #import "WeiboSDK.h"
 
-#import "UMSocialWechatHandler.h"
-
-#import "UMSocialQQHandler.h"
-
 #import "UMSocialSinaSSOHandler.h"
-#import "UMSocialRenrenHandler.h"
 
 
-@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate,WeiboSDKDelegate>
+
+@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
 @property (nonatomic,strong)MainTabBarViewController *mainTabBar;
