@@ -1731,13 +1731,18 @@
             [_currentVoiceView stopAnimating];
             self.audioPlayer = nil;
         }
-        _currentVoiceView = imageView;
         
-        
-        [_currentVoiceView startAnimating];
-    
-        weakCell.leftCorner.hidden = YES;
-        [self makeVideoPlayer:data];
+        if (![_currentVoiceView isEqual:imageView]) {
+            _currentVoiceView = imageView;
+            
+            
+            [_currentVoiceView startAnimating];
+            
+            weakCell.leftCorner.hidden = YES;
+            [self makeVideoPlayer:data];
+            
+        }
+       
     };
     if (cell.model.states == fileStates && cell.model.isSelf) {
         
