@@ -28,7 +28,14 @@
 #import "FileManagerViewController.h"
 #import "FileDetailViewController.h"
 #import "CLImageEditor.h"
+#import <AssetsLibrary/ALAsset.h>
 
+#import <AssetsLibrary/ALAssetsLibrary.h>
+
+#import <AssetsLibrary/ALAssetsGroup.h>
+
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import "UIImage+GIF.h"
 @interface ChatViewController ()<NSStreamDelegate,UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate,WeiboFaceViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
     
     float _sendBackViewHeight;
@@ -175,7 +182,7 @@
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.236 green:0.620 blue:0.995 alpha:0.492];
     
     
-    [self makeBlueData];
+
     
     [self readyUI];
     
@@ -192,6 +199,7 @@
     
     
 }
+
 #pragma mark -- 收到新文件
 - (void)getNewFile:(NSNotification *)noti{
     
@@ -324,7 +332,7 @@
 - (void)setDefaultBackground{
     //    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"壁纸1.jpg"]];
     
-    UIImage *image = [UIImage imageNamed:@"launch_bg"];
+    UIImage *image = [UIImage imageNamed:@"壁纸1.jpg"];
     self.view.layer.contents = (id) image.CGImage;
     self.navigationController.navigationBar.titleTextAttributes =@{
                                                                    NSForegroundColorAttributeName:[UIColor whiteColor]
@@ -350,7 +358,9 @@
     
     _tabBarFrame = self.tabVC.view.frame;
 
-    
+    if (!self.sessionManager) {
+        [self makeBlueData];
+    }
 
 }
 
@@ -1175,8 +1185,99 @@
 // 相册
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    
+    NSLog(@"%@",info);
     NSString *type = [info objectForKey:UIImagePickerControllerMediaType];
+    NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
+   __block NSData *imageData;
+    if ([url.absoluteString hasSuffix:@"GIF"]) {
+        type = @"gif";
+        //
+        //    if(!self.sessionManager.isConnected)
+        //    {
+        //        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+        //        [alertView show];
+        //        return;
+        //    }
+        ALAssetsLibrary* assetLibrary = [[ALAssetsLibrary alloc] init];
+        void (^ALAssetsLibraryAssetForURLResultBlock)(ALAsset *) = ^(ALAsset *asset) {
+            
+            if (asset != nil) {
+                
+                
+                ALAssetRepresentation *rep = [asset defaultRepresentation];
+                Byte *imageBuffer = (Byte*)malloc(rep.size);
+                NSUInteger bufferSize = [rep getBytes:imageBuffer fromOffset:0.0 length:rep.size error:nil];
+                imageData = [NSData dataWithBytesNoCopy:imageBuffer length:bufferSize freeWhenDone:YES];
+                
+                ChatItem * chatItem = [[ChatItem alloc] init];
+                chatItem.isSelf = YES;
+                chatItem.states = picStates;
+                chatItem.picImage = [UIImage sd_animatedGIFWithData:imageData];
+                NSDate *date = [NSDate date];
+                NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+                [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];
+                NSString *dateStr = [formatter stringFromDate:date];
+                chatItem.timeStr = dateStr;
+                [self.datasource addObject:chatItem];
+                [self insertTheTableToButtom];
+                NSInteger index = self.datasource.count - 1;
+
+                [picker dismissViewControllerAnimated:YES completion:^{
+                    //             改变状态栏的颜色  改变为白色
+                    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+                    
+                    //先把图片转成NSData
+                    
+                    
+                    dispatch_async(dispatch_get_global_queue(2, 0), ^{
+                        
+                        //图片保存的路径
+                        //这里将图片放在沙盒的documents文件夹中
+                        NSString * DocumentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+                        
+                        //文件管理器
+                        NSFileManager *fileManager = [NSFileManager defaultManager];
+                        
+                        //把刚刚图片转换的data对象拷贝至沙盒中 并保存为image.png
+                        [fileManager createDirectoryAtPath:DocumentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+                        [fileManager createFileAtPath:[DocumentsPath stringByAppendingString:[NSString stringWithFormat:@"/image%@",type]] contents:imageData attributes:nil];
+                        
+                        //得到选择后沙盒中图片的完整路径
+                        NSString * filePath = [[NSString alloc]initWithFormat:@"%@/image%@",DocumentsPath,type];
+                        
+                        
+                        if(self.sessionManager.isConnected)
+                        {
+                            chatItem.progress =  [self sendAsResource:filePath key:chatItem.timeStr];
+                        }
+                        
+                        //            [self performSelectorOnMainThread:@selector(insertTheTableToButtom) withObject:nil waitUntilDone:YES];
+                        //            dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        //            });
+                        
+                        [self performSelectorOnMainThread:@selector(reloadTableVIewAtIndexPath:) withObject:[NSIndexPath indexPathForRow:index inSection:0] waitUntilDone:YES];
+                    });
+                    }];
+                                   
+
+            
+            }
+
+        };
+        
+        
+        
+        [assetLibrary assetForURL:url
+                      resultBlock:ALAssetsLibraryAssetForURLResultBlock
+                     failureBlock:^(NSError *error){
+                     }];
+        
+        
+        
+        return;
+
+    }
     //当选择的类型是图片
     if ([type isEqualToString:@"public.image"])
     {
@@ -2099,8 +2200,8 @@
                                                                                                                             }error:nil];
             }
           
-            BOOL isDic;
-            BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:BasePath isDirectory:&isDic];
+//            BOOL isDic;
+//            BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:BasePath isDirectory:&isDic];
             NSString *path = [BasePath stringByAppendingPathComponent:fileName];
 
         dispatch_async(dispatch_get_global_queue(2, 0), ^{
@@ -2155,7 +2256,7 @@
             chatItem.displayName = peer.displayName;
             chatItem.states = picStates;
             chatItem.content = name;
-            chatItem.picImage = [UIImage imageWithData:data];
+            chatItem.picImage = [UIImage sd_animatedGIFWithData:data];
             NSDate *date = [NSDate date];
             NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
             [formatter setDateFormat:@"yy-MM-dd HH:mm:ss"];

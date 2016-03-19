@@ -26,11 +26,18 @@
 
 
 
-@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>
+@interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>{
+    
+   NSInteger _errorIndex;
+    NSInteger _errorTime;
+    NSInteger _interval;
+}
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
 @property (nonatomic,strong)MainTabBarViewController *mainTabBar;
 @property (nonatomic,copy)NSString *getFilePath;
+@property (nonatomic,strong)UIView *shade;
+@property (nonatomic,strong)DBGuestureLock *lock;
 @end
 
 @implementation AppDelegate
@@ -268,7 +275,7 @@
     //友盟
     [UMSocialData setAppKey:UMENG_KEY];
     
-    [UMSocialData openLog:YES];
+//    [UMSocialData openLog:YES];
     
     //设置微信AppId，设置分享url，默认使用友盟的网址
 //    [UMSocialWechatHandler setWXAppId:@"wxdc1e388c3822c80b" appSecret:@"a393c1527aaccb95f3a4c88d6d1455f6" url:@"http://www.umeng.com/social"];
@@ -292,10 +299,11 @@
     if (!self.LockView) {
         self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
         self.LockView.backgroundColor = [UIColor colorWithRed:0.308 green:0.730 blue:1.000 alpha:1.000];
-        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 80)];
+        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 100)];
         self.lockStatusLabel.numberOfLines = 0;
+        self.lockStatusLabel.font = [UIFont fontWithName:@"DB LCD Temp" size:27];
         [self.LockView addSubview:self.lockStatusLabel];
-        self.lockStatusLabel.font = [UIFont systemFontOfSize:29];
+//        self.lockStatusLabel.font = [UIFont systemFontOfSize:27];
         
         self.lockStatusLabel.textColor = [UIColor whiteColor];
         self.lockStatusLabel.textAlignment = NSTextAlignmentCenter;
@@ -309,7 +317,7 @@
 //            dismissButton.titleLabel.font = [UIFont systemFontOfSize:19];
             [dismissButton addTarget:self action:@selector(evaluatePolicy) forControlEvents:UIControlEventTouchUpInside];
 
-            
+            self.shade = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight - 60)];
         }
         
         
@@ -321,14 +329,32 @@
         
 
         
-        
+    if ([UserDefaultsGet(@"errorIndex") integerValue] == 0 || ([[NSDate date] timeIntervalSince1970] - [UserDefaultsGet(@"errorTime")integerValue] > 5*60)) {
         self.lockStatusLabel.text = @"请绘制您解锁图案";
+        UserDefaultsSet(@(0), @"errorIndex");
+    }else {
+        _errorTime = [UserDefaultsGet(@"errorTime") integerValue];
+          _interval = 60 *5 - ( [[NSDate date] timeIntervalSince1970] - _errorTime);
+        if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+            self.lockStatusLabel.text =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试或使用指纹解锁\n%02ld:%02ld",_interval/60,_interval%60];
+        }else{
+            
+            self.lockStatusLabel.text
+            =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试\n%02ld:%02ld",_interval/60,_interval%60];
+        }
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdown:) userInfo:nil repeats:YES];
+
+        
+    }
         //Give me a Star: https://github.com/i36lib/DBGuestureLock/
-        DBGuestureLock *lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
-        [self.LockView addSubview:lock];
+        _lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
+        [self.LockView addSubview:_lock];
         [[UIApplication sharedApplication].keyWindow addSubview:self.LockView];
-        
-        
+    
+    
+        self.shade.hidden = YES;
+        [self.LockView addSubview:self.shade];
+    
         [UIView animateWithDuration:duration animations:^{
             self.LockView.transform = CGAffineTransformIdentity;
         } completion:^(BOOL finished) {
@@ -374,6 +400,11 @@
     } else {
         NSLog(@"login success");
         self.lockStatusLabel.text = @"解锁成功";
+        self.shade.hidden = YES;
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"errorTime"];
+        
+        _errorIndex =0;
+        UserDefaultsSet(@(_errorIndex), @"errorIndex");
         [self hiddenLockView];
         
     }
@@ -386,14 +417,59 @@
 
 -(void)guestureLock:(DBGuestureLock *)lock didGetIncorrectPswd:(NSString *)password {
     //NSLog(@"Password incorrect: %@", password);
+    
     if (![lock.firstTimeSetupPassword isEqualToString:DBFirstTimeSetupPassword]) {
         NSLog(@"Error: password not equal to first setup!");
      self.lockStatusLabel.text = @"手势错误";
+        _errorIndex ++;
+        if (_errorIndex > 4) {
+            self.shade.hidden = NO;
+            self.LockView.userInteractionEnabled = NO;
+            
+            _errorTime = [[NSDate date] timeIntervalSince1970];
+            _interval = 60 *5 - ( [[NSDate date] timeIntervalSince1970] - _errorTime);
+            if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+                self.lockStatusLabel.text =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试或使用指纹解锁\n%02ld:%02ld",_interval/60,_interval%60];
+            }else{
+                
+                self.lockStatusLabel.text
+                =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试\n%02ld:%02ld",_interval/60,_interval%60];
+            }
+            UserDefaultsSet(@(_errorTime), @"errorTime");
+            UserDefaultsSet(@(_errorIndex), @"errorIndex");
+            [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdown:) userInfo:nil repeats:YES];
+            
+
+        }
     } else {
         NSLog(@"login failed");
         self.lockStatusLabel.text = @"手势错误";
     }
 }
+- (void)countdown:(NSTimer *)timer{
+    
+    _interval = 60 *5 - ( [[NSDate date] timeIntervalSince1970] - _errorTime);
+
+    if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+       self.lockStatusLabel.text =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试或使用指纹解锁\n%02ld:%02ld",_interval/60,_interval%60];
+    }else{
+    
+      self.lockStatusLabel.text
+        =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试\n%02ld:%02ld",_interval/60,_interval%60];
+    }
+    if (_interval <= 0) {
+        
+        [timer invalidate];
+         self.shade.hidden = YES;
+        self.lockStatusLabel.text = @"请绘制您解锁图案";
+        self.LockView.userInteractionEnabled = YES;
+         UserDefaultsSet(@(0), @"errorIndex");
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"errorIndex"];
+
+    }
+  
+}
+
 -(void)guestureLock:(DBGuestureLock *)lock didSetPassword:(NSString*)password{
     
     
@@ -412,6 +488,9 @@
             
              msg =[NSString stringWithFormat:NSLocalizedString(@"验证成功", nil)];
              dispatch_async(dispatch_get_main_queue(), ^{
+                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"errorTime"];
+                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"errorIndex"];
+                 _errorIndex =0;
                  [self hiddenLockView];
              });
              

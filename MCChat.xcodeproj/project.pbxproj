@@ -525,6 +525,7 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		883B32401C9D2C11005E7F3F /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 883B323F1C9D2C11005E7F3F /* AssetsLibrary.framework */; };
 		884047BF1C8C4B57000D934F /* ChineseString.m in Sources */ = {isa = PBXBuildFile; fileRef = 884047BC1C8C4B57000D934F /* ChineseString.m */; };
 		884047C01C8C4B57000D934F /* pinyin.c in Sources */ = {isa = PBXBuildFile; fileRef = 884047BD1C8C4B57000D934F /* pinyin.c */; };
 		8841B7551C89D381002252B0 /* FileListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8841B7541C89D381002252B0 /* FileListViewController.m */; };
@@ -1275,6 +1276,7 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		883B323F1C9D2C11005E7F3F /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		884047BB1C8C4B57000D934F /* ChineseString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChineseString.h; sourceTree = "<group>"; };
 		884047BC1C8C4B57000D934F /* ChineseString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChineseString.m; sourceTree = "<group>"; };
 		884047BD1C8C4B57000D934F /* pinyin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinyin.c; sourceTree = "<group>"; };
@@ -1358,6 +1360,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				883B32401C9D2C11005E7F3F /* AssetsLibrary.framework in Frameworks */,
 				2BB560C01C96DE6F006B9F26 /* libiconv.2.4.0.tbd in Frameworks */,
 				2BB560BE1C96DE62006B9F26 /* Security.framework in Frameworks */,
 				2BB560BC1C96DE2C006B9F26 /* SystemConfiguration.framework in Frameworks */,
@@ -2482,6 +2485,7 @@
 		2BFAA1261C3FADD700E8D032 = {
 			isa = PBXGroup;
 			children = (
+				883B323F1C9D2C11005E7F3F /* AssetsLibrary.framework */,
 				2B4076BE1C45112D003A7161 /* Assets.xcassets */,
 				2B2A4E0F1C842F0D00FCF768 /* Framework */,
 				2BFAA1311C3FADD700E8D032 /* MCChat */,

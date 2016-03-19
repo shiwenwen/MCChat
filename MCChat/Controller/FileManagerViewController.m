@@ -13,6 +13,7 @@
 #import "MJRefresh.h"
 #import "WWPageController.h"
 #import "ChineseString.h"
+#import "UIImage+GIF.h"
 @interface FileManagerViewController ()<UITableViewDataSource,UITableViewDelegate>{
     
     NSArray *_filterTitles1;
@@ -89,17 +90,17 @@
     if (!self.contentPaths) {
         NSString *path1 = [NSString stringWithFormat:@"%@/Documents/MyInBox",NSHomeDirectory()];
         NSString *path2 = [NSString stringWithFormat:@"%@/Documents/Inbox",NSHomeDirectory()];
-//        self.contentPaths = @[path1,path2];
+        self.contentPaths = @[path1,path2];
         
-        NSString *path = [NSString stringWithFormat:@"%@/Documents",NSHomeDirectory()];
-         NSArray *subPaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil] ;
-        
-        NSMutableArray *pathAppdenSubpaths = [NSMutableArray array];
-        for (NSString *subPath in subPaths) {
-            [pathAppdenSubpaths addObject:[path stringByAppendingPathComponent:subPath]];
-            
-        }
-        self.contentPaths = pathAppdenSubpaths;
+//        NSString *path = [NSString stringWithFormat:@"%@/Documents",NSHomeDirectory()];
+//         NSArray *subPaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil] ;
+//        
+//        NSMutableArray *pathAppdenSubpaths = [NSMutableArray array];
+//        for (NSString *subPath in subPaths) {
+//            [pathAppdenSubpaths addObject:[path stringByAppendingPathComponent:subPath]];
+//            
+//        }
+//        self.contentPaths = pathAppdenSubpaths;
 //        self.contentPaths = @[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/MyInBox"],[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Inbox"]];
     }
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -1814,8 +1815,8 @@
     
     if (cell.model.fileType == image) {
         
-        cell.logoImageView.image = [UIImage imageWithContentsOfFile:cell.model.path];
-        
+//        cell.logoImageView.image = [UIImage imageWithContentsOfFile:cell.model.path];
+        cell.logoImageView.image = [UIImage sd_animatedGIFWithData:[NSData dataWithContentsOfFile:cell.model.path]];
     }
     return cell;
 }

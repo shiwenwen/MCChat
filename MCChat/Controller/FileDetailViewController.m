@@ -15,6 +15,7 @@
 #import "MBProgressHUD.h"
 #import "CLImageEditor.h"
 #import "FileManagerViewController.h"
+#import "UIImage+GIF.h"
 @interface FileDetailViewController ()<UIDocumentInteractionControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>
 @property (nonatomic,strong)UIDocumentInteractionController *documentController;
 @property (nonatomic,strong)UIImageView *imageView;
@@ -46,7 +47,7 @@
     if (self.model.fileType ==image) {
         
         self.logoImage.hidden = YES;
-        UIImage *image= [UIImage imageWithContentsOfFile:self.model.path];
+        UIImage *image= [UIImage sd_animatedGIFWithData:[NSData dataWithContentsOfFile:self.model.path]];
         float scale = image.size.width / image.size.height;
         
         self.imageView = [[ZoomImageView alloc]initWithFrame:CGRectMake(KScreenWidth/2 - 50*scale, 164, 100*scale, 100)];
