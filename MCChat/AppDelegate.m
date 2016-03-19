@@ -38,6 +38,7 @@
 @property (nonatomic,copy)NSString *getFilePath;
 @property (nonatomic,strong)UIView *shade;
 @property (nonatomic,strong)DBGuestureLock *lock;
+@property (nonatomic,strong)UIButton *dismissButton;
 @end
 
 @implementation AppDelegate
@@ -299,7 +300,7 @@
     if (!self.LockView) {
         self.LockView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight)];
         self.LockView.backgroundColor = [UIColor colorWithRed:0.308 green:0.730 blue:1.000 alpha:1.000];
-        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, KNavigationBarHeight, KScreenWidth - 40, 100)];
+        self.lockStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, KNavigationBarHeight-20, KScreenWidth - 30, 120)];
         self.lockStatusLabel.numberOfLines = 0;
         self.lockStatusLabel.font = [UIFont fontWithName:@"DB LCD Temp" size:27];
         [self.LockView addSubview:self.lockStatusLabel];
@@ -307,53 +308,43 @@
         
         self.lockStatusLabel.textColor = [UIColor whiteColor];
         self.lockStatusLabel.textAlignment = NSTextAlignmentCenter;
-        if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
-           
-            UIButton *dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
-            dismissButton.frame = CGRectMake(KScreenWidth - 140, KScreenHeight - 60, 120, 40);
-            [self.LockView addSubview:dismissButton];
-            [dismissButton setTitle:@"使用指纹解锁" forState:UIControlStateNormal];
-            [dismissButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//            dismissButton.titleLabel.font = [UIFont systemFontOfSize:19];
-            [dismissButton addTarget:self action:@selector(evaluatePolicy) forControlEvents:UIControlEventTouchUpInside];
-
-            self.shade = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight - 60)];
-        }
-        
+       
+        self.shade = [[UIView alloc]initWithFrame:CGRectMake(0, 0, KScreenWidth, KScreenHeight - 70)];
         
         
         self.LockView.transform = CGAffineTransformMakeTranslation(0,KScreenHeight);
         
     }
 
+    if (!_dismissButton) {
         
-
+        _dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        _dismissButton.frame = CGRectMake(KScreenWidth - 140, KScreenHeight - 60, 120, 40);
+        [self.LockView addSubview:_dismissButton];
+        [_dismissButton setTitle:@"使用指纹解锁" forState:UIControlStateNormal];
+        [_dismissButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _dismissButton.titleLabel.font = [UIFont systemFontOfSize:19];
+        [_dismissButton addTarget:self action:@selector(evaluatePolicy) forControlEvents:UIControlEventTouchUpInside];
         
-    if ([UserDefaultsGet(@"errorIndex") integerValue] == 0 || ([[NSDate date] timeIntervalSince1970] - [UserDefaultsGet(@"errorTime")integerValue] > 5*60)) {
-        self.lockStatusLabel.text = @"请绘制您解锁图案";
-        UserDefaultsSet(@(0), @"errorIndex");
-    }else {
-        _errorTime = [UserDefaultsGet(@"errorTime") integerValue];
-          _interval = 60 *5 - ( [[NSDate date] timeIntervalSince1970] - _errorTime);
-        if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
-            self.lockStatusLabel.text =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试或使用指纹解锁\n%02ld:%02ld",_interval/60,_interval%60];
-        }else{
-            
-            self.lockStatusLabel.text
-            =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试\n%02ld:%02ld",_interval/60,_interval%60];
-        }
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdown:) userInfo:nil repeats:YES];
-
         
     }
+    if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+        _dismissButton.hidden = NO;
+    }else{
+        _dismissButton.hidden = YES;
+    }
+
+    
+
         //Give me a Star: https://github.com/i36lib/DBGuestureLock/
+    
         _lock = [DBGuestureLock lockOnView:[UIApplication sharedApplication].keyWindow delegate:self];
         [self.LockView addSubview:_lock];
         [[UIApplication sharedApplication].keyWindow addSubview:self.LockView];
     
     
         self.shade.hidden = YES;
-        [self.LockView addSubview:self.shade];
+        [[UIApplication sharedApplication].keyWindow addSubview:self.shade];
     
         [UIView animateWithDuration:duration animations:^{
             self.LockView.transform = CGAffineTransformIdentity;
@@ -368,7 +359,26 @@
             
         }];
     
-    
+    if ([UserDefaultsGet(@"errorIndex") integerValue] == 0 || ([[NSDate date] timeIntervalSince1970] - [UserDefaultsGet(@"errorTime")integerValue] > 5*60)) {
+        self.lockStatusLabel.text = @"请绘制您解锁图案";
+        UserDefaultsSet(@(0), @"errorIndex");
+        self.shade.hidden = YES;
+    }else {
+        
+        _errorTime = [UserDefaultsGet(@"errorTime") integerValue];
+        _interval = 60 *5 - ( [[NSDate date] timeIntervalSince1970] - _errorTime);
+        self.shade.hidden = NO;
+        if ([UserDefaultsGet(KHaveFingerprint)boolValue]) {
+            self.lockStatusLabel.text =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试或使用指纹解锁\n%02ld:%02ld",_interval/60,_interval%60];
+        }else{
+            
+            self.lockStatusLabel.text
+            =  [NSString stringWithFormat:@"解锁错误次数过多，请稍后重试\n%02ld:%02ld",_interval/60,_interval%60];
+        }
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdown:) userInfo:nil repeats:YES];
+        
+        
+    }
     
 }
 
