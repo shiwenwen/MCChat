@@ -45,11 +45,14 @@
         //    UIImage *shareImage = [UIImage imageNamed:@"UMS_social_demo"];          //分享内嵌图片
         UIImage *shareImage = self.image;
         //调用快速分享接口
+        [UMSocialData defaultData].extConfig.wxMessageType = UMSocialWXMessageTypeImage;
+        [UMSocialData defaultData].extConfig.yxsessionData.yxMessageType = UMSocialYXMessageTypeImage;
+         [UMSocialData defaultData].extConfig.yxtimelineData.yxMessageType = UMSocialYXMessageTypeImage;
         [UMSocialSnsService presentSnsIconSheetView:self.viewController
                                              appKey:UMENG_KEY
                                           shareText:shareText
                                          shareImage:shareImage
-                                    shareToSnsNames:@[UMShareToSina]
+                                    shareToSnsNames:@[UMShareToSina,UMShareToYXSession,UMShareToYXTimeline,UMShareToWechatSession,UMShareToWechatTimeline,UMShareToWechatFavorite]
                                            delegate:self];
         
    

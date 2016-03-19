@@ -55,7 +55,7 @@
     BOOL _isfileStream;
     FileModel *_currentFileModel;
     NSMutableDictionary *_progressDictionary;
-    
+    BOOL _cameraAvaible;
 }
 
 @property (nonatomic,strong)NSMutableDictionary *otherHeaderImages;
@@ -92,6 +92,17 @@
 
 @property (strong, nonatomic) UIProgressView *audioPower;//音频波动
 
+//
+@property (nonatomic, strong)       AVCaptureSession            * session;
+//AVCaptureSession对象来执行输入设备和输出设备之间的数据传递
+@property (nonatomic, strong)       AVCaptureDeviceInput        * videoInput;
+//AVCaptureDeviceInput对象是输入流
+@property (nonatomic, strong)       AVCaptureStillImageOutput   * stillImageOutput;
+//照片输出流对象，当然我的照相机只有拍照功能，所以只需要这个对象就够了
+@property (nonatomic, strong)       AVCaptureVideoPreviewLayer  * previewLayer;
+//预览图层，来显示照相机拍摄到的画面
+@property (nonatomic, strong)       UIBarButtonItem             * toggleButton;
+//切换前后镜头的按钮
 
 
 
@@ -191,6 +202,10 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenKeyboard)];
     [self.view addGestureRecognizer:tap];
     
+    UITapGestureRecognizer *doubleTap  = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(backGroundCamera:)];
+    [self.view addGestureRecognizer:doubleTap];
+    doubleTap.numberOfTapsRequired = 2;
+    [tap requireGestureRecognizerToFail:doubleTap];
     //监听背景切换
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(setDefaultBackground) name:@"ChangeDefaultBackground" object:nil];
     //监听新文件
@@ -200,6 +215,95 @@
     
 }
 
+
+#pragma mark - 背景摄像头
+- (void)backGroundCamera:(UITapGestureRecognizer *)tap{
+    NSLog(@"双击");
+    _cameraAvaible = !_cameraAvaible;
+    if (_cameraAvaible) {
+        if (!self.session) {
+            [self initialSession];
+
+        }
+            [self setUpCameraLayer];
+        [self.session startRunning];
+    }else{
+        [self.session stopRunning];
+        
+        [self.previewLayer removeFromSuperlayer];
+        self.previewLayer = nil;
+//        if (UserDefaultsGet(@"bgPath")) {
+//            
+//            UIImage *image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"bgPath")];
+//            self.view.layer.contents = (id) image.CGImage;
+//            self.navigationController.navigationBar.titleTextAttributes =@{
+//                                                                           NSForegroundColorAttributeName:[UIColor whiteColor]
+//                                                                           
+//                                                                           };
+//        }else{
+//            [self setDefaultBackground];
+//            
+//        }
+
+    }
+    
+    
+}
+- (void) initialSession
+{
+
+    self.session = [[AVCaptureSession alloc] init];
+    self.videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:nil];
+    //[self fronCamera]方法会返回一个AVCaptureDevice对象，因为我初始化时是采用前摄像头，所以这么写，具体的实现方法后面会介绍
+//    self.stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+//    NSDictionary * outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG,AVVideoCodecKey, nil];
+//    //这是输出流的设置参数AVVideoCodecJPEG参数表示以JPEG的图片格式输出图片
+//    [self.stillImageOutput setOutputSettings:outputSettings];
+    
+    if ([self.session canAddInput:self.videoInput]) {
+        [self.session addInput:self.videoInput];
+    }
+//    if ([self.session canAddOutput:self.stillImageOutput]) {
+//        [self.session addOutput:self.stillImageOutput];
+//    }
+//    
+}
+- (void) setUpCameraLayer
+{
+    if (_cameraAvaible == NO) return;
+    
+    if (self.previewLayer == nil) {
+        self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
+        UIView * view = self.view;
+        CALayer * viewLayer = [view layer];
+        [viewLayer setMasksToBounds:YES];
+        
+        CGRect bounds = [view bounds];
+        [self.previewLayer setFrame:bounds];
+        [self.previewLayer setVideoGravity:AVLayerVideoGravityResizeAspect];
+        
+        [viewLayer insertSublayer:self.previewLayer below:[[viewLayer sublayers] objectAtIndex:0]];
+        
+    }
+}
+- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition) position {
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if ([device position] == position) {
+            return device;
+        }
+    }
+    return nil;
+}
+
+
+- (AVCaptureDevice *)frontCamera {
+    return [self cameraWithPosition:AVCaptureDevicePositionFront];
+}
+
+- (AVCaptureDevice *)backCamera {
+    return [self cameraWithPosition:AVCaptureDevicePositionBack];
+}
 #pragma mark -- 收到新文件
 - (void)getNewFile:(NSNotification *)noti{
     

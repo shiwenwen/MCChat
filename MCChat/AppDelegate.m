@@ -23,8 +23,8 @@
 #import "WeiboSDK.h"
 
 #import "UMSocialSinaSSOHandler.h"
-
-
+#import "UMSocialYiXinHandler.h"
+#import "UMSocialWechatHandler.h"
 
 @interface AppDelegate ()<DBGuestureLockDelegate,UIAlertViewDelegate>{
     
@@ -287,6 +287,11 @@
                                               secret:SINA_APPSECRET
                                          RedirectURL:SINA_RedirectURL];
     
+    //设置易信Appkey和分享url地址
+    [UMSocialYixinHandler setYixinAppKey:YINXIN_APPKey url:@"http://open.yixin.im/my"];
+    
+    //设置微信AppId、appSecret，分享url
+    [UMSocialWechatHandler setWXAppId:WeiChat_APPId appSecret:WeiChat_APPSecret url:@"https://open.weixin.qq.com"];
     
     return YES;
 }

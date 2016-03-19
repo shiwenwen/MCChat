@@ -42,4 +42,9 @@
 #define SINA_APPKEY @"3914267365"
 #define SINA_APPSECRET @"0b98291d8c114162bdd1b984aa885621"
 #define SINA_RedirectURL @"http://sns.whalecloud.com/sina2/callback"
+//易信
+#define YINXIN_APPKey @"yx34374f4fe8fc4290a7bbccb400c232f1"
+//
+#define WeiChat_APPId @"wx277d488fefb4a4d3"
+#define WeiChat_APPSecret @"wx277d488fefb4a4d3"
 #endif /* UICommons_h */
