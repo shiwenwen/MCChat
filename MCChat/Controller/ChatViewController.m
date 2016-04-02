@@ -155,7 +155,8 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ChangeGroupName:) name:@"ChangeGroupName" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(haveDisconnectSession) name:@"disconnectSession" object:nil];
     
-      [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];   
+      [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+ 
 }
 - (void)viewWillDisappear:(BOOL)animated{
     
@@ -214,6 +215,10 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getNewFile:) name:KGetNewFile object:nil];
      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getNewFile:) name:@"PostFile" object:nil];
     
+    if (self.touchBlock) {
+        self.touchBlock();
+    }
+
     
 }
 
@@ -327,6 +332,35 @@
             NSLog(@"toggle carema failed, error = %@", error);
         }
     }
+}
+#pragma mark - 3dTouch
+-(void)touchOf3DNoti:(NSNotification *)noti{
+    if([noti.object isEqualToString:@"TYShortcut1"]) {
+        //添加
+        [self lookOtherDevice];
+        
+    }else if([noti.object isEqualToString:@"TYShortcut2"]){
+        //打开天线
+        [self.sessionManager advertiseForBrowserViewController];
+        [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"正在扩散..." viewController:nil];
+    }else if([noti.object isEqualToString:@"TYShortcut3"]){
+        //文件管理
+        
+        FileManagerViewController *fileManeger = [[FileManagerViewController alloc]init];
+        fileManeger.isFromChat = YES;
+        
+        [self.navigationController pushViewController:fileManeger animated:YES];
+        
+    } else if([noti.object isEqualToString:@"TYShortcut4"]){
+       
+        
+        
+    }
+
+    
+    
+    
+    
 }
 #pragma mark -- 收到新文件
 - (void)getNewFile:(NSNotification *)noti{
@@ -593,7 +627,19 @@
         
     }];
 }
+#pragma mark - 查看文件
+- (void)showFileManager{
+    
+    FileManagerViewController *fileManeger = [[FileManagerViewController alloc]init];
+    fileManeger.isFromChat = YES;
+    
+    [self.navigationController pushViewController:fileManeger animated:YES];
 
+}
+- (void)showSelf{
+    [self.sessionManager advertiseForBrowserViewController];
+    [[CustomAlertView shareCustomAlertView]showAlertViewWtihTitle:@"正在扩散..." viewController:nil];
+}
 #pragma mark -- 设置
 - (void)showSelfAdvertiser
 {
@@ -1250,11 +1296,7 @@
         {
             //发送文件
             
-            FileManagerViewController *fileManeger = [[FileManagerViewController alloc]init];
-            fileManeger.isFromChat = YES;
-            
-            [self.navigationController pushViewController:fileManeger animated:YES];
-            
+            [self showFileManager];
         }
             break;
             

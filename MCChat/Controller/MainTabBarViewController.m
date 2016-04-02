@@ -25,13 +25,8 @@
         
     }
     
-    ChatViewController *chat = [[ChatViewController alloc]init];
-    chat.tabVC = self;
-    self.chatVC = chat;
-    UINavigationController *naviC = [[UINavigationController alloc]initWithRootViewController:chat];
-    
-    self.viewControllers = @[naviC];
-    
+
+//    [[NSNotificationCenter defaultCenter]addObserver:chat selector:@selector(touchOf3DNoti:) name:K3DTouchNoti object:nil];
     
 }
 

@@ -31,6 +31,8 @@
    NSInteger _errorIndex;
     NSInteger _errorTime;
     NSInteger _interval;
+    NSString *_touchType;
+    
 }
 @property (nonatomic,strong)UIView *LockView;
 @property (nonatomic,strong)UILabel *lockStatusLabel;
@@ -58,7 +60,7 @@
     UIApplicationShortcutIconTypeSearch,
     UIApplicationShortcutIconTypeShare
 */
-    /*
+
     if ([[UIDevice currentDevice].systemVersion floatValue] > 9.0) {
         
         UIApplicationShortcutItem
@@ -71,14 +73,14 @@
                   @"TYShortcut1"
                   localizedTitle
                   :
-                  @"TYLocation"
+                  @"添加"
                   localizedSubtitle
                   :
-                  @"你点一下试试（定位"
+                  @"搜索附近设备"
                   icon
                   :[
                     UIApplicationShortcutIcon
-                    iconWithType:UIApplicationShortcutIconTypeLocation] userInfo:nil];
+                    iconWithType:UIApplicationShortcutIconTypeAdd] userInfo:nil];
         
         UIApplicationShortcutItem
         *item2 = [[
@@ -90,14 +92,14 @@
                   @"TYShortcut2"
                   localizedTitle
                   :
-                  @"TYLocaPlay"
+                  @"打开天线"
                   localizedSubtitle
                   :
-                  @"点一下试试呗（播放）"
+                  @"让他人搜索到你"
                   icon
                   :[
                     UIApplicationShortcutIcon
-                    iconWithType:UIApplicationShortcutIconTypePlay] userInfo:nil];
+                    iconWithType:UIApplicationShortcutIconTypeShare] userInfo:nil];
         
         UIApplicationShortcutItem
         *item3 = [[
@@ -109,14 +111,14 @@
                   @"TYShortcut3"
                   localizedTitle
                   :
-                  @"TYShare"
+                  @"文件管理"
                   localizedSubtitle
                   :
-                  @"点一下试试吧（分享）"
+                  @"管理和查看你的文件"
                   icon
                   :[
                     UIApplicationShortcutIcon
-                    iconWithType:UIApplicationShortcutIconTypeShare] userInfo:nil];
+                    iconWithType:UIApplicationShortcutIconTypeCloud] userInfo:nil];
         // 这里是可以自定义的效果  可以自己设置  Icon
         
         UIApplicationShortcutItem
@@ -144,7 +146,7 @@
     
     }
     
-*/    
+  
     
     
     
@@ -160,6 +162,16 @@
 //    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[RootViewController alloc]init]];
     self.mainTabBar = [[MainTabBarViewController alloc]init];
     self.window.rootViewController = self.mainTabBar;
+    ChatViewController *chat = [[ChatViewController alloc]init];
+    
+
+    chat.tabVC = _mainTabBar;
+    _mainTabBar.chatVC = chat;
+    UINavigationController *naviC = [[UINavigationController alloc]initWithRootViewController:chat];
+    
+    _mainTabBar.viewControllers = @[naviC];
+
+    
     //  1.如果是iOS8请求用户权限
     if ([UIDevice currentDevice].systemVersion.doubleValue >= 8.0 && [UIDevice currentDevice].systemVersion.floatValue <= 9.0) {
         
@@ -550,6 +562,7 @@
 
        [UMSocialSnsService  applicationDidBecomeActive];
     
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -664,6 +677,36 @@
     
     
    
+}
+#pragma mark - 3D Touch
+-(void) application:(UIApplication*)application performActionForShortcutItem:(UIApplicationShortcutItem*)shortcutItem completionHandler:(void(^)(BOOL))completionHandler{
+    
+    _touchType = shortcutItem.type;
+//    NSLog(@"%@",shortcutItem.type);
+//    /*
+//     在此处添加需要跳转到的页面如果不写默认进入程序正常开启页面（不添加3D Touch的效果）
+//     */
+    
+    MainTabBarViewController *main = (MainTabBarViewController *)self.window.rootViewController;
+    ChatViewController *chat = main.chatVC;
+//    __weak typeof(chat)weakChat;
+    if([_touchType isEqualToString:@"TYShortcut1"]) {
+    
+        [chat performSelector:@selector(lookOtherDevice) withObject:nil afterDelay:.5];
+   
+        
+    }else if([_touchType isEqualToString:@"TYShortcut2"]){
+        
+      [chat performSelector:@selector(showSelf) withObject:nil afterDelay:.5];
+    }else if([_touchType isEqualToString:@"TYShortcut3"]){
+        
+     [chat performSelector:@selector(showFileManager) withObject:nil afterDelay:.5];
+        
+    } else if([_touchType isEqualToString:@"TYShortcut4"]){
+        
+    }
+    
+//    return;
 }
 
 

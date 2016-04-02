@@ -9,8 +9,14 @@
 #import <UIKit/UIKit.h>
 @class  MainTabBarViewController;
 @interface ChatViewController : UIViewController
+typedef  void(^TouchBlock)();
 @property (nonatomic,strong)MainTabBarViewController *tabVC;
 - (void)makeBlueData;
 + (void)cancelLocalNotificationWithKey:(NSString *)key;
 - (void)sendWeNeedNews:(NSString *)content;
+//搜索设备
+- (void)lookOtherDevice;
+- (void)showFileManager;
+- (void)showSelf;
+@property (nonatomic,copy)TouchBlock touchBlock;
 @end
