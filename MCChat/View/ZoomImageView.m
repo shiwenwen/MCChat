@@ -94,11 +94,12 @@
     {
         //得到分享到的微博平台名
         NSLog(@"share to sns name is %@",[[response.data allKeys] objectAtIndex:0]);
-        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
+//        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
         
     }else{
+         NSLog(@"share to sns name is %@",[[response.data allKeys] objectAtIndex:0]);
+//        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
         
-        [[CustomAlertView shareCustomAlertView]showBottomAlertViewWtihTitle:response.message viewController:nil];
     }
     
     

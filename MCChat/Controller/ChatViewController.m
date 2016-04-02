@@ -98,7 +98,9 @@
 @property (nonatomic, strong)       AVCaptureDeviceInput        * videoInput;
 //AVCaptureDeviceInput对象是输入流
 @property (nonatomic, strong)       AVCaptureStillImageOutput   * stillImageOutput;
-//照片输出流对象，当然我的照相机只有拍照功能，所以只需要这个对象就够了
+
+@property (nonatomic,strong)AVCaptureVideoDataOutput *videoDataOutput;
+
 @property (nonatomic, strong)       AVCaptureVideoPreviewLayer  * previewLayer;
 //预览图层，来显示照相机拍摄到的画面
 @property (nonatomic, strong)       UIBarButtonItem             * toggleButton;
@@ -232,18 +234,6 @@
         
         [self.previewLayer removeFromSuperlayer];
         self.previewLayer = nil;
-//        if (UserDefaultsGet(@"bgPath")) {
-//            
-//            UIImage *image = [UIImage imageWithContentsOfFile:UserDefaultsGet(@"bgPath")];
-//            self.view.layer.contents = (id) image.CGImage;
-//            self.navigationController.navigationBar.titleTextAttributes =@{
-//                                                                           NSForegroundColorAttributeName:[UIColor whiteColor]
-//                                                                           
-//                                                                           };
-//        }else{
-//            [self setDefaultBackground];
-//            
-//        }
 
     }
     
@@ -254,19 +244,23 @@
 
     self.session = [[AVCaptureSession alloc] init];
     self.videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:nil];
-    //[self fronCamera]方法会返回一个AVCaptureDevice对象，因为我初始化时是采用前摄像头，所以这么写，具体的实现方法后面会介绍
-//    self.stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
-//    NSDictionary * outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG,AVVideoCodecKey, nil];
-//    //这是输出流的设置参数AVVideoCodecJPEG参数表示以JPEG的图片格式输出图片
-//    [self.stillImageOutput setOutputSettings:outputSettings];
     
+    self.stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+
+    NSDictionary * outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:AVVideoCodecJPEG,AVVideoCodecKey, nil];
+    //这是输出流的设置参数AVVideoCodecJPEG参数表示以JPEG的图片格式输出图片
+    
+    [self.stillImageOutput setOutputSettings:outputSettings];
+
+
+
     if ([self.session canAddInput:self.videoInput]) {
         [self.session addInput:self.videoInput];
     }
-//    if ([self.session canAddOutput:self.stillImageOutput]) {
-//        [self.session addOutput:self.stillImageOutput];
-//    }
-//    
+    if ([self.session canAddOutput:self.stillImageOutput]) {
+        [self.session addOutput:self.stillImageOutput];
+    }
+    
 }
 - (void) setUpCameraLayer
 {
@@ -303,6 +297,36 @@
 
 - (AVCaptureDevice *)backCamera {
     return [self cameraWithPosition:AVCaptureDevicePositionBack];
+}
+//切换前后
+- (void)toggleCamera {
+    NSUInteger cameraCount = [[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count];
+    if (cameraCount > 1) {
+        NSError *error;
+        AVCaptureDeviceInput *newVideoInput;
+        AVCaptureDevicePosition position = [[_videoInput device] position];
+        
+        if (position == AVCaptureDevicePositionBack)
+            newVideoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self frontCamera] error:&error];
+        else if (position == AVCaptureDevicePositionFront)
+            newVideoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:&error];
+        else
+            return;
+        
+        if (newVideoInput != nil) {
+            [self.session beginConfiguration];
+            [self.session removeInput:self.videoInput];
+            if ([self.session canAddInput:newVideoInput]) {
+                [self.session addInput:newVideoInput];
+                [self setVideoInput:newVideoInput];
+            } else {
+                [self.session addInput:self.videoInput];
+            }
+            [self.session commitConfiguration];
+        } else if (error) {
+            NSLog(@"toggle carema failed, error = %@", error);
+        }
+    }
 }
 #pragma mark -- 收到新文件
 - (void)getNewFile:(NSNotification *)noti{
