@@ -19,6 +19,8 @@
 #import <LocalAuthentication/LAContext.h>
 #import "FileManagerViewController.h"
 #import "CLImageEditor.h"
+#import "MCChat-Swift.h"
+
 @interface SettingViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MLImageCropDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,DBGuestureLockDelegate,CLImageEditorDelegate, CLImageEditorTransitionDelegate, CLImageEditorThemeDelegate>{
     
     UICollectionView *collection;
@@ -305,6 +307,11 @@
                     [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
             };
             [self.navigationController pushViewController:changeName animated:YES];
+            
+            
+          
+            
+            
         }else if (indexPath.row == 2){
             changeName.style = groupName;
             changeName.placehold = self.groupName;

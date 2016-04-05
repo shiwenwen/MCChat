@@ -525,6 +525,29 @@
 		2BFAA1581C3FADD800E8D032 /* MCChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA1571C3FADD800E8D032 /* MCChatUITests.m */; };
 		2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */; };
 		2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */; };
+		88308A1F1CB3F847007470B9 /* backgrounds.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 88308A1D1CB3F847007470B9 /* backgrounds.atlas */; };
+		88308A201CB3F847007470B9 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 88308A1E1CB3F847007470B9 /* sprites.atlas */; };
+		88308A361CB3F86E007470B9 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A221CB3F86E007470B9 /* CGFloat+Extensions.swift */; };
+		88308A371CB3F86E007470B9 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A231CB3F86E007470B9 /* CGPoint+Extensions.swift */; };
+		88308A381CB3F86E007470B9 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A241CB3F86E007470B9 /* CGVector+Extensions.swift */; };
+		88308A391CB3F86E007470B9 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A251CB3F86E007470B9 /* Int+Extensions.swift */; };
+		88308A3A1CB3F86E007470B9 /* SKAction+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A261CB3F86E007470B9 /* SKAction+Extensions.swift */; };
+		88308A3B1CB3F86E007470B9 /* SKAction+SpecialEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A271CB3F86E007470B9 /* SKAction+SpecialEffects.swift */; };
+		88308A3C1CB3F86E007470B9 /* SKColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A281CB3F86E007470B9 /* SKColor+Extensions.swift */; };
+		88308A3D1CB3F86E007470B9 /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A291CB3F86E007470B9 /* SKNode+Extensions.swift */; };
+		88308A3E1CB3F86E007470B9 /* SKTAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A2A1CB3F86E007470B9 /* SKTAudio.swift */; };
+		88308A3F1CB3F86E007470B9 /* SKTEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A2B1CB3F86E007470B9 /* SKTEffects.swift */; };
+		88308A401CB3F86E007470B9 /* SKTTimingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A2C1CB3F86E007470B9 /* SKTTimingFunctions.swift */; };
+		88308A411CB3F86E007470B9 /* Vector3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A2D1CB3F86E007470B9 /* Vector3.swift */; };
+		88308A421CB3F86E007470B9 /* coin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A2F1CB3F86E007470B9 /* coin.wav */; };
+		88308A431CB3F86E007470B9 /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A301CB3F86E007470B9 /* ding.wav */; };
+		88308A441CB3F86E007470B9 /* falling.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A311CB3F86E007470B9 /* falling.wav */; };
+		88308A451CB3F86E007470B9 /* flapping.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A321CB3F86E007470B9 /* flapping.wav */; };
+		88308A461CB3F86E007470B9 /* hitGround.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A331CB3F86E007470B9 /* hitGround.wav */; };
+		88308A471CB3F86E007470B9 /* pop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A341CB3F86E007470B9 /* pop.wav */; };
+		88308A481CB3F86E007470B9 /* whack.wav in Resources */ = {isa = PBXBuildFile; fileRef = 88308A351CB3F86E007470B9 /* whack.wav */; };
+		88308A4B1CB3F881007470B9 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A491CB3F881007470B9 /* GameScene.swift */; };
+		88308A4C1CB3F881007470B9 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88308A4A1CB3F881007470B9 /* GameViewController.swift */; };
 		883B32401C9D2C11005E7F3F /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 883B323F1C9D2C11005E7F3F /* AssetsLibrary.framework */; };
 		884047BF1C8C4B57000D934F /* ChineseString.m in Sources */ = {isa = PBXBuildFile; fileRef = 884047BC1C8C4B57000D934F /* ChineseString.m */; };
 		884047C01C8C4B57000D934F /* pinyin.c in Sources */ = {isa = PBXBuildFile; fileRef = 884047BD1C8C4B57000D934F /* pinyin.c */; };
@@ -1278,6 +1301,29 @@
 		2BFAA16A1C3FB7B000E8D032 /* ChatItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatItem.m; sourceTree = "<group>"; };
 		2BFAA16C1C3FB7B000E8D032 /* BlueSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueSessionManager.h; sourceTree = "<group>"; };
 		2BFAA16D1C3FB7B000E8D032 /* BlueSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueSessionManager.m; sourceTree = "<group>"; };
+		88308A1D1CB3F847007470B9 /* backgrounds.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = backgrounds.atlas; sourceTree = "<group>"; };
+		88308A1E1CB3F847007470B9 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
+		88308A221CB3F86E007470B9 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
+		88308A231CB3F86E007470B9 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
+		88308A241CB3F86E007470B9 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
+		88308A251CB3F86E007470B9 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
+		88308A261CB3F86E007470B9 /* SKAction+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKAction+Extensions.swift"; sourceTree = "<group>"; };
+		88308A271CB3F86E007470B9 /* SKAction+SpecialEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKAction+SpecialEffects.swift"; sourceTree = "<group>"; };
+		88308A281CB3F86E007470B9 /* SKColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKColor+Extensions.swift"; sourceTree = "<group>"; };
+		88308A291CB3F86E007470B9 /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
+		88308A2A1CB3F86E007470B9 /* SKTAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTAudio.swift; sourceTree = "<group>"; };
+		88308A2B1CB3F86E007470B9 /* SKTEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTEffects.swift; sourceTree = "<group>"; };
+		88308A2C1CB3F86E007470B9 /* SKTTimingFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTTimingFunctions.swift; sourceTree = "<group>"; };
+		88308A2D1CB3F86E007470B9 /* Vector3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3.swift; sourceTree = "<group>"; };
+		88308A2F1CB3F86E007470B9 /* coin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = coin.wav; sourceTree = "<group>"; };
+		88308A301CB3F86E007470B9 /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
+		88308A311CB3F86E007470B9 /* falling.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = falling.wav; sourceTree = "<group>"; };
+		88308A321CB3F86E007470B9 /* flapping.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flapping.wav; sourceTree = "<group>"; };
+		88308A331CB3F86E007470B9 /* hitGround.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitGround.wav; sourceTree = "<group>"; };
+		88308A341CB3F86E007470B9 /* pop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pop.wav; sourceTree = "<group>"; };
+		88308A351CB3F86E007470B9 /* whack.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = whack.wav; sourceTree = "<group>"; };
+		88308A491CB3F881007470B9 /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		88308A4A1CB3F881007470B9 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		883B323F1C9D2C11005E7F3F /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		884047BB1C8C4B57000D934F /* ChineseString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChineseString.h; sourceTree = "<group>"; };
 		884047BC1C8C4B57000D934F /* ChineseString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChineseString.m; sourceTree = "<group>"; };
@@ -1711,6 +1757,8 @@
 				2BC89AF01C895F2300782C45 /* PreviewViewController.xib */,
 				8841B7531C89D381002252B0 /* FileListViewController.h */,
 				8841B7541C89D381002252B0 /* FileListViewController.m */,
+				88308A491CB3F881007470B9 /* GameScene.swift */,
+				88308A4A1CB3F881007470B9 /* GameViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2584,6 +2632,9 @@
 		2BFAA16E1C3FB7B000E8D032 /* Resourse */ = {
 			isa = PBXGroup;
 			children = (
+				88308A211CB3F86E007470B9 /* SKTUtils */,
+				88308A2E1CB3F86E007470B9 /* Sounds */,
+				88308A1C1CB3F847007470B9 /* Art */,
 				2BC9D2A31C72DDC2005F3954 /* face */,
 				2B4076861C44FDCB003A7161 /* HomeBackgroud@2x.png */,
 				2B4076871C44FDCB003A7161 /* HomeBackgroud@3x.png */,
@@ -2594,6 +2645,48 @@
 				2B4076731C44FC22003A7161 /* MMChatLaunchImage */,
 			);
 			path = Resourse;
+			sourceTree = "<group>";
+		};
+		88308A1C1CB3F847007470B9 /* Art */ = {
+			isa = PBXGroup;
+			children = (
+				88308A1D1CB3F847007470B9 /* backgrounds.atlas */,
+				88308A1E1CB3F847007470B9 /* sprites.atlas */,
+			);
+			path = Art;
+			sourceTree = "<group>";
+		};
+		88308A211CB3F86E007470B9 /* SKTUtils */ = {
+			isa = PBXGroup;
+			children = (
+				88308A221CB3F86E007470B9 /* CGFloat+Extensions.swift */,
+				88308A231CB3F86E007470B9 /* CGPoint+Extensions.swift */,
+				88308A241CB3F86E007470B9 /* CGVector+Extensions.swift */,
+				88308A251CB3F86E007470B9 /* Int+Extensions.swift */,
+				88308A261CB3F86E007470B9 /* SKAction+Extensions.swift */,
+				88308A271CB3F86E007470B9 /* SKAction+SpecialEffects.swift */,
+				88308A281CB3F86E007470B9 /* SKColor+Extensions.swift */,
+				88308A291CB3F86E007470B9 /* SKNode+Extensions.swift */,
+				88308A2A1CB3F86E007470B9 /* SKTAudio.swift */,
+				88308A2B1CB3F86E007470B9 /* SKTEffects.swift */,
+				88308A2C1CB3F86E007470B9 /* SKTTimingFunctions.swift */,
+				88308A2D1CB3F86E007470B9 /* Vector3.swift */,
+			);
+			path = SKTUtils;
+			sourceTree = "<group>";
+		};
+		88308A2E1CB3F86E007470B9 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				88308A2F1CB3F86E007470B9 /* coin.wav */,
+				88308A301CB3F86E007470B9 /* ding.wav */,
+				88308A311CB3F86E007470B9 /* falling.wav */,
+				88308A321CB3F86E007470B9 /* flapping.wav */,
+				88308A331CB3F86E007470B9 /* hitGround.wav */,
+				88308A341CB3F86E007470B9 /* pop.wav */,
+				88308A351CB3F86E007470B9 /* whack.wav */,
+			);
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 		884047BA1C8C4B57000D934F /* ChineseSorting */ = {
@@ -2884,6 +2977,7 @@
 				2BC9D4E81C72DDC3005F3954 /* 090.gif in Resources */,
 				2BC9D3E51C72DDC2005F3954 /* 003.gif in Resources */,
 				2BC9D4011C72DDC2005F3954 /* 013.gif in Resources */,
+				88308A1F1CB3F847007470B9 /* backgrounds.atlas in Resources */,
 				2BC9D5101C72DDC3005F3954 /* 103.png in Resources */,
 				2BC9D50D1C72DDC3005F3954 /* 102.png in Resources */,
 				2B4076921C44FDCB003A7161 /* HomeBackgroud@2x.png in Resources */,
@@ -2915,6 +3009,7 @@
 				2BC9D4FB1C72DDC3005F3954 /* 096.png in Resources */,
 				2BC9D4931C72DDC3005F3954 /* 061@2x.png in Resources */,
 				2BC9D4551C72DDC3005F3954 /* 041.gif in Resources */,
+				88308A461CB3F86E007470B9 /* hitGround.wav in Resources */,
 				2BC9D5061C72DDC3005F3954 /* 100.gif in Resources */,
 				2BB5607B1C96B353006B9F26 /* UMShareEditViewController.xib in Resources */,
 				2BC9D4B21C72DDC3005F3954 /* 072.gif in Resources */,
@@ -2962,6 +3057,7 @@
 				2BC9D4BF1C72DDC3005F3954 /* 076.png in Resources */,
 				2BC9D41B1C72DDC3005F3954 /* 021@2x.png in Resources */,
 				2BC9D3E81C72DDC2005F3954 /* 004.gif in Resources */,
+				88308A481CB3F86E007470B9 /* whack.wav in Resources */,
 				2BC89B321C8964D100782C45 /* MJRefresh.bundle in Resources */,
 				2BC9D4441C72DDC3005F3954 /* 035.png in Resources */,
 				2BC9D5041C72DDC3005F3954 /* 099.png in Resources */,
@@ -3109,6 +3205,7 @@
 				2BC9D4101C72DDC2005F3954 /* 018.gif in Resources */,
 				2BC89B231C8964D100782C45 /* LICENSE in Resources */,
 				2BC9D50A1C72DDC3005F3954 /* 101.png in Resources */,
+				88308A201CB3F847007470B9 /* sprites.atlas in Resources */,
 				2BC9D4B01C72DDC3005F3954 /* 071.png in Resources */,
 				2BC9D4A41C72DDC3005F3954 /* 067.png in Resources */,
 				2BB560801C96B353006B9F26 /* UMSocialSDKResourcesNew.bundle in Resources */,
@@ -3131,6 +3228,8 @@
 				2BC9D4D51C72DDC3005F3954 /* 083@2x.png in Resources */,
 				2BC9D4661C72DDC3005F3954 /* 046@2x.png in Resources */,
 				2BC9D4351C72DDC3005F3954 /* 030.png in Resources */,
+				88308A471CB3F86E007470B9 /* pop.wav in Resources */,
+				88308A451CB3F86E007470B9 /* flapping.wav in Resources */,
 				2BC9D3E71C72DDC2005F3954 /* 003@2x.png in Resources */,
 				2BC9D4EE1C72DDC3005F3954 /* 092.gif in Resources */,
 				2BC9D4201C72DDC3005F3954 /* 023.png in Resources */,
@@ -3168,6 +3267,7 @@
 				2BC9D3F71C72DDC2005F3954 /* 009.gif in Resources */,
 				2BB560781C96B353006B9F26 /* UMSCommentDetailController.xib in Resources */,
 				2BC9D4851C72DDC3005F3954 /* 057.gif in Resources */,
+				88308A431CB3F86E007470B9 /* ding.wav in Resources */,
 				2B4076831C44FC22003A7161 /* LaunchImage-Portrait@2x~ipad.png in Resources */,
 				2BC9D4D61C72DDC3005F3954 /* 084.gif in Resources */,
 				2BC9D44A1C72DDC3005F3954 /* 037.png in Resources */,
@@ -3187,7 +3287,9 @@
 				2B4076991C44FDCB003A7161 /* AppIcon72x72~ipad.png in Resources */,
 				2BC9D4911C72DDC3005F3954 /* 061.gif in Resources */,
 				2BC9D48C1C72DDC3005F3954 /* 059.png in Resources */,
+				88308A441CB3F86E007470B9 /* falling.wav in Resources */,
 				2BC9D4721C72DDC3005F3954 /* 050@2x.png in Resources */,
+				88308A421CB3F86E007470B9 /* coin.wav in Resources */,
 				2BC9D4B11C72DDC3005F3954 /* 071@2x.png in Resources */,
 				2BC9D4001C72DDC2005F3954 /* 012@2x.png in Resources */,
 				2BC9D4FA1C72DDC3005F3954 /* 096.gif in Resources */,
@@ -3266,6 +3368,7 @@
 				2B7C9E0F1C86948700062209 /* NSData+ImageContentType.m in Sources */,
 				2B39978B1C7199F70081CAFC /* ChatBackgroundChoseViewController.m in Sources */,
 				2BB560331C967342006B9F26 /* CLClippingTool.m in Sources */,
+				88308A401CB3F86E007470B9 /* SKTTimingFunctions.swift in Sources */,
 				2BAD25CF1C489748007EBFAE /* ZoomImageView.m in Sources */,
 				2BB560361C967342006B9F26 /* CLGloomEffect.m in Sources */,
 				2B71EFC21C71BE110082BAE3 /* UIAlertView+AFNetworking.m in Sources */,
@@ -3293,8 +3396,10 @@
 				2BC89AF11C895F2300782C45 /* PreviewViewController.m in Sources */,
 				2B7C9E191C86948700062209 /* UIImage+MultiFormat.m in Sources */,
 				2B7C9E1B1C86948700062209 /* UIImageView+HighlightedWebCache.m in Sources */,
+				88308A3F1CB3F86E007470B9 /* SKTEffects.swift in Sources */,
 				8841B7551C89D381002252B0 /* FileListViewController.m in Sources */,
 				2B2A4E161C842F2F00FCF768 /* DBGuestureLock.m in Sources */,
+				88308A3D1CB3F86E007470B9 /* SKNode+Extensions.swift in Sources */,
 				2BC89B2E1C8964D100782C45 /* MJRefreshBackStateFooter.m in Sources */,
 				8894B6E21C8A86F6005E0889 /* pwd2key.c in Sources */,
 				2B7C9E181C86948700062209 /* UIImage+GIF.m in Sources */,
@@ -3310,10 +3415,12 @@
 				2BB560351C967342006B9F26 /* CLBloomEffect.m in Sources */,
 				2BC89B3E1C89A0DE00782C45 /* WWPageController.m in Sources */,
 				2B71EFBB1C71BE110082BAE3 /* AFSecurityPolicy.m in Sources */,
+				88308A381CB3F86E007470B9 /* CGVector+Extensions.swift in Sources */,
 				2BC89B241C8964D100782C45 /* MJRefreshAutoFooter.m in Sources */,
 				2BB560411C967342006B9F26 /* CLRotateTool.m in Sources */,
 				2BEA0B8D1C4624BF00A719A8 /* DTTimePeriodChain.m in Sources */,
 				2BB560301C967342006B9F26 /* CLImageToolInfo.m in Sources */,
+				88308A3E1CB3F86E007470B9 /* SKTAudio.swift in Sources */,
 				8894B6DD1C8A86F6005E0889 /* aestab.c in Sources */,
 				2B71EFBA1C71BE110082BAE3 /* AFNetworkReachabilityManager.m in Sources */,
 				884047BF1C8C4B57000D934F /* ChineseString.m in Sources */,
@@ -3338,10 +3445,12 @@
 				2B92D65A1C473AF50073171C /* MyChatCell.m in Sources */,
 				2BEA0B901C4624BF00A719A8 /* NSDate+DateTools.m in Sources */,
 				8894B6DF1C8A86F6005E0889 /* fileenc.c in Sources */,
+				88308A371CB3F86E007470B9 /* CGPoint+Extensions.swift in Sources */,
 				8894B7841C8B1043005E0889 /* CLSplashTool.m in Sources */,
 				8894B6E81C8A86F6005E0889 /* zip.c in Sources */,
 				2BFAA1761C3FB7B000E8D032 /* ChatItem.m in Sources */,
 				2BFAA1771C3FB7B000E8D032 /* BlueSessionManager.m in Sources */,
+				88308A3A1CB3F86E007470B9 /* SKAction+Extensions.swift in Sources */,
 				8894B6E91C8A86F6005E0889 /* SSZipArchive.m in Sources */,
 				2B4076B51C4508EB003A7161 /* WPAttributedStyleAction.m in Sources */,
 				2BC89B331C8964D100782C45 /* MJRefreshConst.m in Sources */,
@@ -3353,6 +3462,7 @@
 				2BB560431C967342006B9F26 /* CLCircleView.m in Sources */,
 				2BB5604A1C967342006B9F26 /* CLSplineInterpolator.m in Sources */,
 				8894B6E51C8A86F6005E0889 /* ioapi.c in Sources */,
+				88308A411CB3F86E007470B9 /* Vector3.swift in Sources */,
 				2BB5603B1C967342006B9F26 /* CLSpotEffect.m in Sources */,
 				2BC89B3D1C89A0DE00782C45 /* TitleCell.m in Sources */,
 				2BFAA1371C3FADD700E8D032 /* AppDelegate.m in Sources */,
@@ -3371,6 +3481,7 @@
 				2BB560321C967342006B9F26 /* CLBlurTool.m in Sources */,
 				2BEA0B8B1C4624BF00A719A8 /* DTError.m in Sources */,
 				2B7C9E131C86948700062209 /* SDWebImageDownloader.m in Sources */,
+				88308A361CB3F86E007470B9 /* CGFloat+Extensions.swift in Sources */,
 				8894B6DB1C8A86F6005E0889 /* aescrypt.c in Sources */,
 				8894B7861C8B1043005E0889 /* CLFontPickerView.m in Sources */,
 				8894B78B1C8B1043005E0889 /* CLTextTool.m in Sources */,
@@ -3385,11 +3496,13 @@
 				8894B6DE1C8A86F6005E0889 /* entropy.c in Sources */,
 				2BC9D5291C72F831005F3954 /* WeiboFacePanelView.m in Sources */,
 				2BB560461C967342006B9F26 /* CLImageToolInfo+Private.m in Sources */,
+				88308A3C1CB3F86E007470B9 /* SKColor+Extensions.swift in Sources */,
 				2BB560401C967342006B9F26 /* CLImageToolBase.m in Sources */,
 				2B71EFC11C71BE110082BAE3 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				2B71EF901C71BE070082BAE3 /* MLImageCrop.m in Sources */,
 				2BB5603A1C967342006B9F26 /* CLPosterizeEffect.m in Sources */,
 				2BC89B2C1C8964D100782C45 /* MJRefreshBackGifFooter.m in Sources */,
+				88308A4B1CB3F881007470B9 /* GameScene.swift in Sources */,
 				2B92D6631C473B420073171C /* HomeViewController.m in Sources */,
 				8894B7881C8B1043005E0889 /* CLPickerView.m in Sources */,
 				2BC9D5361C733D02005F3954 /* WXLabel.m in Sources */,
@@ -3401,9 +3514,11 @@
 				2BB5603C1C967342006B9F26 /* CLEffectBase.m in Sources */,
 				2BC89B271C8964D100782C45 /* MJRefreshFooter.m in Sources */,
 				2BC89B341C8964D100782C45 /* UIScrollView+MJExtension.m in Sources */,
+				88308A4C1CB3F881007470B9 /* GameViewController.swift in Sources */,
 				2BB560311C967342006B9F26 /* CLAdjustmentTool.m in Sources */,
 				2BC89B2B1C8964D100782C45 /* MJRefreshAutoStateFooter.m in Sources */,
 				2BC9D52F1C73363F005F3954 /* RegexKitLite.m in Sources */,
+				88308A3B1CB3F86E007470B9 /* SKAction+SpecialEffects.swift in Sources */,
 				2B92D66B1C47417C0073171C /* MainTabBarViewController.m in Sources */,
 				8894B7891C8B1043005E0889 /* CLTextLabel.m in Sources */,
 				2BC89B2A1C8964D100782C45 /* MJRefreshAutoNormalFooter.m in Sources */,
@@ -3412,6 +3527,7 @@
 				2B7C9DEA1C868D2300062209 /* NSDate+TimeAgo.m in Sources */,
 				2B71EFB81C71BE110082BAE3 /* AFHTTPRequestOperationManager.m in Sources */,
 				2B4076B61C4508EB003A7161 /* WPHotspotLabel.m in Sources */,
+				88308A391CB3F86E007470B9 /* Int+Extensions.swift in Sources */,
 				2BB560381C967342006B9F26 /* CLHueEffect.m in Sources */,
 				2B2A4E151C842F2F00FCF768 /* DBGuestureButton.m in Sources */,
 			);
@@ -3550,6 +3666,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3590,6 +3707,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
