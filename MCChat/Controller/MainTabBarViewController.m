@@ -19,11 +19,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    for (UIView * view in self.tabBar.subviews) {
+//    for (UIView * view in self.tabBar.subviews) {
+    
+//        [view removeFromSuperview];
         
-        [view removeFromSuperview];
-        
-    }
+//    }
     
 
 //    [[NSNotificationCenter defaultCenter]addObserver:chat selector:@selector(touchOf3DNoti:) name:K3DTouchNoti object:nil];

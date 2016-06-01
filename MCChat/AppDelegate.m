@@ -140,7 +140,7 @@
                      UIApplicationShortcutIcon
                      iconWithTemplateImageName:@"ToolViewEmotion"] userInfo:nil];
         
-        [[UIApplication sharedApplication] setShortcutItems: @[item1, item2, item3, item4 ]];
+        [[UIApplication sharedApplication] setShortcutItems: @[item1, item2, item3 ]];
 
 
     

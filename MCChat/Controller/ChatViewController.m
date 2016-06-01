@@ -111,6 +111,7 @@
 @end
 
 @implementation ChatViewController
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -1705,9 +1706,9 @@
 {
     if(!self.sessionManager.isConnected)
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
-                [alertView show];
-                return;
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接已经断开了，请重新连接！" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+//                [alertView show];
+//                return;
     }
     if([self.sendTextView.text isEqualToString:@""]&& content.length < 1)
     {
